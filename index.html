@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oasis AI Workspace</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="shell">
+
+  <nav id="rail" aria-label="Sidebar">
+    <button class="logo" id="logoBtn" type="button" title="Hide toolbar" aria-label="Hide toolbar" aria-expanded="true">
+      <svg viewBox="0 0 32 32"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5ec8ff"/><stop offset=".5" stop-color="#8b7dff"/><stop offset="1" stop-color="#ff7ab6"/></linearGradient></defs><rect x="3" y="3" width="26" height="26" rx="9" fill="url(#lg)"/><path d="M11 12h10M11 16h10M11 20h6" stroke="#0b0f16" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <button class="rail-item" id="toggleRail" title="Expand sidebar"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><path d="M9.5 4.5v15"/></svg><span>Collapse sidebar</span></button>
+    <button class="rail-item" id="newChat" title="New chat"><svg viewBox="0 0 24 24"><path d="M12 4H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-5"/><path d="M18.5 3.5a1.8 1.8 0 0 1 2.5 2.5L12 15l-3.5 1 1-3.5z"/></svg><span>New chat</span></button>
+    <button class="rail-item" id="showHistory" title="Chat history"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Chat history</span></button>
+    <button class="rail-item" id="openCodeLab" type="button" title="Code Lab" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M8.5 8l-4.5 4 4.5 4M15.5 8l4.5 4-4.5 4M13.5 5.5l-3 13"/></svg><span>Code Lab</span></button>
+    <button class="rail-item" id="openOasisElement" type="button" title="Oasis Chat in Element"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 12h7M12 8.5v7"/></svg><span>Chat</span></button>
+    <button class="rail-item" id="openLiveTV" type="button" title="Live TV" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M21 3H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5v2h8v-2h5a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 14H3V5h18v12z"/></svg><span>Live TV</span></button>
+    <div class="rail-sep"></div>
+    <div id="links"></div>
+    <button class="rail-item" id="editLinks" type="button" title="Add or edit links"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>Add or edit links</span></button>
+    <div class="rail-spacer"></div>
+    <button class="rail-item" id="openSettings" title="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></button>
+    <button class="avatar" id="avatar" title="Settings" aria-label="Settings">G</button>
+  </nav>
+
+  <main id="main" class="home">
+    <div id="wall" aria-hidden="true"></div>
+    <div class="topbar">
+      <button class="pill-btn" id="statusBtn" title="Connection settings"><span class="dot" id="statusDot"></span><span id="statusText">Checking LM Studio…</span></button>
+    </div>
+
+    <aside id="history" aria-label="Chat history">
+      <h2>Chat history <button id="closeHistory" aria-label="Close history">×</button></h2>
+      <div id="histList"></div>
+    </aside>
+
+    <section id="codeLab" hidden aria-label="Code Lab">
+      <div class="cl-head">
+        <div class="cl-title"><svg viewBox="0 0 24 24"><path d="M8.5 8l-4.5 4 4.5 4M15.5 8l4.5 4-4.5 4M13.5 5.5l-3 13"/></svg><b>Code Lab</b></div>
+        <div class="cl-tabs" role="tablist" aria-label="Code Lab sections">
+          <button type="button" role="tab" class="cl-tab" data-tab="editor" aria-selected="true">Editor</button>
+          <button type="button" role="tab" class="cl-tab" data-tab="challenges" aria-selected="false">Challenges</button>
+        </div>
+        <div class="cl-grow"></div>
+        <button type="button" id="clRun" class="cl-run" title="Run the code in the editor"><svg viewBox="0 0 24 24"><path d="M7 5v14l12-7z"/></svg>Run</button>
+        <a class="round" id="clPop" href="https://onecompiler.com/python" target="_blank" rel="noopener noreferrer" title="Open in a new tab" aria-label="Open in a new tab"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/></svg></a>
+        <button type="button" class="round" id="clClose" title="Close Code Lab" aria-label="Close Code Lab"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <div class="cl-body">
+        <p class="cl-note" id="clNote">Loading the editor… Code Lab needs an internet connection.</p>
+        <div id="clFrames"></div>
+      </div>
+    </section>
+
+    <section id="liveTV" hidden aria-label="Live TV">
+      <div class="cl-head">
+        <div class="cl-title"><svg viewBox="0 0 24 24"><path d="M21 3H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5v2h8v-2h5a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 14H3V5h18v12z"/></svg><b>Live TV</b></div>
+        <div class="cl-grow"></div>
+        <button type="button" class="round" id="ltPop" title="Open in a new tab" aria-label="Open in a new tab"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/></svg></button>
+        <button type="button" class="round" id="ltClose" title="Close Live TV" aria-label="Close Live TV"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <div class="cl-body">
+        <iframe id="ltFrame" title="Live TV player" src="tv.html" allow="picture-in-picture; fullscreen" allowfullscreen></iframe>
+      </div>
+    </section>
+
+    <h1 id="greeting">Nice to see you, Guest. What’s new?</h1>
+
+    <section id="messages" aria-live="polite">
+      <button id="scrollNotice" type="button" title="Scroll to the latest message">↓ New text below — scroll down</button>
+    </section>
+
+    <div id="composer-wrap">
+      <div id="liveBar" data-state="listening">
+        <button class="live-orb" id="liveOrb" type="button" aria-label="Live chat control"></button>
+        <div class="live-text"><b id="liveState" aria-live="polite">Listening…</b><span id="liveHint"></span></div>
+        <button id="liveEnd" type="button">End</button>
+      </div>
+      <div id="composer">
+        <div class="attached" id="attached"></div>
+        <textarea id="input" rows="1" placeholder="Message your model"></textarea>
+        <div class="row">
+          <button class="round" id="attachBtn" title="Attach a file or image" aria-label="Attach a file or image"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+          <button class="round" id="camBtn" type="button" title="Show the AI your webcam" aria-label="Show the AI your webcam"><svg viewBox="0 0 24 24"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
+          <button class="round" id="screenBtn" type="button" title="Show the AI your screen" aria-label="Show the AI your screen"><svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M9 20h6M12 16.5V20"/></svg></button>
+          <div class="grow"></div>
+          <button class="round" id="speakBtn" type="button" title="Read replies aloud" aria-label="Read replies aloud" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg></button>
+          <button class="round" id="micBtn" type="button" title="Dictate a message" aria-label="Dictate a message" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button>
+          <button class="round" id="liveBtn" type="button" title="Live voice chat" aria-label="Live voice chat" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/></svg></button>
+          <button id="send" title="Send" aria-label="Send"><svg viewBox="0 0 24 24"><path d="M12 19V6M6 11.5l6-6 6 6"/></svg></button>
+        </div>
+      </div>
+      <input type="file" id="fileInput" hidden accept=".txt,.md,.json,.csv,.log,.js,.ts,.py,.html,.css,.xml,.yml,.yaml,.ini,.sh,.c,.cpp,.java,.go,.rs,.sql,text/*,image/png,image/jpeg,image/webp,image/gif">
+    </div>
+
+    <div id="chips"></div>
+
+    <section id="cards">
+      <article class="card">
+        <div class="card-head"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="6" rx="2"/><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M7 7h.01M7 17h.01"/></svg>LM Studio connection</div>
+        <h3>Chat with your own model</h3>
+        <div class="status-line"><span class="dot" id="cardDot"></span><span id="cardStatus">Checking…</span></div>
+        <p id="cardUrl"></p>
+        <button class="btn push" id="cardSettings">Connection settings</button>
+      </article>
+      <article class="card fact">
+        <div class="card-head"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>Daily facts</div>
+        <h3 id="factText"></h3>
+        <button class="btn push" id="factMore">Tell me more</button>
+      </article>
+      <article class="card">
+        <div class="card-head"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-3.8A8 8 0 1 1 20 12z"/></svg>Keep talking</div>
+        <div id="recentList"></div>
+      </article>
+    </section>
+
+    <p id="foot">Chats are saved in this browser and answered by the model running in LM Studio. It can make mistakes.</p>
+  </main>
+</div>
+
+<div id="voiceToast" role="status" aria-live="polite"></div>
+
+<dialog id="settings">
+  <form method="dialog" id="settingsForm">
+    <h2>Settings</h2>
+    <div class="settings-cols">
+      <div class="col-left">
+        <label>Your name
+          <input id="setName" autocomplete="off">
+        </label>
+        <label>LM Studio server address
+          <input id="setUrl" autocomplete="off" spellcheck="false" placeholder="http://localhost:1234/v1">
+        </label>
+        <label>API key (leave blank unless you set one)
+          <input id="setKey" type="password" autocomplete="off">
+        </label>
+        <div class="model-settings">
+          <label>Model
+            <div class="model-settings-row">
+              <select id="setModel" title="Choose model" aria-label="Choose model"><option value="">Auto</option></select>
+              <button type="button" class="round" id="refreshModels" title="Refresh model list" aria-label="Refresh model list"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.5-4M4 5v3.5h3.5M4 13a8 8 0 0 0 14.5 4M20 19v-3.5h-3.5"/></svg></button>
+            </div>
+          </label>
+          <small>Select <b>Auto</b> to let LM Studio use its active/default model, or choose one of the models returned by the server.</small>
+        </div>
+
+        <div class="vblock">
+          <h3>Images, search &amp; memory</h3>
+          <label class="vrow"><input type="checkbox" id="setImageGen" class="vchk"> Let the AI generate images when you ask for one</label>
+          <label class="vrow"><input type="checkbox" id="setRealImages" class="vchk"> Let the AI find and show real photos (not just AI-generated art)</label>
+          <label class="vrow"><input type="checkbox" id="setWebSearch" class="vchk"> Let the AI search the web and open results in a new tab</label>
+          <div class="media-api-grid">
+            <label>
+              Pexels API key <span class="muted">(optional)</span>
+              <input id="setPexelsKey" type="password" autocomplete="off" placeholder="Free Pexels key">
+            </label>
+            <label>
+              Pixabay API key <span class="muted">(optional)</span>
+              <input id="setPixabayKey" type="password" autocomplete="off" placeholder="Free Pixabay key">
+            </label>
+            <label>
+              TMDB API read access token <span class="muted">(optional)</span>
+              <input id="setTmdbKey" type="password" autocomplete="off" placeholder="Free for non-commercial use">
+            </label>
+            <label>
+              YouTube Data API key <span class="muted">(optional)</span>
+              <input id="setYoutubeKey" type="password" autocomplete="off" placeholder="Google API key">
+            </label>
+            <label>
+              NASA API key <span class="muted">(optional)</span>
+              <input id="setNasaKey" type="password" autocomplete="off" placeholder="DEMO_KEY works without signup">
+            </label>
+          </div>
+          <label class="vrow"><input type="checkbox" id="setMemoryEnabled" class="vchk"> Let the AI remember things about you across chats</label>
+          <label id="memoryRow">Memory notes (auto-saved facts — edit or clear anytime)
+            <textarea id="setMemory" placeholder="Nothing saved yet." rows="4"></textarea>
+          </label>
+          <div class="wall-actions">
+            <button type="button" id="memoryClear">Clear memory</button>
+          </div>
+          <small>Image generation uses Pollinations. Real-image lookup uses TVMaze, Openverse and Wikimedia Commons first, with optional Pexels, Pixabay and TMDB. Extra tools include YouTube, Wikipedia, NASA, Jikan anime, Open-Meteo weather, REST Countries, Frankfurter currency rates and OpenStreetMap places. YouTube/TMDB/NASA keys are optional. Keys are stored only in this browser. Web search opens DuckDuckGo results in a new tab.</small>
+        </div>
+        <div class="vblock">
+          <h3>Wallpaper</h3>
+          <label>Background
+            <select id="wallMode">
+              <option value="off">Default look</option>
+              <option value="pick">Use the wallpaper I picked</option>
+              <option value="random">Random every time I open the page</option>
+              <option value="timed">Shuffle automatically</option>
+            </select>
+          </label>
+          <label id="wallEveryRow">Change every
+            <select id="wallEvery"><option value="1">1 minute</option><option value="5">5 minutes</option><option value="15">15 minutes</option><option value="30">30 minutes</option><option value="60">1 hour</option></select>
+          </label>
+          <label>Dim for readability: <span id="wallDimVal"></span>
+            <input id="wallDim" type="range" min="0" max="80" step="5">
+          </label>
+          <div class="wall-actions">
+            <button type="button" id="wallBrowse">Browse wallpapers…</button>
+            <button type="button" id="wallAdd">Add my own image…</button>
+          </div>
+          <small>Wallpaper changes apply right away. Random and shuffle use the built-in pack plus any images you add.</small>
+        </div>
+      </div>
+      <div class="col-right">
+        <label>System prompt
+          <div class="persona-row">
+            <select id="personaSelect" title="Choose a persona" aria-label="Choose a persona"><option value="">Custom prompt</option></select>
+            <button type="button" class="round" id="savePersonaBtn" title="Save current prompt as a persona" aria-label="Save current prompt as a persona"><svg viewBox="0 0 24 24"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H16l3 3v12.5A1.5 1.5 0 0 1 17.5 20h-11A1.5 1.5 0 0 1 5 18.5v-14z"/><path d="M8 3v5h7V3M8 20v-6h8v6"/></svg></button>
+            <button type="button" class="round" id="deletePersonaBtn" title="Delete selected persona" aria-label="Delete selected persona"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7M6 7l1 13a2 2 0 0 0 2 1.8h6a2 2 0 0 0 2-1.8l1-13"/></svg></button>
+          </div>
+          <textarea id="setSystem" placeholder="Optional. For example: You are a helpful, concise assistant."></textarea>
+        </label>
+        <label>Temperature: <span id="tempVal"></span>
+          <input id="setTemp" type="range" min="0" max="2" step="0.1">
+        </label>
+        <div class="vblock">
+          <h3>Voice</h3>
+          <label>Voice engine
+            <select id="setEngine">
+              <option value="browser">Browser voices (built in)</option>
+              <option value="kokoro-web">Kokoro, runs in your browser (free)</option>
+              <option value="kokoro-server">Kokoro server or other OpenAI-compatible TTS</option>
+              <option value="puter">Puter.js, free cloud voices (OpenAI, Gemini, ElevenLabs, Polly)</option>
+            </select>
+          </label>
+          <div id="engineBox" class="ebox" style="display:none">
+            <div id="serverBox" class="ebox" style="display:none">
+              <label>Voice server address
+                <input id="ttsUrl" autocomplete="off" spellcheck="false" placeholder="http://localhost:8880/v1">
+              </label>
+              <label>API key (leave blank unless your server needs one)
+                <input id="ttsKey" type="password" autocomplete="off">
+              </label>
+            </div>
+            <label>Natural voice
+              <div class="persona-row">
+                <select id="ttsVoice" aria-label="Natural voice"></select>
+                <button type="button" class="round" id="ttsRefresh" title="Reload the voice list" aria-label="Reload the voice list"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.5-4M4 5v3.5h3.5M4 13a8 8 0 0 0 14.5 4M20 19v-3.5h-3.5"/></svg></button>
+              </div>
+            </label>
+            <button type="button" id="puterSignIn" style="display:none">Sign in to Puter (free)</button>
+            <small id="ttsStatus"></small>
+          </div>
+          <label id="browserVoiceRow">Reply voice
+            <select id="setVoice"><option value="">System default</option></select>
+          </label>
+          <label>Speech speed: <span id="rateVal">1.00×</span>
+            <input id="setRate" type="range" min="0.6" max="1.6" step="0.05" value="1">
+          </label>
+          <label class="vrow"><input type="checkbox" id="setAuto" class="vchk"> Read replies aloud automatically</label>
+          <button type="button" id="voiceTest">Preview voice</button>
+          <small>Voice settings apply right away. In Chrome and Edge the microphone is transcribed by the browser’s online speech service, and voices marked “online” are also processed online.</small>
+        </div>
+      </div>
+    </div>
+    <small>In LM Studio, open the Developer tab, load a model, turn on <b>Enable CORS</b>, and start the server. If this page is on a different computer, also turn on <b>Serve on Local Network</b> and use that computer’s IP address above.</small>
+    <div id="testResult"></div>
+    <div class="dlg-actions">
+      <button type="button" id="testBtn">Test connection</button>
+      <button type="button" id="cancelSettings">Cancel</button>
+      <button type="submit" class="primary" value="save">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="linksDlg">
+  <div class="ld">
+    <h2>Sidebar links <button type="button" class="round" id="lkClose" aria-label="Close">✕</button></h2>
+    <small>Change a name or address, click an icon to pick another, or remove a link. Changes show in the sidebar when you save.</small>
+    <div id="lkList"></div>
+    <div id="lkMsg" role="alert"></div>
+    <div class="lk-actions">
+      <button type="button" id="lkAdd">+ Add a link</button>
+      <button type="button" id="lkReset">Restore original links</button>
+    </div>
+    <div class="dlg-actions">
+      <button type="button" id="lkCancel">Cancel</button>
+      <button type="button" class="primary" id="lkSave">Save</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Persistent live vision feed -->
+<div id="visionFeed" class="vision-feed" hidden>
+  <div class="vision-feed-head" id="visionFeedHead">
+    <div class="vision-feed-title">
+      <span class="vision-live-dot"></span>
+      <span id="visionFeedTitle">Live Vision</span>
+      <span id="visionFeedStatus" class="vision-feed-status">AI sees latest frame</span>
+    </div>
+    <div class="vision-feed-tools">
+      <button type="button" id="visionFeedMin" title="Minimize">−</button>
+      <button type="button" id="visionFeedClose" title="Stop sharing">×</button>
+    </div>
+  </div>
+  <div class="vision-feed-body">
+    <video id="feedVideo" autoplay playsinline muted></video>
+    <div id="visionFeedOverlay">Waiting for video…</div>
+  </div>
+  <div class="vision-feed-bar">
+    <span id="visionFeedMode">SCREEN</span>
+    <label class="vision-watch">
+      <input type="checkbox" id="visionAutoWatch">
+      <span>AI Watch</span>
+    </label>
+    <button type="button" id="visionCapture" title="Attach a still to the next message">📷 Attach</button>
+  </div>
+</div>
+
+<dialog id="camDlg">
+  <div class="cd">
+    <h2 id="camTitle">Webcam <button type="button" class="round" id="camClose" aria-label="Close">✕</button></h2>
+    <div id="camStage">
+      <video id="camVideo" autoplay playsinline muted></video>
+    </div>
+    <div id="camMsg" role="alert"></div>
+    <small id="camHint">Frame the shot, then capture a still to attach to your next message. You can capture more than one.</small>
+    <div class="dlg-actions cam-actions">
+      <button type="button" id="camCancel">Cancel</button>
+      <button type="button" class="primary" id="camShot"><svg viewBox="0 0 24 24"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg> Capture</button>
+    </div>
+  </div>
+  <canvas id="camCanvas" hidden></canvas>
+</dialog>
+
+<dialog id="wallDlg">
+  <div class="wd">
+    <h2>Wallpapers <button type="button" class="round" id="wallClose" aria-label="Close">✕</button></h2>
+    <div id="wallScroll"></div>
+    <input type="file" id="wallFile" accept="image/*" multiple hidden>
+  </div>
+</dialog>
+
+<script src="js/app.js"></script>
+<script src="js/personas.js"></script>
+<script src="js/voice.js"></script>
+<script src="js/tts-engines.js"></script>
+<script src="js/wallpaper-list.js"></script>
+<script src="js/wallpapers.js"></script>
+<script src="js/codelab.js"></script>
+<script src="js/livetv.js"></script>
+<script src="js/oasis-element.js"></script>
+</body>
+</html>

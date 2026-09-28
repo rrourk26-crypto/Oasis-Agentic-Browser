@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>I Ching Coin Cast — Mystic Oracle</title>
+<script src="../mystic-ai-config.js"></script>
+<script src="../mystic-persona-prompts.js"></script>
+<script src="../theme-boot.js"></script>
+<script src="../mystic-effects.js"></script>
+<style>
+  :root{
+    --mystic-accent:#ffd700;
+    --mystic-accent-2:#9d2048;
+    --mystic-glow:rgba(255,215,0,.25);
+    --mystic-bg-1:rgba(28,15,40,.9);
+    --mystic-bg-2:rgba(157,32,72,.78);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background:
+      radial-gradient(circle at 50% 10%, rgba(116, 66, 173, 0.24), transparent 32%),
+      radial-gradient(circle at 15% 65%, rgba(128, 20, 67, 0.15), transparent 28%),
+      radial-gradient(circle at 85% 70%, rgba(67, 30, 126, 0.15), transparent 28%),
+      linear-gradient(rgba(5, 2, 10, 0.55), rgba(5, 2, 10, 0.82)),
+      url('stars and moons.png') center top / cover no-repeat fixed;
+    color: white;
+    font-family: 'Cinzel', Georgia, serif;
+    text-align: center;
+    padding: 20px;
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  h1 {
+    font-size: 2.3em;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  }
+
+  .subtitle {
+    color: #b9a9c8;
+    margin-bottom: 26px;
+    font-size: 1.05em;
+  }
+
+  .mystical-symbol {
+    position: fixed; font-size: 2em; opacity: 0.15; pointer-events: none;
+    z-index: 0; animation: float 15s ease-in-out infinite;
+  }
+  .symbol-1 { top: 10%; left: 8%; animation-delay: 0s; }
+  .symbol-2 { top: 15%; right: 10%; animation-delay: 2s; }
+  .symbol-3 { bottom: 12%; left: 12%; animation-delay: 4s; }
+  .symbol-4 { bottom: 20%; right: 8%; animation-delay: 6s; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(10deg); }
+  }
+
+  .back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 200;
+    background: rgba(28, 15, 40, 0.85);
+    color: var(--mystic-accent);
+    border: 2px solid rgba(255, 215, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-weight: bold;
+    font-size: 1em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  }
+
+  .back-btn:hover {
+    background: rgba(157, 32, 72, 0.5);
+    border-color: #ffed4e;
+    transform: translateY(-2px);
+  }
+
+  .history-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 200;
+    background: rgba(28, 15, 40, 0.85);
+    color: var(--mystic-accent);
+    border: 2px solid rgba(255, 215, 0, 0.5);
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-weight: bold;
+    font-size: 1em;
+    font-family: 'Cinzel', Georgia, serif;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  }
+
+  .history-btn:hover {
+    background: rgba(157, 32, 72, 0.5);
+    border-color: #ffed4e;
+    transform: translateY(-2px);
+  }
+
+  button {
+    background: var(--mystic-accent-2);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    margin: 5px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1em;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  }
+
+  button:hover {
+    background: #d9748f;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0,0,0,0.4);
+  }
+
+  button:active { transform: translateY(0); }
+
+  button:disabled {
+    opacity: 0.4;
+    cursor: default;
+    transform: none;
+  }
+
+  button.secondary {
+    background: #6f4bb0;
+  }
+  button.secondary:hover {
+    background: #8d5cff;
+  }
+
+  .line-progress {
+    color: #b9a9c8;
+    font-style: italic;
+    margin-bottom: 18px;
+    font-size: 0.95em;
+  }
+
+  /* ---- Coins ---- */
+  .coins-row {
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    margin: 10px auto 6px;
+  }
+
+  .coin {
+    width: 74px;
+    height: 74px;
+    perspective: 800px;
+    cursor: default;
+  }
+
+  .coin-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(.3,.6,.3,1);
+    border-radius: 50%;
+  }
+
+  .coin.flipped .coin-inner {
+    transform: rotateY(720deg);
+  }
+
+  .coin-face {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--mystic-accent, #ffd700);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  }
+
+  .coin-back {
+    background: linear-gradient(135deg, #3a1024 0%, #9d2048 100%);
+    font-size: 1.6em;
+    color: rgba(255,215,0,0.5);
+  }
+
+  .coin-front {
+    transform: rotateY(180deg);
+    font-family: 'Cinzel', Georgia, serif;
+    font-weight: 700;
+    font-size: 1.15em;
+    color: var(--mystic-accent);
+    flex-direction: column;
+    line-height: 1.1;
+  }
+
+  .coin-front.heads {
+    background: radial-gradient(circle at 35% 30%, #6f2740, #2c0a17 80%);
+  }
+  .coin-front.tails {
+    background: radial-gradient(circle at 35% 30%, #4b3c91, #1c0f28 80%);
+  }
+
+  .coin-front .glyph {
+    font-size: 1.6em;
+    line-height: 1;
+  }
+  .coin-front .label {
+    font-size: 0.42em;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #e6d9f0;
+    margin-top: 2px;
+  }
+
+  .coin-hole {
+    position: absolute;
+    width: 22%;
+    height: 22%;
+    background: rgba(0,0,0,0.55);
+    border: 1px solid rgba(255,215,0,0.4);
+  }
+
+  .coins-hint {
+    color: #b9a9c8;
+    font-size: 0.85em;
+    font-style: italic;
+    margin-bottom: 24px;
+    min-height: 1.1em;
+  }
+
+  /* ---- Hexagram build panel ---- */
+  .hexagram-panel {
+    background: rgba(28, 15, 40, 0.7);
+    border: 2px solid #6f4bb0;
+    border-radius: 12px;
+    padding: 24px 30px;
+    margin: 0 auto 26px;
+    width: min(280px, 80vw);
+  }
+
+  .hex-line {
+    height: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10%;
+    margin: 10px 0;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .hex-line.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .hex-seg {
+    height: 100%;
+    flex: 1;
+    background: linear-gradient(180deg, var(--mystic-accent, #ffd700), #b8930a);
+    border-radius: 3px;
+    box-shadow: 0 0 8px var(--mystic-glow, rgba(255,215,0,.4));
+  }
+
+  .hex-line.changing .hex-seg {
+    background: linear-gradient(180deg, #ff9d9d, var(--mystic-accent-2, #9d2048));
+    box-shadow: 0 0 10px rgba(157,32,72,0.8);
+    animation: hexPulse 1.1s ease-in-out infinite;
+  }
+
+  @keyframes hexPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .hex-gap { height: 100%; flex: 0.6; }
+
+  .hex-placeholder {
+    color: #6f5c82;
+    font-size: 0.8em;
+    font-style: italic;
+  }
+
+  /* ---- Reading / result section ---- */
+  .reading-section {
+    max-width: 560px;
+    margin: 0 auto 20px;
+    padding: 26px 30px;
+    background: rgba(28, 15, 40, 0.7);
+    border-radius: 12px;
+    border: 2px solid #6f4bb0;
+    text-align: left;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reading-section.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reading-section.hidden { display: none; }
+
+  .reading-section h2 {
+    text-align: center;
+    color: var(--mystic-accent);
+    margin: 0 0 18px 0;
+    font-size: 1.6em;
+    text-shadow: 0 0 10px var(--mystic-glow);
+  }
+
+  .card-name {
+    color: #d9748f;
+    font-weight: bold;
+    font-size: 1.25em;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .context-text {
+    color: var(--mystic-accent);
+    font-style: italic;
+    margin-bottom: 15px;
+    font-size: 0.95em;
+    text-align: center;
+  }
+
+  .interpretation-text {
+    color: #f7f0ff;
+    line-height: 1.8;
+    margin-top: 10px;
+    font-size: 1.05em;
+    text-align: center;
+  }
+
+  .instruction {
+    color: #b9a9c8;
+    margin-top: 4px;
+    margin-bottom: 24px;
+    font-style: italic;
+    max-width: 600px;
+  }
+
+  .shuffle-spark {
+    position: fixed;
+    z-index: 999;
+    pointer-events: none;
+    font-size: 1.1em;
+    left: 0; top: 0;
+    transform: translate(-50%, -50%);
+    animation: sparkFly 0.65s ease-out forwards;
+  }
+
+  @keyframes sparkFly {
+    0%   { transform: translate(-50%,-50%) translate(0,0) scale(0.5); opacity: 1; }
+    100% { transform: translate(-50%,-50%) translate(var(--dx), var(--dy)) scale(1.15); opacity: 0; }
+  }
+
+  @media (max-width: 768px) {
+    h1 { font-size: 1.9em; }
+    .coin { width: 62px; height: 62px; }
+    .coins-row { gap: 14px; }
+    .back-btn { top: 10px; left: 10px; padding: 8px 12px; font-size: 0.85em; }
+    .history-btn { top: 10px; right: 10px; padding: 8px 12px; font-size: 0.85em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="mystical-symbol symbol-1">✨</div>
+<div class="mystical-symbol symbol-2">🌙</div>
+<div class="mystical-symbol symbol-3">⭐</div>
+<div class="mystical-symbol symbol-4">✨</div>
+
+<a href="../index.html" class="back-btn">&larr; Back</a>
+
+<button type="button" class="history-btn" title="Past Readings" onclick="openIChingHistory()">📜 Past Readings</button>
+
+<h1>☯ I Ching Coin Cast ☯</h1>
+<p class="subtitle">Ask your question, then cast six lines from the bottom up</p>
+
+<div class="line-progress" id="lineProgress">Line 1 of 6 — ready to cast</div>
+
+<div class="coins-row" id="coinsRow"></div>
+<div class="coins-hint" id="coinsHint">Flip three coins to determine this line</div>
+
+<div class="buttons">
+  <button id="flipBtn">🪙 Flip 3 Coins</button>
+  <button id="resetBtn" class="secondary">🔄 Reset</button>
+</div>
+
+<p class="instruction">Each line is cast from three coins: three heads or three tails is a changing line. The hexagram builds from the bottom line upward.</p>
+
+<div class="hexagram-panel" id="hexPanel">
+  <div class="hex-placeholder" id="hexPlaceholder">Your hexagram will take shape here</div>
+</div>
+
+<div class="reading-section hidden" id="readingSection">
+  <h2>🌙 Your Reading 🌙</h2>
+  <div id="interpretation"></div>
+</div>
+
+<script>
+  // ---------------------------------------------------------------
+  // Trigram + King Wen hexagram lookup
+  // ---------------------------------------------------------------
+  const TRIGRAM_ORDER = ["qian", "zhen", "kan", "gen", "kun", "xun", "li", "dui"];
+
+  const TRIGRAM_BITS = {
+    qian: "111", zhen: "100", kan: "010", gen: "001",
+    kun: "000", xun: "011", li: "101", dui: "110"
+  };
+
+  const HEX_MATRIX = [
+    [1, 34, 5, 26, 11, 9, 14, 43],
+    [25, 51, 3, 27, 24, 42, 21, 17],
+    [6, 40, 29, 4, 7, 59, 64, 47],
+    [33, 62, 39, 52, 15, 53, 56, 31],
+    [12, 16, 8, 23, 2, 20, 35, 45],
+    [44, 32, 48, 18, 46, 57, 50, 28],
+    [13, 55, 63, 22, 36, 37, 30, 49],
+    [10, 54, 60, 41, 19, 61, 38, 58]
+  ];
+
+  const BITS_TO_TRIGRAM = {};
+  TRIGRAM_ORDER.forEach(name => { BITS_TO_TRIGRAM[TRIGRAM_BITS[name]] = name; });
+
+  function hexagramNumberFromBits(bottomThree, topThree) {
+    const lowerIdx = TRIGRAM_ORDER.indexOf(BITS_TO_TRIGRAM[bottomThree]);
+    const upperIdx = TRIGRAM_ORDER.indexOf(BITS_TO_TRIGRAM[topThree]);
+    return HEX_MATRIX[lowerIdx][upperIdx];
+  }
+
+  const HEXAGRAMS = {
+    1:  { name: "The Creative", note: "Pure initiating energy. A moment to lead with clarity and confidence." },
+    2:  { name: "The Receptive", note: "Yielding strength. Support what is already in motion rather than force a new path." },
+    3:  { name: "Difficulty at the Beginning", note: "New ventures start tangled. Patience and small steady effort untangle it." },
+    4:  { name: "Youthful Folly", note: "Inexperience is honest. Ask questions and stay open to correction." },
+    5:  { name: "Waiting", note: "The moment isn't ripe yet. Prepare calmly instead of forcing the outcome." },
+    6:  { name: "Conflict", note: "A dispute is brewing. Seek a fair middle ground before it escalates." },
+    7:  { name: "The Army", note: "Discipline and clear structure carry a group through a hard task." },
+    8:  { name: "Holding Together", note: "Unity matters now. Draw closer to allies and shared purpose." },
+    9:  { name: "Small Taming", note: "Progress is gentle and gradual. Small restraints hold back a bigger storm." },
+    10: { name: "Treading", note: "Move carefully among stronger forces; courtesy and care keep you safe." },
+    11: { name: "Peace", note: "Harmony between opposites. A favorable, open period of exchange and growth." },
+    12: { name: "Standstill", note: "Communication is blocked. Withdraw and conserve until conditions shift." },
+    13: { name: "Fellowship with Others", note: "Shared goals bring people together across differences." },
+    14: { name: "Great Possession", note: "Abundance is present. Use resources generously and with integrity." },
+    15: { name: "Modesty", note: "Quiet humility earns more lasting respect than open display." },
+    16: { name: "Enthusiasm", note: "Genuine motivation moves others. Inspire rather than command." },
+    17: { name: "Following", note: "Adapt to what the moment calls for; flexibility now serves you well." },
+    18: { name: "Work on What Has Been Spoiled", note: "Old neglect needs repair. Careful correction restores what decayed." },
+    19: { name: "Approach", note: "Favorable conditions are advancing toward you. Step forward with care." },
+    20: { name: "Contemplation", note: "Step back and observe before acting; perspective is the real gain here." },
+    21: { name: "Biting Through", note: "An obstacle must be met directly and decisively, not avoided." },
+    22: { name: "Grace", note: "Form and beauty support substance, but should never replace it." },
+    23: { name: "Splitting Apart", note: "Old structures are eroding. Preserve what's essential and let the rest go." },
+    24: { name: "Return", note: "A turning point back toward the right path. A quiet new beginning." },
+    25: { name: "Innocence", note: "Act simply and honestly, without hidden calculation." },
+    26: { name: "Great Taming", note: "Strong restraint builds real strength; hold steady before releasing energy." },
+    27: { name: "Nourishment", note: "Consider what you're feeding — in body, mind, and relationships." },
+    28: { name: "Great Exceeding", note: "Pressure has built past a safe limit; something must give or bend." },
+    29: { name: "The Abysmal (Water)", note: "Danger repeats. Stay steady and move through it exactly one step at a time." },
+    30: { name: "The Clinging (Fire)", note: "Clarity comes through attachment to something worth illuminating." },
+    31: { name: "Influence", note: "Mutual attraction and honest response open a new connection." },
+    32: { name: "Duration", note: "Lasting results come from steady, consistent effort, not sudden bursts." },
+    33: { name: "Retreat", note: "A strategic withdrawal preserves strength for a better moment." },
+    34: { name: "Great Power", note: "Strength is available, but must be guided by restraint to avoid harm." },
+    35: { name: "Progress", note: "Advancement is natural now; move forward openly and visibly." },
+    36: { name: "Darkening of the Light", note: "Difficult times call for quiet inner resolve rather than open display." },
+    37: { name: "The Family", note: "Order at home or among close ties supports everything built outward." },
+    38: { name: "Opposition", note: "Differences are real but not fatal; find the narrow common ground." },
+    39: { name: "Obstruction", note: "The direct path is blocked. Seek allies or an indirect route." },
+    40: { name: "Deliverance", note: "Tension is releasing. Act to resolve what remains, then rest." },
+    41: { name: "Decrease", note: "Simplify and let go of excess; less can serve the goal better now." },
+    42: { name: "Increase", note: "Conditions favor growth and giving; benefit flows in both directions." },
+    43: { name: "Breakthrough", note: "A firm, clear decision is needed to resolve a mounting pressure." },
+    44: { name: "Coming to Meet", note: "An unplanned encounter or influence arrives; watch its true nature." },
+    45: { name: "Gathering Together", note: "People and resources are converging; organize them with a clear aim." },
+    46: { name: "Pushing Upward", note: "Gradual, earned advancement, like a plant growing steadily toward light." },
+    47: { name: "Oppression", note: "Resources or options feel exhausted; inner composure is the way through." },
+    48: { name: "The Well", note: "A steady, renewable source is available if you take the trouble to draw from it." },
+    49: { name: "Revolution", note: "Real change is due and justified, but timing and method matter." },
+    50: { name: "The Cauldron", note: "Refinement and transformation, turning raw material into something useful." },
+    51: { name: "The Arousing (Thunder)", note: "A shock arrives; it clears the air more than it harms." },
+    52: { name: "Keeping Still (Mountain)", note: "Stillness now brings clarity. Pause before the next move." },
+    53: { name: "Development", note: "Gradual, well-ordered progress, like a tree growing ring by ring." },
+    54: { name: "The Marrying Maiden", note: "Know your true position in a situation before committing further." },
+    55: { name: "Abundance", note: "A peak moment. Enjoy it fully, but notice it will not last forever." },
+    56: { name: "The Wanderer", note: "You're on unfamiliar ground; stay adaptable, courteous, and light on your feet." },
+    57: { name: "The Gentle (Wind)", note: "Gradual, penetrating influence succeeds where force would fail." },
+    58: { name: "The Joyous (Lake)", note: "Shared pleasure and open expression strengthen a bond." },
+    59: { name: "Dispersion", note: "Rigid separation is breaking up; reconnect what has drifted apart." },
+    60: { name: "Limitation", note: "Healthy boundaries and reasonable limits, not restriction for its own sake." },
+    61: { name: "Inner Truth", note: "Sincerity at the core reaches others even without force or persuasion." },
+    62: { name: "Small Exceeding", note: "Attend to small, careful details rather than reaching for grand gestures." },
+    63: { name: "After Completion", note: "A goal is achieved. Stay watchful — order can still slip if neglected." },
+    64: { name: "Before Completion", note: "Close, but not finished. Take the final step with care, not haste." }
+  };
+
+  // ---------------------------------------------------------------
+  // App state
+  // ---------------------------------------------------------------
+  const coinsRow = document.getElementById('coinsRow');
+  const coinsHint = document.getElementById('coinsHint');
+  const lineProgress = document.getElementById('lineProgress');
+  const flipBtn = document.getElementById('flipBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const hexPanel = document.getElementById('hexPanel');
+  const hexPlaceholder = document.getElementById('hexPlaceholder');
+  const readingSection = document.getElementById('readingSection');
+  const interpretationDiv = document.getElementById('interpretation');
+
+  let lineValues = [];   // bottom to top, each 6/7/8/9
+  let hexRows = [];      // DOM rows, top of hexagram first
+  let flipping = false;
+
+  function buildCoins() {
+    coinsRow.innerHTML = '';
+    for (let i = 0; i < 3; i++) {
+      const coin = document.createElement('div');
+      coin.className = 'coin';
+      coin.innerHTML = `
+        <div class="coin-inner">
+          <div class="coin-face coin-back">☯</div>
+          <div class="coin-face coin-front"></div>
+        </div>
+      `;
+      coinsRow.appendChild(coin);
+    }
+  }
+
+  function buildHexPanel() {
+    hexPanel.innerHTML = '';
+    hexRows = [];
+    // visual top row first in the DOM, down to bottom row
+    for (let i = 0; i < 6; i++) {
+      const row = document.createElement('div');
+      row.className = 'hex-line';
+      hexPanel.appendChild(row);
+      hexRows.push(row);
+    }
+  }
+
+  function renderHexLine(row, value) {
+    row.innerHTML = '';
+    const solid = (value === 7 || value === 9);
+    const changing = (value === 6 || value === 9);
+    row.classList.toggle('changing', changing);
+
+    if (solid) {
+      const seg = document.createElement('div');
+      seg.className = 'hex-seg';
+      row.appendChild(seg);
+    } else {
+      const seg1 = document.createElement('div');
+      seg1.className = 'hex-seg';
+      const gap = document.createElement('div');
+      gap.className = 'hex-gap';
+      const seg2 = document.createElement('div');
+      seg2.className = 'hex-seg';
+      row.appendChild(seg1);
+      row.appendChild(gap);
+      row.appendChild(seg2);
+    }
+  }
+
+  function spawnSparks(anchor) {
+    const rect = anchor.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    for (let i = 0; i < 8; i++) {
+      const s = document.createElement('div');
+      s.className = 'shuffle-spark';
+      s.textContent = Math.random() < 0.5 ? '✨' : '⭐';
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 40 + Math.random() * 60;
+      s.style.left = cx + 'px';
+      s.style.top = cy + 'px';
+      s.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+      s.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 700);
+    }
+  }
+
+  function flipLine() {
+    if (flipping) return;
+    flipping = true;
+    flipBtn.disabled = true;
+    coinsHint.textContent = 'Flipping...';
+
+    const coinEls = Array.from(coinsRow.children);
+    coinEls.forEach(c => {
+      c.classList.remove('flipped');
+      const front = c.querySelector('.coin-front');
+      front.className = 'coin-face coin-front';
+      front.innerHTML = '';
+    });
+
+    const results = []; // 3 or 2 per coin
+
+    coinEls.forEach((coin, i) => {
+      setTimeout(() => {
+        const isHeads = Math.random() < 0.5;
+        const value = isHeads ? 3 : 2;
+        results.push(value);
+
+        const front = coin.querySelector('.coin-front');
+        front.classList.add(isHeads ? 'heads' : 'tails');
+        front.innerHTML = isHeads
+          ? '<span class="glyph">陽</span><span class="label">Yang · 3</span>'
+          : '<span class="glyph">陰</span><span class="label">Yin · 2</span>';
+
+        coin.classList.add('flipped');
+        spawnSparks(coin);
+
+        if (results.length === 3) {
+          setTimeout(() => finishLine(results), 550);
+        }
+      }, i * 220);
+    });
+  }
+
+  function finishLine(results) {
+    const sum = results.reduce((a, b) => a + b, 0); // 6, 7, 8, or 9
+    lineValues.push(sum);
+
+    const lineIndexBottomUp = lineValues.length - 1; // 0..5
+    const domRow = hexRows[5 - lineIndexBottomUp];   // bottom line -> last row in DOM
+    renderHexLine(domRow, sum);
+    requestAnimationFrame(() => domRow.classList.add('visible'));
+
+    hexPlaceholder.style.display = 'none';
+
+    const lineNames = { 6: 'Old Yin (changing)', 7: 'Young Yang', 8: 'Young Yin', 9: 'Old Yang (changing)' };
+    coinsHint.textContent = `Line ${lineValues.length}: ${lineNames[sum]}`;
+
+    if (lineValues.length >= 6) {
+      lineProgress.textContent = 'All six lines cast';
+      flipBtn.textContent = '🔮 Reveal Your Hexagram';
+      flipBtn.onclick = revealHexagram;
+      flipBtn.disabled = false;
+    } else {
+      lineProgress.textContent = `Line ${lineValues.length + 1} of 6 — ready to cast`;
+      flipBtn.disabled = false;
+    }
+    flipping = false;
+  }
+
+  function bitsFromValues(vals) {
+    return vals.map(v => (v === 7 || v === 9) ? "1" : "0").join('');
+  }
+
+  function changedBits(vals) {
+    return vals.map(v => {
+      if (v === 6) return "1";
+      if (v === 9) return "0";
+      return (v === 7) ? "1" : "0";
+    }).join('');
+  }
+
+  function revealHexagram() {
+    const primaryLower = bitsFromValues(lineValues.slice(0, 3));
+    const primaryUpper = bitsFromValues(lineValues.slice(3, 6));
+    const primaryNum = hexagramNumberFromBits(primaryLower, primaryUpper);
+    const primary = HEXAGRAMS[primaryNum];
+
+    const hasChanging = lineValues.some(v => v === 6 || v === 9);
+    let changingLine = '';
+    let resultNum = null;
+    let resulting = null;
+
+    if (hasChanging) {
+      const changedLower = changedBits(lineValues.slice(0, 3));
+      const changedUpper = changedBits(lineValues.slice(3, 6));
+      resultNum = hexagramNumberFromBits(changedLower, changedUpper);
+      resulting = HEXAGRAMS[resultNum];
+      changingLine = `<p class="context-text">Changing lines transform this into Hexagram ${resultNum}, ${resulting.name}</p>`;
+    } else {
+      changingLine = `<p class="context-text">No changing lines — the hexagram stands as cast</p>`;
+    }
+
+    interpretationDiv.innerHTML = `
+      <p class="card-name">${primaryNum}. ${primary.name}</p>
+      ${changingLine}
+      <p class="interpretation-text">${primary.note}</p>
+    `;
+
+    readingSection.classList.remove('hidden');
+    flipBtn.disabled = true;
+    requestAnimationFrame(() => {
+      setTimeout(() => readingSection.classList.add('revealed'), 50);
+    });
+
+    if (window.IChingAI) {
+      window.IChingAI.interpretCast("I Ching Coin Cast", {
+        primaryNumber: primaryNum,
+        primaryName: primary.name,
+        primaryNote: primary.note,
+        lines: lineValues.map(v => ({ solid: (v === 7 || v === 9), changing: (v === 6 || v === 9) })),
+        hasChanging: hasChanging,
+        resultNumber: resultNum,
+        resultName: resulting ? resulting.name : null,
+        resultNote: resulting ? resulting.note : null
+      });
+    }
+  }
+
+  function resetAll() {
+    lineValues = [];
+    flipping = false;
+    lineProgress.textContent = 'Line 1 of 6 — ready to cast';
+    coinsHint.textContent = 'Flip three coins to determine this line';
+    flipBtn.textContent = '🪙 Flip 3 Coins';
+    flipBtn.onclick = flipLine;
+    flipBtn.disabled = false;
+    buildCoins();
+    buildHexPanel();
+    hexPlaceholder.style.display = '';
+    hexPanel.appendChild(hexPlaceholder);
+    readingSection.classList.remove('revealed');
+    readingSection.classList.add('hidden');
+    interpretationDiv.innerHTML = '';
+    if (window.IChingAI) window.IChingAI.clear();
+  }
+
+  flipBtn.onclick = flipLine;
+  resetBtn.onclick = resetAll;
+
+  buildCoins();
+  buildHexPanel();
+</script>
+<script src="../tarot/reading-history.js"></script>
+<script src="../tarot/reading-history-modal.js"></script>
+<script src="iching-ai.js"></script>
+<script>
+function openIChingHistory() {
+    MysticHistoryModal.open({
+        title: "I Ching Readings",
+        icon: "☯",
+        filter: (entry) => entry.app === "I Ching"
+    });
+}
+</script>
+
+<div class="scroll-hint" id="scrollHint" aria-hidden="true">⌄</div>
+<style>
+  .scroll-hint {
+    position: fixed;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    z-index: 500;
+    font-size: 2em;
+    line-height: 1;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+    opacity: 0;
+    pointer-events: none;
+    cursor: pointer;
+    animation: scrollHintBounce 1.6s ease-in-out infinite;
+    transition: opacity 0.4s ease;
+  }
+  .scroll-hint.show {
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  @keyframes scrollHintBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(10px); }
+  }
+</style>
+<script>
+(function () {
+  var hint = document.getElementById("scrollHint");
+  if (!hint) return;
+
+  function check() {
+    var scrollable = document.documentElement.scrollHeight > window.innerHeight + 60;
+    var atTop = window.scrollY < 40;
+    hint.classList.toggle("show", scrollable && atTop);
+  }
+
+  hint.addEventListener("click", function () {
+    window.scrollBy({ top: window.innerHeight * 0.8, behavior: "smooth" });
+  });
+
+  window.addEventListener("scroll", check, { passive: true });
+  window.addEventListener("resize", check);
+  setInterval(check, 700);
+  check();
+})();
+</script>
+
+</body>
+</html>

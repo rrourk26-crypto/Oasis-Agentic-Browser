@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Horseshoe Tarot Spread</title>
+<style>
+  body {
+    background:
+      radial-gradient(circle at 50% 10%, rgba(116, 66, 173, 0.24), transparent 32%),
+      radial-gradient(circle at 15% 65%, rgba(128, 20, 67, 0.15), transparent 28%),
+      radial-gradient(circle at 85% 70%, rgba(67, 30, 126, 0.15), transparent 28%),
+      linear-gradient(rgba(5, 2, 10, 0.55), rgba(5, 2, 10, 0.82)),
+      url('stars and moons.png') center top / cover no-repeat fixed;
+    color: white;
+    font-family: 'Cinzel', Georgia, serif;
+    text-align: center;
+    padding: 20px;
+    min-height: 100vh;
+  }
+
+  h1 { 
+    font-size: 2.5em; 
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  }
+
+  .subtitle {
+    color: #b9a9c8;
+    margin-bottom: 30px;
+    font-size: 1.1em;
+  }
+
+  .buttons { 
+    margin-bottom: 30px; 
+  }
+
+  button {
+    background: #9d2048;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    margin: 5px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  }
+
+  button:hover { 
+    background: #d9748f;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0,0,0,0.4);
+  }
+
+  button:active {
+    transform: translateY(0);
+  }
+
+  #resetBtn {
+    background: #6f4bb0;
+  }
+
+  #resetBtn:hover {
+    background: #8d5cff;
+  }
+
+  /* Horseshoe layout - 7 cards in an arch */
+  .tarot-layout {
+    display: grid;
+    grid-template-columns: repeat(7, 140px);
+    grid-template-rows: repeat(2, 240px);
+    gap: 20px;
+    justify-content: center;
+    align-items: end;
+    margin: 40px auto;
+    max-width: 1100px;
+    position: relative;
+  }
+
+  .card-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Horseshoe arch positioning */
+  .card-container:nth-child(1) { 
+    grid-column: 1; 
+    grid-row: 2;
+    transform: rotate(-15deg);
+  }
+  .card-container:nth-child(2) { 
+    grid-column: 2; 
+    grid-row: 1;
+    transform: rotate(-10deg);
+  }
+  .card-container:nth-child(3) { 
+    grid-column: 3; 
+    grid-row: 1;
+    transform: rotate(-5deg);
+  }
+  .card-container:nth-child(4) { 
+    grid-column: 4; 
+    grid-row: 1;
+  }
+  .card-container:nth-child(5) { 
+    grid-column: 5; 
+    grid-row: 1;
+    transform: rotate(5deg);
+  }
+  .card-container:nth-child(6) { 
+    grid-column: 6; 
+    grid-row: 1;
+    transform: rotate(10deg);
+  }
+  .card-container:nth-child(7) { 
+    grid-column: 7; 
+    grid-row: 2;
+    transform: rotate(15deg);
+  }
+
+  .card {
+    width: 150px;
+    height: 260px;
+    border-radius: 8px;
+    background-color: #1c0f28;
+    overflow: hidden;
+    position: relative;
+    perspective: 1000px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    transition: transform 0.2s ease;
+  }
+
+  .card:hover {
+    transform: scale(1.05) !important;
+  }
+
+  .card-inner {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    position: relative;
+  }
+
+  .card.flipped .card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card-back {
+    background: var(--mystic-bg-1, linear-gradient(135deg, #3a1024 0%, #9d2048 100%));
+    border: 3px solid var(--mystic-accent, #ffd700);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .card-back::after {
+    content: "🌙";
+    font-size: 3.5em;
+    opacity: 0.3;
+  }
+
+  .card-front {
+    transform: rotateY(180deg);
+    background: #1c0f28;
+  }
+
+  .card-front img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .reversed {
+    transform: rotateY(180deg) rotate(180deg);
+  }
+
+  .labels {
+    font-size: 0.85em;
+    color: #ffd700;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    white-space: nowrap;
+  }
+
+  .instruction {
+    color: #b9a9c8;
+    margin-top: 30px;
+    font-style: italic;
+  }
+
+  .reading-section {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px;
+    background: rgba(28, 15, 40, 0.6);
+    border-radius: 12px;
+    border: 2px solid #6f4bb0;
+    text-align: left;
+  }
+
+  .reading-section h2 {
+    text-align: center;
+    color: #ffd700;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+  }
+
+  .card-interpretation {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(11, 22, 34, 0.5);
+    border-radius: 8px;
+    border-left: 4px solid #9d2048;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .card-interpretation.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .card-interpretation h3 {
+    color: #ffd700;
+    margin-bottom: 8px;
+    font-size: 1.2em;
+  }
+
+  .card-name {
+    color: #d9748f;
+    font-weight: bold;
+  }
+
+  .reversed-indicator {
+    color: #e6a4b8;
+    font-style: italic;
+    font-size: 0.9em;
+  }
+
+  .interpretation-text {
+    color: #f7f0ff;
+    line-height: 1.6;
+    margin-top: 8px;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .tarot-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+    
+    .card-container:nth-child(n) {
+      transform: none !important;
+    }
+    
+    .card {
+      width: 130px;
+      height: 210px;
+    }
+  }
+
+  .back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 100;
+    background: rgba(28, 15, 40, 0.85);
+    color: #ffd700;
+    border: 2px solid rgba(255, 215, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-weight: bold;
+    font-size: 1em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  }
+
+  .back-btn:hover {
+    background: rgba(157, 32, 72, 0.5);
+    border-color: #ffed4e;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    .back-btn {
+      top: 10px;
+      left: 10px;
+      padding: 8px 14px;
+      font-size: 0.9em;
+    }
+  }
+
+  /* ===== Shuffle deck ===== */
+  .deck-wrap {
+    position: relative;
+    width: 110px;
+    height: 170px;
+    margin: 0 auto 10px;
+    cursor: pointer;
+  }
+  .deck-card {
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #3a1024 0%, #9d2048 100%);
+    border: 3px solid #ffd700;
+    transform: rotate(var(--r));
+    transition: transform 0.25s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  }
+  .deck-card::after {
+    content: "✨";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2em;
+    opacity: 0.25;
+  }
+  .deck-wrap:hover .deck-card {
+    transform: rotate(var(--r)) translateY(-4px);
+  }
+  .deck-wrap.shuffling .deck-card {
+    animation: deckJitter 0.55s ease-in-out;
+  }
+  @keyframes deckJitter {
+    0%   { transform: translate(0,0) rotate(var(--r)); }
+    20%  { transform: translate(-6px,-3px) rotate(calc(var(--r) - 9deg)); }
+    40%  { transform: translate(5px,4px) rotate(calc(var(--r) + 11deg)); }
+    60%  { transform: translate(-4px,3px) rotate(calc(var(--r) - 7deg)); }
+    80%  { transform: translate(3px,-4px) rotate(calc(var(--r) + 6deg)); }
+    100% { transform: translate(0,0) rotate(var(--r)); }
+  }
+  .deck-label {
+    color: #b9a9c8;
+    font-size: 0.85em;
+    font-style: italic;
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .shuffle-spark {
+    position: fixed;
+    z-index: 999;
+    pointer-events: none;
+    font-size: 1.2em;
+    left: 0; top: 0;
+    transform: translate(-50%, -50%);
+    animation: sparkFly 0.65s ease-out forwards;
+  }
+  @keyframes sparkFly {
+    0%   { transform: translate(-50%,-50%) translate(0,0) scale(0.5); opacity: 1; }
+    100% { transform: translate(-50%,-50%) translate(var(--dx), var(--dy)) scale(1.15); opacity: 0; }
+  }
+  @media (max-width: 768px) {
+    .deck-wrap { width: 88px; height: 136px; }
+  }
+  .buttons {
+    display: none;
+  }
+</style>
+<script src="../mystic-ai-config.js"></script>
+<script src="../mystic-persona-prompts.js"></script>
+<script src="../theme-boot.js"></script>
+<script src="../mystic-effects.js"></script>
+</head>
+<body>
+<a href="index.html" class="back-btn">&larr; Back</a>
+<h1>🌙 Horseshoe Tarot Spread 🌙</h1>
+<p class="subtitle">Seven Cards to Guide Your Path</p>
+
+<div class="deck-wrap" id="deckWrap" title="Tap to shuffle & draw">
+  <div class="deck-card" style="--r:-6deg;"></div>
+  <div class="deck-card" style="--r:-3deg;"></div>
+  <div class="deck-card" style="--r:0deg;"></div>
+  <div class="deck-card" style="--r:3deg;"></div>
+  <div class="deck-card" style="--r:6deg;"></div>
+</div>
+<div class="deck-label" id="deckLabel">Tap the deck to shuffle</div>
+
+<div class="buttons">
+  <button id="dealBtn">✨ Draw Horseshoe Spread</button>
+  <button id="resetBtn">🔄 Reset</button>
+</div>
+
+<div class="tarot-layout" id="cardLayout"></div>
+
+<p class="instruction">Click any card to reveal its wisdom. Reversed cards appear upside down.</p>
+
+<div class="reading-section hidden" id="readingSection">
+  <h2>📖 Your Reading 📖</h2>
+  <div id="interpretations"></div>
+</div>
+
+<script>
+// Complete list of all 78 tarot cards with proper spacing
+const allCards = [
+  "Ace of Cups.jpg",
+  "Ace of Pentacles.jpg",
+  "Ace of Swords.jpg",
+  "Ace of Wands.jpg",
+  "Two of Cups.jpg",
+  "Two of Pentacles.jpg",
+  "Two of Swords.jpg",
+  "Two of Wands.jpg",
+  "Three of Cups.jpg",
+  "Three of Pentacles.jpg",
+  "Three of Swords.jpg",
+  "Three of Wands.jpg",
+  "Four of Cups.jpg",
+  "Four of Pentacles.jpg",
+  "Four of Swords.jpg",
+  "Four of Wands.jpg",
+  "Five of Cups.jpg",
+  "Five of Pentacles.jpg",
+  "Five of Swords.jpg",
+  "Five of Wands.jpg",
+  "Six of Cups.jpg",
+  "Six of Pentacles.jpg",
+  "Six of Swords.jpg",
+  "Six of Wands.jpg",
+  "Seven of Cups.jpg",
+  "Seven of Pentacles.jpg",
+  "Seven of Swords.jpg",
+  "Seven of Wands.jpg",
+  "Eight of Cups.jpg",
+  "Eight of Pentacles.jpg",
+  "Eight of Swords.jpg",
+  "Eight of Wands.jpg",
+  "Nine of Cups.jpg",
+  "Nine of Pentacles.jpg",
+  "Nine of Swords.jpg",
+  "Nine of Wands.jpg",
+  "Ten of Cups.jpg",
+  "Ten of Pentacles.jpg",
+  "Ten of Swords.jpg",
+  "Ten of Wands.jpg",
+  "Page of Cups.jpg",
+  "Page of Pentacles.jpg",
+  "Page of Swords.jpg",
+  "Page of Wands.jpg",
+  "Knight of Cups.jpg",
+  "Knight of Pentacles.jpg",
+  "Knight of Swords.jpg",
+  "Knight of Wands.jpg",
+  "Queen of Cups.jpg",
+  "Queen of Pentacles.jpg",
+  "Queen of Swords.jpg",
+  "King of Cups.jpg",
+  "King of Pentacles.jpg",
+  "King of Swords.jpg",
+  "King of Wands.jpg",
+  "The Fool.jpg",
+  "The Magician.jpg",
+  "The High Priestess.jpg",
+  "The Empress.jpg",
+  "The Emperor.jpg",
+  "The Hierophant.jpg",
+  "The Lovers.jpg",
+  "The Chariot.jpg",
+  "strength.jpg",
+  "The Hermit.jpg",
+  "The Wheel of Fortune.jpg",
+  "Justice.jpg",
+  "The Hanged Man.jpg",
+  "Death.jpg",
+  "Temperance.jpg",
+  "The Devil.jpg",
+  "The Tower.jpg",
+  "The Star.jpg",
+  "The Moon.jpg",
+  "The Sun.jpg",
+  "Judgement.jpg",
+  "The World.jpg"
+];
+
+const positions = [
+  "1. Past",
+  "2. Present",
+  "3. Hidden Influences",
+  "4. Obstacles",
+  "5. External Influences",
+  "6. Advice",
+  "7. Outcome"
+];
+
+const layoutGrid = document.getElementById("cardLayout");
+const dealBtn = document.getElementById("dealBtn");
+const resetBtn = document.getElementById("resetBtn");
+const deckWrap = document.getElementById("deckWrap");
+const deckLabel = document.getElementById("deckLabel");
+const readingSection = document.getElementById("readingSection");
+const interpretations = document.getElementById("interpretations");
+
+// Card meanings database
+const cardMeanings = {
+  "The Fool.jpg": {
+    upright: "New beginnings, innocence, spontaneity, free spirit. A journey is beginning.",
+    reversed: "Recklessness, risk-taking, holding back, missed opportunities."
+  },
+  "The Magician.jpg": {
+    upright: "Manifestation, resourcefulness, power, inspired action. You have the tools you need.",
+    reversed: "Manipulation, poor planning, untapped talents, illusion."
+  },
+  "The High Priestess.jpg": {
+    upright: "Intuition, sacred knowledge, divine feminine, the subconscious mind.",
+    reversed: "Secrets, disconnected from intuition, withdrawal and silence."
+  },
+  "The Empress.jpg": {
+    upright: "Femininity, beauty, nature, nurturing, abundance, creativity.",
+    reversed: "Creative block, dependence on others, lack of growth."
+  },
+  "The Emperor.jpg": {
+    upright: "Authority, establishment, structure, father figure, stability.",
+    reversed: "Domination, excessive control, rigidity, inflexibility."
+  },
+  "The Hierophant.jpg": {
+    upright: "Spiritual wisdom, tradition, conformity, morality, institutions.",
+    reversed: "Personal beliefs, freedom, challenging the status quo."
+  },
+  "The Lovers.jpg": {
+    upright: "Love, harmony, relationships, values alignment, choices.",
+    reversed: "Imbalance, misalignment of values, disharmony in relationships."
+  },
+  "The Chariot.jpg": {
+    upright: "Control, willpower, success, action, determination, victory.",
+    reversed: "Lack of control, lack of direction, aggression, opposition."
+  },
+  "strength.jpg": {
+    upright: "Strength, courage, patience, control, compassion, inner power.",
+    reversed: "Self-doubt, weakness, insecurity, lack of confidence."
+  },
+  "The Hermit.jpg": {
+    upright: "Soul-searching, introspection, inner guidance, solitude, wisdom.",
+    reversed: "Isolation, loneliness, withdrawal from others, lost your way."
+  },
+  "The Wheel of Fortune.jpg": {
+    upright: "Good luck, karma, life cycles, destiny, turning point.",
+    reversed: "Bad luck, resistance to change, breaking cycles."
+  },
+  "Justice.jpg": {
+    upright: "Justice, fairness, truth, cause and effect, law and order.",
+    reversed: "Unfairness, lack of accountability, dishonesty, injustice."
+  },
+  "The Hanged Man.jpg": {
+    upright: "Pause, surrender, letting go, new perspectives, sacrifice.",
+    reversed: "Delays, resistance, stalling, indecision, unable to let go."
+  },
+  "Death.jpg": {
+    upright: "Endings, change, transformation, transition, letting go of the past.",
+    reversed: "Resistance to change, fear of change, repeating negative patterns."
+  },
+  "Temperance.jpg": {
+    upright: "Balance, moderation, patience, purpose, finding meaning.",
+    reversed: "Imbalance, excess, self-healing, re-alignment needed."
+  },
+  "The Devil.jpg": {
+    upright: "Shadow self, attachment, addiction, restriction, sexuality.",
+    reversed: "Releasing limiting beliefs, exploring dark thoughts, detachment."
+  },
+  "The Tower.jpg": {
+    upright: "Sudden change, upheaval, chaos, revelation, awakening.",
+    reversed: "Personal transformation, fear of change, averting disaster."
+  },
+  "The Star.jpg": {
+    upright: "Hope, faith, purpose, renewal, spirituality, inspiration.",
+    reversed: "Lack of faith, despair, self-trust, disconnection."
+  },
+  "The Moon.jpg": {
+    upright: "Illusion, fear, anxiety, subconscious, intuition, dreams.",
+    reversed: "Release of fear, repressed emotion, inner confusion clearing."
+  },
+  "The Sun.jpg": {
+    upright: "Positivity, fun, warmth, success, vitality, joy, confidence.",
+    reversed: "Inner child, feeling down, overly optimistic, unrealistic."
+  },
+  "Judgement.jpg": {
+    upright: "Judgement, rebirth, inner calling, absolution, self-evaluation.",
+    reversed: "Self-doubt, inner critic, ignoring the call, lack of self-awareness."
+  },
+  "The World.jpg": {
+    upright: "Completion, accomplishment, travel, fulfillment, unity.",
+    reversed: "Seeking closure, incomplete, lack of closure, short-cuts."
+  },
+  "Ace of Wands.jpg": {
+    upright: "Inspiration, new opportunities, growth, potential in creative ventures.",
+    reversed: "Emerging ideas, lack of direction, delays, creative blocks."
+  },
+  "Two of Wands.jpg": {
+    upright: "Future planning, progress, decisions, discovery, personal power.",
+    reversed: "Fear of unknown, lack of planning, bad planning, playing it safe."
+  },
+  "Three of Wands.jpg": {
+    upright: "Progress, expansion, foresight, overseas opportunities, leadership.",
+    reversed: "Playing it safe, lack of foresight, unexpected delays."
+  },
+  "Four of Wands.jpg": {
+    upright: "Celebration, joy, harmony, relaxation, homecoming, community.",
+    reversed: "Personal celebration, inner harmony, conflict with others."
+  },
+  "Five of Wands.jpg": {
+    upright: "Conflict, disagreements, competition, tension, diversity of ideas.",
+    reversed: "Inner conflict, avoiding conflict, end of conflict, compromise."
+  },
+  "Six of Wands.jpg": {
+    upright: "Success, public recognition, progress, self-confidence, victory.",
+    reversed: "Private achievement, personal success, fall from grace, egotism."
+  },
+  "Seven of Wands.jpg": {
+    upright: "Challenge, competition, protection, perseverance, standing your ground.",
+    reversed: "Exhaustion, giving up, overwhelmed, feeling defeated."
+  },
+  "Eight of Wands.jpg": {
+    upright: "Movement, fast-paced change, action, alignment, air travel, rapid progress.",
+    reversed: "Delays, frustration, resisting change, internal alignment needed."
+  },
+  "Nine of Wands.jpg": {
+    upright: "Resilience, courage, persistence, test of faith, boundaries.",
+    reversed: "Inner resources, struggle, overwhelm, defensive, paranoia."
+  },
+  "Ten of Wands.jpg": {
+    upright: "Burden, extra responsibility, hard work, completion, stress.",
+    reversed: "Doing it all, delegating, release, letting go of burdens."
+  },
+  "Page of Wands.jpg": {
+    upright: "Inspiration, ideas, discovery, new opportunities, free spirit, enthusiasm.",
+    reversed: "Newly-formed ideas, redirecting energy, self-limiting beliefs."
+  },
+  "Knight of Wands.jpg": {
+    upright: "Energy, passion, adventure, impulsiveness, inspired action.",
+    reversed: "Passion project, haste, scattered energy, delays, frustration."
+  },
+  "Queen of Wands.jpg": {
+    upright: "Courage, confidence, independence, social butterfly, determination.",
+    reversed: "Self-respect, self-confidence, introverted, re-establish confidence."
+  },
+  "King of Wands.jpg": {
+    upright: "Natural-born leader, vision, entrepreneur, honor, boldness.",
+    reversed: "Impulsiveness, haste, ruthless, high expectations, arrogance."
+  },
+  "Ace of Cups.jpg": {
+    upright: "Love, new relationships, compassion, creativity, emotional awakening.",
+    reversed: "Self-love, intuition, repressed emotions, blocked creativity."
+  },
+  "Two of Cups.jpg": {
+    upright: "Unified love, partnership, mutual attraction, connection, relationships.",
+    reversed: "Self-love, break-ups, disharmony, imbalance in relationships."
+  },
+  "Three of Cups.jpg": {
+    upright: "Celebration, friendship, creativity, collaboration, community.",
+    reversed: "Independence, alone time, hardcore partying, 'three's a crowd'."
+  },
+  "Four of Cups.jpg": {
+    upright: "Meditation, contemplation, apathy, reevaluation, missing opportunities.",
+    reversed: "Retreat, withdrawal, checking in for alignment, self-awareness."
+  },
+  "Five of Cups.jpg": {
+    upright: "Regret, failure, disappointment, pessimism, loss, grief.",
+    reversed: "Personal setbacks, self-forgiveness, moving on, acceptance."
+  },
+  "Six of Cups.jpg": {
+    upright: "Revisiting the past, childhood memories, innocence, joy, nostalgia.",
+    reversed: "Living in past, forgiveness, lacking playfulness, moving forward."
+  },
+  "Seven of Cups.jpg": {
+    upright: "Opportunities, choices, wishful thinking, illusion, fantasy.",
+    reversed: "Alignment, personal values, overwhelmed by choices, clarity."
+  },
+  "Eight of Cups.jpg": {
+    upright: "Disappointment, abandonment, withdrawal, escapism, moving on.",
+    reversed: "Trying one more time, indecision, aimless drifting, confusion."
+  },
+  "Nine of Cups.jpg": {
+    upright: "Contentment, satisfaction, gratitude, wish come true, emotional stability.",
+    reversed: "Inner happiness, materialism, dissatisfaction, indulgence."
+  },
+  "Ten of Cups.jpg": {
+    upright: "Divine love, blissful relationships, harmony, alignment, family happiness.",
+    reversed: "Disconnection, misaligned values, struggling relationships."
+  },
+  "Page of Cups.jpg": {
+    upright: "Creative opportunities, curiosity, possibility, intuitive messages.",
+    reversed: "New ideas, doubting intuition, creative blocks, inner child."
+  },
+  "Knight of Cups.jpg": {
+    upright: "Creativity, romance, charm, imagination, beauty, following your heart.",
+    reversed: "Overactive imagination, unrealistic, jealous, moodiness."
+  },
+  "Queen of Cups.jpg": {
+    upright: "Compassion, warmth, kindness, intuition, healer, counselor.",
+    reversed: "Inner feelings, self-care, self-love, co-dependency."
+  },
+  "King of Cups.jpg": {
+    upright: "Emotionally balanced, compassionate, diplomatic, caring, tolerant.",
+    reversed: "Self-compassion, inner feelings, moodiness, emotional manipulation."
+  },
+  "Ace of Swords.jpg": {
+    upright: "Breakthroughs, new ideas, mental clarity, success, raw power of the mind.",
+    reversed: "Inner clarity, re-thinking ideas, clouded judgment, confusion."
+  },
+  "Two of Swords.jpg": {
+    upright: "Difficult decisions, weighing options, stalemate, avoidance, denial.",
+    reversed: "Indecision, confusion, information overload, sticking your head in sand."
+  },
+  "Three of Swords.jpg": {
+    upright: "Heartbreak, emotional pain, sorrow, grief, hurt, trauma.",
+    reversed: "Negative self-talk, releasing pain, optimism, forgiveness."
+  },
+  "Four of Swords.jpg": {
+    upright: "Rest, relaxation, meditation, contemplation, recuperation.",
+    reversed: "Exhaustion, burn-out, deep contemplation, stagnation."
+  },
+  "Five of Swords.jpg": {
+    upright: "Conflict, disagreements, competition, defeat, winning at all costs.",
+    reversed: "Reconciliation, making amends, past resentment, open communication."
+  },
+  "Six of Swords.jpg": {
+    upright: "Transition, change, rite of passage, releasing baggage, moving forward.",
+    reversed: "Personal transition, resistance to change, unfinished business."
+  },
+  "Seven of Swords.jpg": {
+    upright: "Betrayal, deception, getting away with something, stealth, strategy.",
+    reversed: "Imposter syndrome, self-deceit, keeping secrets, coming clean."
+  },
+  "Eight of Swords.jpg": {
+    upright: "Negative thoughts, self-imposed restriction, imprisonment, victim mentality.",
+    reversed: "Self-limiting beliefs, inner critic, releasing negative thoughts, freedom."
+  },
+  "Nine of Swords.jpg": {
+    upright: "Anxiety, worry, fear, depression, nightmares, mental anguish.",
+    reversed: "Inner turmoil, deep-seated fears, secrets, releasing worry."
+  },
+  "Ten of Swords.jpg": {
+    upright: "Painful endings, deep wounds, betrayal, loss, rock bottom, crisis.",
+    reversed: "Recovery, regeneration, resisting an inevitable end, things can only get better."
+  },
+  "Page of Swords.jpg": {
+    upright: "New ideas, curiosity, thirst for knowledge, new ways of communicating.",
+    reversed: "Self-expression, all talk and no action, haphazard action, speaking out."
+  },
+  "Knight of Swords.jpg": {
+    upright: "Ambitious, action-oriented, driven to succeed, fast-thinking, assertive.",
+    reversed: "Restless, unfocused, impulsive, burn-out, reckless behavior."
+  },
+  "Queen of Swords.jpg": {
+    upright: "Independent, unbiased judgment, clear boundaries, direct communication.",
+    reversed: "Overly-emotional, easily influenced, bitchy, cold-hearted, bitter."
+  },
+  "King of Swords.jpg": {
+    upright: "Mental clarity, intellectual power, authority, truth, clear thinking.",
+    reversed: "Quiet power, inner truth, misuse of power, manipulation."
+  },
+  "Ace of Pentacles.jpg": {
+    upright: "New financial opportunity, prosperity, abundance, manifestation.",
+    reversed: "Lost opportunity, missed chance, lack of planning, scarcity mindset."
+  },
+  "Two of Pentacles.jpg": {
+    upright: "Multiple priorities, time management, prioritization, adaptability.",
+    reversed: "Over-committed, disorganization, overwhelmed, re-prioritizing."
+  },
+  "Three of Pentacles.jpg": {
+    upright: "Teamwork, collaboration, learning, implementation, building.",
+    reversed: "Disharmony, misalignment, working alone, lack of teamwork."
+  },
+  "Four of Pentacles.jpg": {
+    upright: "Saving money, security, conservatism, scarcity, control, holding on.",
+    reversed: "Over-spending, greed, self-protection, financial insecurity."
+  },
+  "Five of Pentacles.jpg": {
+    upright: "Financial loss, poverty, lack mindset, isolation, worry, hardship.",
+    reversed: "Recovery from financial loss, spiritual poverty, positive changes coming."
+  },
+  "Six of Pentacles.jpg": {
+    upright: "Giving, receiving, sharing wealth, generosity, charity, fairness.",
+    reversed: "Self-care, unpaid debts, one-sided charity, strings attached."
+  },
+  "Seven of Pentacles.jpg": {
+    upright: "Long-term view, sustainable results, perseverance, investment, patience.",
+    reversed: "Lack of long-term vision, limited success, impatience, procrastination."
+  },
+  "Eight of Pentacles.jpg": {
+    upright: "Apprenticeship, repetitive tasks, mastery, skill development, dedication.",
+    reversed: "Self-development, perfectionism, misdirected activity, uninspired work."
+  },
+  "Nine of Pentacles.jpg": {
+    upright: "Abundance, luxury, self-sufficiency, financial independence, success.",
+    reversed: "Self-worth, over-investment in work, hustling, material instability."
+  },
+  "Ten of Pentacles.jpg": {
+    upright: "Wealth, financial security, family, long-term success, legacy, contribution.",
+    reversed: "Financial failure, loneliness, loss, broken family relationships."
+  },
+  "Page of Pentacles.jpg": {
+    upright: "Manifestation, financial opportunity, skill development, new job, ambitious.",
+    reversed: "Lack of progress, procrastination, learn from failure, new ideas."
+  },
+  "Knight of Pentacles.jpg": {
+    upright: "Hard work, productivity, routine, conservatism, methodical, efficient.",
+    reversed: "Self-discipline, boredom, feeling 'stuck', perfectionism, laziness."
+  },
+  "Queen of Pentacles.jpg": {
+    upright: "Nurturing, practical, providing financially, down-to-earth, luxury, comfort.",
+    reversed: "Financial independence, self-care, work-home conflict, jealousy."
+  },
+  "King of Pentacles.jpg": {
+    upright: "Wealth, business, leadership, security, discipline, abundance, provider.",
+    reversed: "Financially inept, obsessed with wealth, greed, materialistic."
+  }
+};
+
+function triggerDeal(fn) {
+  if (deckWrap.classList.contains("shuffling")) return;
+  deckWrap.classList.add("shuffling");
+  spawnSparks(deckWrap);
+  setTimeout(() => {
+    deckWrap.classList.remove("shuffling");
+    fn();
+    if (deckLabel) deckLabel.textContent = "Tap the deck to read again";
+    requestAnimationFrame(flyCardsFromDeck);
+  }, 550);
+}
+
+function flyCardsFromDeck() {
+  const cards = layoutGrid.querySelectorAll(".card");
+  const deckRect = deckWrap.getBoundingClientRect();
+  const dcx = deckRect.left + deckRect.width / 2;
+  const dcy = deckRect.top + deckRect.height / 2;
+
+  cards.forEach((card, i) => {
+    const rect = card.getBoundingClientRect();
+    const ccx = rect.left + rect.width / 2;
+    const ccy = rect.top + rect.height / 2;
+    const dx = dcx - ccx;
+    const dy = dcy - ccy;
+    const rot = (i % 2 === 0 ? -1 : 1) * (16 + Math.random() * 12);
+
+    card.style.transition = "none";
+    card.style.transform = `translate(${dx}px, ${dy}px) rotate(${rot}deg) scale(0.55)`;
+    card.style.opacity = "0";
+    card.getBoundingClientRect(); // force reflow
+
+    const delay = (i * 0.12).toFixed(2);
+    card.style.transition = `transform 0.65s cubic-bezier(.2,.8,.2,1) ${delay}s, opacity 0.4s ease ${delay}s`;
+
+    requestAnimationFrame(() => {
+      card.style.transform = "";
+      card.style.opacity = "1";
+    });
+
+    card.addEventListener("transitionend", function cleanup(e) {
+      if (e.propertyName === "transform") {
+        card.style.transition = "";
+        card.removeEventListener("transitionend", cleanup);
+      }
+    });
+  });
+}
+
+function spawnSparks(anchor) {
+  const rect = anchor.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+
+  for (let i = 0; i < 14; i++) {
+    const s = document.createElement("div");
+    s.className = "shuffle-spark";
+    s.textContent = Math.random() < 0.5 ? "✨" : "⭐";
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 60 + Math.random() * 90;
+    s.style.left = cx + "px";
+    s.style.top = cy + "px";
+    s.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+    s.style.setProperty("--dy", Math.sin(angle) * dist + "px");
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 700);
+  }
+}
+
+deckWrap.onclick = () => triggerDeal(dealHorseshoe);
+dealBtn.onclick = () => triggerDeal(dealHorseshoe);
+resetBtn.onclick = () => {
+  layoutGrid.innerHTML = "";
+  readingSection.classList.add("hidden");
+  interpretations.innerHTML = "";
+  if (window.AITarot) AITarot.clear();
+};
+
+function dealHorseshoe() {
+  layoutGrid.innerHTML = "";
+  interpretations.innerHTML = "";
+
+  // Shuffle and select 7 cards
+  const chosen = shuffle([...allCards]).slice(0, 7);
+  const readingData = [];
+
+  chosen.forEach((cardName, i) => {
+    const reversed = Math.random() < 0.5;
+    
+    const container = document.createElement("div");
+    container.className = "card-container";
+    
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.index = i;
+    
+    card.innerHTML = `
+      <div class="card-inner">
+        <div class="card-face card-back"></div>
+        <div class="card-face card-front ${reversed ? "reversed" : ""}">
+          <img src="cards/${cardName}" alt="${cardName}" draggable="false">
+        </div>
+      </div>
+    `;
+    
+    const label = document.createElement("div");
+    label.className = "labels";
+    label.textContent = positions[i];
+    
+    card.onclick = () => {
+      const wasFlipped = card.classList.contains("flipped");
+      card.classList.toggle("flipped");
+      
+      if (!wasFlipped) {
+        revealInterpretation(i);
+      }
+    };
+    
+    container.appendChild(card);
+    container.appendChild(label);
+    layoutGrid.appendChild(container);
+
+    readingData.push({
+      position: positions[i],
+      cardName: cardName,
+      reversed: reversed
+    });
+  });
+
+  generateInterpretation(readingData);
+  readingSection.classList.remove("hidden");
+
+  if (window.AITarot) {
+    const aiCards = readingData.map(c => {
+      const m = cardMeanings[c.cardName];
+      return {
+        position: c.position,
+        cardName: c.cardName,
+        reversed: c.reversed,
+        meaning: m ? (c.reversed ? m.reversed : m.upright) : ""
+      };
+    });
+    AITarot.interpretSpread("Horseshoe Spread", aiCards);
+  }
+}
+
+function revealInterpretation(index) {
+  const interpretation = interpretations.children[index];
+  if (interpretation && !interpretation.classList.contains("revealed")) {
+    interpretation.classList.add("revealed");
+  }
+}
+
+function generateInterpretation(readingData) {
+  const positionMeanings = [
+    "This card represents the past - the foundation and events that have shaped your current situation.",
+    "This card represents the present - where you stand now and what's currently happening.",
+    "This card represents hidden influences - unseen forces or subconscious factors affecting the situation.",
+    "This card represents obstacles - the challenges or blocks you need to overcome.",
+    "This card represents external influences - people, events, or circumstances around you.",
+    "This card represents advice - guidance on the best course of action to take.",
+    "This card represents the outcome - the likely result if you follow the path ahead."
+  ];
+
+  readingData.forEach((card, index) => {
+    const cardDiv = document.createElement("div");
+    cardDiv.className = "card-interpretation";
+    
+    const cleanName = card.cardName.replace(".jpg", "").replace(/_/g, " ");
+    const meaning = cardMeanings[card.cardName];
+    const interpretation = card.reversed ? meaning.reversed : meaning.upright;
+    
+    cardDiv.innerHTML = `
+      <h3>${card.position}</h3>
+      <p class="card-name">${cleanName} ${card.reversed ? '<span class="reversed-indicator">(Reversed)</span>' : ''}</p>
+      <p style="color: #b9a9c8; font-style: italic; margin-top: 5px;">${positionMeanings[index]}</p>
+      <p class="interpretation-text">${interpretation}</p>
+    `;
+    
+    interpretations.appendChild(cardDiv);
+  });
+}
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+</script>
+<script src="reading-history.js"></script>
+<script src="ai-settings.js"></script>
+<div class="scroll-hint" id="scrollHint" aria-hidden="true">⌄</div>
+<style>
+  .scroll-hint {
+    position: fixed;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    z-index: 500;
+    font-size: 2em;
+    line-height: 1;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+    opacity: 0;
+    pointer-events: none;
+    cursor: pointer;
+    animation: scrollHintBounce 1.6s ease-in-out infinite;
+    transition: opacity 0.4s ease;
+  }
+  .scroll-hint.show {
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  @keyframes scrollHintBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(10px); }
+  }
+</style>
+<script>
+(function () {
+  var hint = document.getElementById("scrollHint");
+  if (!hint) return;
+
+  function check() {
+    var scrollable = document.documentElement.scrollHeight > window.innerHeight + 60;
+    var atTop = window.scrollY < 40;
+    hint.classList.toggle("show", scrollable && atTop);
+  }
+
+  hint.addEventListener("click", function () {
+    window.scrollBy({ top: window.innerHeight * 0.8, behavior: "smooth" });
+  });
+
+  window.addEventListener("scroll", check, { passive: true });
+  window.addEventListener("resize", check);
+  setInterval(check, 700);
+  check();
+})();
+</script>
+
+<script src="persona-theme.js"></script>
+</body>
+</html>

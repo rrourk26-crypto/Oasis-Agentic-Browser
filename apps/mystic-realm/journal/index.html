@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Book of Shadows — Mystic Realm</title>
+<script src="../mystic-ai-config.js"></script>
+<script src="../mystic-persona-prompts.js"></script>
+<script src="../theme-boot.js"></script>
+<script src="../mystic-effects.js"></script>
+<script src="../tarot/reading-history.js"></script>
+<script src="../streaks.js"></script>
+<script src="../diary-store.js"></script>
+<style>
+  :root{
+    --mystic-accent:#ffd700;
+    --mystic-accent-2:#9d2048;
+    --mystic-glow:rgba(255,215,0,.25);
+    --mystic-bg-1:rgba(28,15,40,.9);
+    --mystic-bg-2:rgba(157,32,72,.78);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background:
+      radial-gradient(circle at 50% 10%, rgba(116, 66, 173, 0.24), transparent 32%),
+      radial-gradient(circle at 15% 65%, rgba(128, 20, 67, 0.15), transparent 28%),
+      radial-gradient(circle at 85% 70%, rgba(67, 30, 126, 0.15), transparent 28%),
+      linear-gradient(rgba(5, 2, 10, 0.55), rgba(5, 2, 10, 0.82)),
+      url('../stars and moons.png') center top / cover no-repeat fixed;
+    color: white;
+    font-family: 'Cinzel', Georgia, serif;
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  .back-btn {
+    position: fixed; top: 20px; left: 20px; z-index: 200;
+    background: rgba(28, 15, 40, 0.85); color: var(--mystic-accent);
+    border: 2px solid rgba(255, 215, 0, 0.5); padding: 10px 20px;
+    border-radius: 999px; font-weight: bold; font-size: 1em;
+    text-decoration: none; cursor: pointer; transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  }
+  .back-btn:hover { background: rgba(157, 32, 72, 0.5); border-color: #ffed4e; transform: translateY(-2px); }
+
+  .wrap { max-width: 880px; margin: 0 auto; position: relative; z-index: 2; padding-top: 44px; }
+
+  header.jhead { text-align: center; margin-bottom: 26px; }
+  header.jhead h1 { font-size: 2rem; color: var(--mystic-accent); text-shadow: 0 0 20px var(--mystic-glow); letter-spacing: .03em; }
+  header.jhead p { color: #cbb9dd; margin-top: 10px; font-family: Georgia, serif; font-size: .95rem; }
+
+  .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .stat-card {
+    text-align: center; padding: 14px 8px; border-radius: 8px;
+    border: 1px solid rgba(255,215,0,.25);
+    background: linear-gradient(145deg, rgba(32,15,46,.75), rgba(9,4,17,.8));
+  }
+  .stat-num { font-size: 1.5rem; color: var(--mystic-accent); font-weight: 700; }
+  .stat-label { font-size: .68rem; color: #b9a9c8; text-transform: uppercase; letter-spacing: .12em; margin-top: 4px; }
+
+  .controls { margin-bottom: 18px; }
+  .search-box {
+    width: 100%; padding: 12px 16px; border-radius: 999px;
+    border: 1px solid rgba(255,215,0,.35); background: rgba(10,4,18,.7);
+    color: white; font-family: Georgia, serif; font-size: .95rem; outline: none;
+  }
+  .search-box::placeholder { color: #8b7a9e; }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .chip {
+    padding: 7px 14px; border-radius: 999px; font-size: .78rem; cursor: pointer;
+    border: 1px solid rgba(255,215,0,.3); background: rgba(28,15,40,.7); color: #d9c9ea;
+    transition: all .2s ease; white-space: nowrap;
+  }
+  .chip:hover { border-color: rgba(255,215,0,.7); }
+  .chip.active { background: linear-gradient(135deg, rgba(157,32,72,.55), rgba(90,40,140,.5)); color: var(--mystic-accent); border-color: var(--mystic-accent); }
+
+  .entry-list { display: flex; flex-direction: column; gap: 14px; margin-top: 22px; }
+
+  .entry {
+    border: 1px solid rgba(255,215,0,.22); border-radius: 8px; padding: 16px 18px;
+    background: linear-gradient(145deg, rgba(32,15,46,.68), rgba(9,4,17,.75));
+  }
+  .entry-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .entry-app { font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; color: var(--mystic-accent); }
+  .entry-title { font-size: 1.02rem; margin-top: 3px; color: #f5eaff; }
+  .entry-date { font-size: .76rem; color: #9c8bb0; margin-top: 3px; font-family: Georgia, serif; }
+  .entry-del {
+    background: none; border: none; color: #c98; cursor: pointer; font-size: 1.05rem;
+    opacity: .7; transition: opacity .2s ease; flex: none;
+  }
+  .entry-del:hover { opacity: 1; }
+
+  .entry-cards { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .entry-card-chip {
+    font-size: .76rem; padding: 4px 10px; border-radius: 999px;
+    background: rgba(255,215,0,.08); border: 1px solid rgba(255,215,0,.22); color: #e9dcf5;
+  }
+  .entry-text { margin-top: 10px; font-family: Georgia, serif; font-size: .88rem; color: #d8cbe8; line-height: 1.55; }
+  .entry-ai { margin-top: 10px; padding: 10px 12px; border-radius: 6px; background: rgba(157,32,72,.14); border: 1px solid rgba(255,215,0,.15); font-size: .85rem; line-height: 1.55; color: #ecdfff; }
+
+  .entry-note-label { font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: #b9a9c8; margin-top: 12px; margin-bottom: 4px; }
+  .entry-note {
+    width: 100%; min-height: 50px; resize: vertical; padding: 8px 10px; border-radius: 6px;
+    border: 1px solid rgba(255,215,0,.25); background: rgba(0,0,0,.25); color: #fff;
+    font-family: Georgia, serif; font-size: .85rem; outline: none;
+  }
+  .entry-note::placeholder { color: #746385; }
+  .note-saved { font-size: .7rem; color: #8fd9a8; opacity: 0; transition: opacity .3s ease; margin-top: 4px; }
+  .note-saved.show { opacity: 1; }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: #a897bd; font-family: Georgia, serif; }
+  .empty-state .big { font-size: 2.4rem; margin-bottom: 14px; }
+
+  /* ---- tabs ---- */
+  .bos-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,215,0,.18); padding-bottom: 0; }
+  .bos-tab {
+    background: none; border: none; color: #b9a9c8; font-family: 'Cinzel', Georgia, serif;
+    font-size: .85rem; padding: 10px 6px 12px; cursor: pointer; letter-spacing: .04em;
+    border-bottom: 2px solid transparent; transition: all .2s ease;
+  }
+  .bos-tab:hover { color: #e9dcf5; }
+  .bos-tab.active { color: var(--mystic-accent); border-bottom-color: var(--mystic-accent); }
+
+  /* ---- diary: lock gate ---- */
+  .diary-gate {
+    text-align: center; padding: 50px 20px; max-width: 420px; margin: 20px auto;
+    border: 1px solid rgba(255,215,0,.25); border-radius: 10px;
+    background: linear-gradient(145deg, rgba(32,15,46,.7), rgba(9,4,17,.8));
+  }
+  .diary-gate .big { font-size: 2.6rem; margin-bottom: 14px; }
+  .diary-gate p { color: #c9b9db; font-family: Georgia, serif; font-size: .88rem; margin-bottom: 18px; line-height: 1.5; }
+  .diary-pin-input {
+    width: 100%; max-width: 220px; text-align: center; letter-spacing: .4em; font-size: 1.3rem;
+    padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,.35);
+    background: rgba(0,0,0,.3); color: #fff; font-family: 'Cinzel', Georgia, serif; outline: none; margin-bottom: 12px;
+  }
+  .diary-btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 6px; }
+  .bos-btn {
+    font-family: 'Cinzel', Georgia, serif; font-size: .8rem; padding: 9px 18px; border-radius: 999px;
+    border: 1px solid rgba(255,215,0,.4); background: rgba(28,15,40,.8); color: var(--mystic-accent);
+    cursor: pointer; transition: all .2s ease;
+  }
+  .bos-btn:hover { background: rgba(157,32,72,.5); border-color: #ffed4e; }
+  .bos-btn.subtle { border-color: rgba(255,255,255,.15); color: #b9a9c8; font-size: .72rem; padding: 6px 12px; }
+  .bos-btn.danger { border-color: rgba(232,120,120,.4); color: #f0a3a3; }
+  .diary-gate-error { color: #f0a3a3; font-size: .78rem; margin-top: -6px; margin-bottom: 10px; min-height: 1em; }
+  .diary-note {
+    font-size: .72rem; color: #8b7a9e; margin-top: 16px; line-height: 1.5; font-family: Georgia, serif;
+    border-top: 1px solid rgba(255,255,255,.08); padding-top: 12px;
+  }
+
+  /* ---- diary: composer + entries ---- */
+  .diary-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 10px; flex-wrap: wrap; }
+  .diary-toolbar-title { font-size: .8rem; color: #b9a9c8; }
+
+  .diary-composer {
+    border: 1px solid rgba(255,215,0,.28); border-radius: 8px; padding: 16px 18px; margin-bottom: 22px;
+    background: linear-gradient(145deg, rgba(32,15,46,.68), rgba(9,4,17,.75));
+  }
+  .diary-title-input {
+    width: 100%; padding: 9px 12px; margin-bottom: 8px; border-radius: 6px;
+    border: 1px solid rgba(255,215,0,.25); background: rgba(0,0,0,.25); color: #fff;
+    font-family: 'Cinzel', Georgia, serif; font-size: .9rem; outline: none;
+  }
+  .diary-text-input {
+    width: 100%; min-height: 90px; padding: 10px 12px; border-radius: 6px; resize: vertical;
+    border: 1px solid rgba(255,215,0,.25); background: rgba(0,0,0,.25); color: #fff;
+    font-family: Georgia, serif; font-size: .9rem; outline: none; margin-bottom: 10px;
+  }
+  .diary-media-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+  .diary-media-chip {
+    display: flex; align-items: center; gap: 6px; font-size: .76rem; padding: 5px 10px;
+    border-radius: 999px; background: rgba(255,215,0,.08); border: 1px solid rgba(255,215,0,.25); color: #e9dcf5;
+  }
+  .diary-media-chip img { width: 22px; height: 22px; border-radius: 4px; object-fit: cover; }
+  .diary-media-chip button { background: none; border: none; color: #f0a3a3; cursor: pointer; font-size: .85rem; }
+  .diary-rec-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #f0a3a3; margin-right: 6px; animation: recPulse 1s ease-in-out infinite; }
+  @keyframes recPulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+
+  /* ---- live recording preview (shown while recording is in progress) ---- */
+  .diary-live-wrap {
+    position: relative; margin-bottom: 10px; border-radius: 8px; overflow: hidden;
+    border: 1px solid rgba(240,163,163,.5); background: #000;
+    box-shadow: 0 0 0 3px rgba(240,163,163,.12);
+  }
+  .diary-live-wrap video { display: block; width: 100%; max-height: 240px; background: #000; }
+  .diary-live-wrap canvas { display: block; width: 100%; height: 90px; background: rgba(0,0,0,.4); }
+  .diary-live-badge {
+    position: absolute; top: 8px; left: 8px; display: flex; align-items: center; gap: 6px;
+    background: rgba(0,0,0,.6); color: #fff; font-size: .72rem; padding: 4px 9px; border-radius: 999px;
+    letter-spacing: .06em; z-index: 2;
+  }
+
+  /* ---- saved-entry media thumbnails ---- */
+  .diary-media-item { position: relative; max-width: 320px; }
+  .diary-media-item .thumb-wrap {
+    position: relative; cursor: pointer; border-radius: 6px; overflow: hidden;
+    border: 1px solid rgba(255,215,0,.25); background: #000;
+  }
+  .diary-media-item img.thumb { display: block; width: 100%; max-height: 220px; object-fit: cover; }
+  .diary-media-item .play-overlay {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,.28); color: #fff; font-size: 1.8rem; transition: background .2s ease;
+    pointer-events: none;
+  }
+  .diary-media-item .thumb-wrap:hover .play-overlay { background: rgba(0,0,0,.42); }
+
+  .diary-entry {
+    border: 1px solid rgba(255,215,0,.22); border-radius: 8px; padding: 16px 18px; margin-bottom: 14px;
+    background: linear-gradient(145deg, rgba(32,15,46,.68), rgba(9,4,17,.75));
+  }
+  .diary-entry-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+  .diary-entry-date { font-size: .74rem; color: #9c8bb0; font-family: Georgia, serif; }
+  .diary-entry-text { font-family: Georgia, serif; font-size: .9rem; color: #e2d5f0; line-height: 1.6; white-space: pre-wrap; margin-top: 4px; }
+  .diary-media-players { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+  .diary-media-players .diary-media-item video { width: 100%; max-width: 420px; max-height: 260px; background: #000; border-radius: 6px; }
+
+
+  @media (max-width: 640px) {
+    .stat-row { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<a href="../index.html" class="back-btn">&larr; Back</a>
+
+<div class="wrap">
+
+  <header class="jhead">
+    <h1>📖 Book of Shadows</h1>
+    <p>Every reading, sitting, and cast from across the Realm, gathered in one place.</p>
+  </header>
+
+  <div class="stat-row" id="statRow"></div>
+
+  <div class="bos-tabs" id="bosTabs">
+    <button type="button" class="bos-tab active" data-tab="readings">📜 Readings</button>
+    <button type="button" class="bos-tab" data-tab="diary">🔒 My Journal</button>
+  </div>
+
+  <div id="panel-readings">
+    <div class="controls">
+      <input type="text" class="search-box" id="searchBox" placeholder="Search titles, cards, meanings, or your own notes…">
+      <div class="chip-row" id="chipRow"></div>
+    </div>
+
+    <div class="entry-list" id="entryList"></div>
+  </div>
+
+  <div id="panel-diary" style="display:none"></div>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const APP_META = {
+    "Mystic Tarot":         { icon: "🔮", label: "Mystic Tarot",        link: "../tarot/index.html" },
+    "Celestial Horoscope":  { icon: "✨", label: "Celestial Horoscope", link: "../horoscope/index.html" },
+    "Numerology":           { icon: "🔢", label: "Numerology",          link: "../numerology/index.html" },
+    "Dream Interpreter":    { icon: "🌙", label: "Dream Interpreter",   link: "../dreams/index.html" },
+    "I Ching":              { icon: "☯️", label: "I Ching",             link: "../iching/index.html" },
+    "Magic 8 Ball":         { icon: "🎱", label: "Magic 8 Ball",        link: "../eightball/index.html" },
+    "Astragalomancy":       { icon: "🎲", label: "Astragalomancy",      link: "../astragalomancy/index.html" },
+    "Astrolabe":            { icon: "🪐", label: "Astrolabe",           link: "../astrolabe/index.html" },
+  };
+  // Selene sittings are tagged with the persona's display name, not "Selene"
+  const SELENE_NAMES = { "Amelia": 1, "Gwenny": 1, "Anja": 1, "Eliza": 1 };
+
+  function metaFor(appTag) {
+    if (APP_META[appTag]) return APP_META[appTag];
+    if (SELENE_NAMES[appTag]) return { icon: "🕯️", label: "Madame Selene — " + appTag, link: "../selene/index.html" };
+    return { icon: "📜", label: appTag || "Reading", link: null };
+  }
+  function groupLabel(appTag) {
+    // for filter chips: collapse all Selene personas into one "Selene" bucket
+    if (SELENE_NAMES[appTag]) return "Madame Selene";
+    return appTag;
+  }
+
+  let activeFilter = "All";
+  let searchQuery = "";
+
+  function escapeHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  function renderStats() {
+    const el = document.getElementById("statRow");
+    const all = window.ReadingHistory ? ReadingHistory.loadAll() : [];
+    const realms = new Set(all.map((e) => groupLabel(e.app || "Mystic Tarot")));
+    const streak = window.MysticStreaks ? MysticStreaks.compute() : { current: 0, longest: 0 };
+    el.innerHTML = [
+      { num: all.length, label: "Total Readings" },
+      { num: realms.size, label: "Realms Explored" },
+      { num: streak.current, label: "Day Streak" },
+      { num: streak.longest, label: "Longest Streak" },
+    ].map((s) => `<div class="stat-card"><div class="stat-num">${s.num}</div><div class="stat-label">${s.label}</div></div>`).join("");
+  }
+
+  function renderChips() {
+    const el = document.getElementById("chipRow");
+    const all = window.ReadingHistory ? ReadingHistory.loadAll() : [];
+    const groups = Array.from(new Set(all.map((e) => groupLabel(e.app || "Mystic Tarot")))).sort();
+    const chips = ["All"].concat(groups);
+    el.innerHTML = chips.map((g) => {
+      const meta = g === "All" ? { icon: "🌌" } : metaFor(g === "Madame Selene" ? "Amelia" : g);
+      return `<div class="chip${g === activeFilter ? " active" : ""}" data-chip="${escapeHtml(g)}">${meta.icon || ""} ${escapeHtml(g)}</div>`;
+    }).join("");
+    el.querySelectorAll(".chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        activeFilter = chip.getAttribute("data-chip");
+        renderChips();
+        renderEntries();
+      });
+    });
+  }
+
+  function renderEntries() {
+    const listEl = document.getElementById("entryList");
+    if (!window.ReadingHistory) {
+      listEl.innerHTML = `<div class="empty-state"><div class="big">📖</div>History module not loaded.</div>`;
+      return;
+    }
+    let entries = ReadingHistory.loadAll();
+
+    if (activeFilter !== "All") {
+      entries = entries.filter((e) => groupLabel(e.app || "Mystic Tarot") === activeFilter);
+    }
+
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      entries = entries.filter((e) => {
+        if (String(e.spreadTitle || "").toLowerCase().includes(q)) return true;
+        if (String(e.note || "").toLowerCase().includes(q)) return true;
+        if (String(e.aiText || "").toLowerCase().includes(q)) return true;
+        return (e.cards || []).some((c) => {
+          const name = c.cardName ? String(c.cardName).replace(/\.jpg$/i, "").replace(/_/g, " ") : "";
+          const text = c.text ? String(c.text) : "";
+          return (name + " " + text).toLowerCase().includes(q);
+        });
+      });
+    }
+
+    if (!entries.length) {
+      listEl.innerHTML = `
+        <div class="empty-state">
+          <div class="big">📖</div>
+          ${searchQuery || activeFilter !== "All" ? "Nothing matches that search or filter." : "Your Book of Shadows is empty so far.<br>Go have a reading somewhere in the Realm — it'll show up here."}
+        </div>`;
+      return;
+    }
+
+    listEl.innerHTML = entries.map((entry) => {
+      const appTag = entry.app || "Mystic Tarot";
+      const meta = metaFor(appTag);
+      let dateText = "";
+      try { dateText = entry.timestamp ? new Date(entry.timestamp).toLocaleString() : ""; } catch (e) { /* noop */ }
+
+      const cards = Array.isArray(entry.cards) ? entry.cards : [];
+      const isPlainText = cards.length === 1 && cards[0] && cards[0].text && !cards[0].cardName;
+
+      let bodyHtml = "";
+      if (isPlainText) {
+        bodyHtml = `<div class="entry-text">${escapeHtml(cards[0].text)}</div>`;
+      } else if (cards.length) {
+        bodyHtml = `<div class="entry-cards">${cards.map((c) => {
+          if (c && c.cardName) {
+            const clean = String(c.cardName).replace(/\.jpg$/i, "").replace(/_/g, " ");
+            const orient = c.reversed ? "Reversed" : "Upright";
+            const pos = c.position ? escapeHtml(c.position) + ": " : "";
+            return `<span class="entry-card-chip">${pos}${escapeHtml(clean)} (${orient})</span>`;
+          }
+          return `<span class="entry-card-chip">${escapeHtml((c && c.text) || "")}</span>`;
+        }).join("")}</div>`;
+      }
+
+      const aiHtml = entry.aiText ? `<div class="entry-ai">🤖 ${escapeHtml(entry.aiText)}</div>` : "";
+
+      const titleInner = escapeHtml(entry.spreadTitle || entry.title || "Reading");
+      const titleHtml = meta.link
+        ? `<a href="${meta.link}" style="color:inherit;text-decoration:none">${titleInner}</a>`
+        : titleInner;
+
+      return `
+        <div class="entry" data-id="${escapeHtml(entry.id)}">
+          <div class="entry-top">
+            <div>
+              <div class="entry-app">${meta.icon} ${escapeHtml(meta.label)}</div>
+              <div class="entry-title">${titleHtml}</div>
+              <div class="entry-date">${escapeHtml(dateText)}</div>
+            </div>
+            <button class="entry-del" data-id="${escapeHtml(entry.id)}" title="Delete this reading">🗑️</button>
+          </div>
+          ${bodyHtml}
+          ${aiHtml}
+          <div class="entry-note-label">Your notes</div>
+          <textarea class="entry-note" data-id="${escapeHtml(entry.id)}" placeholder="Add a private note about this reading…">${escapeHtml(entry.note || "")}</textarea>
+          <div class="note-saved" data-saved-for="${escapeHtml(entry.id)}">Saved ✓</div>
+        </div>`;
+    }).join("");
+
+    listEl.querySelectorAll(".entry-del").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const id = this.getAttribute("data-id");
+        if (!confirm("Delete this reading from your Book of Shadows?")) return;
+        ReadingHistory.deleteOne(id);
+        renderAll();
+      });
+    });
+
+    listEl.querySelectorAll(".entry-note").forEach((ta) => {
+      ta.addEventListener("change", function () {
+        const id = this.getAttribute("data-id");
+        ReadingHistory.updateNote(id, this.value);
+        const flag = listEl.querySelector(`.note-saved[data-saved-for="${CSS.escape(id)}"]`);
+        if (flag) {
+          flag.classList.add("show");
+          setTimeout(() => flag.classList.remove("show"), 1500);
+        }
+      });
+    });
+  }
+
+  function renderAll() {
+    renderStats();
+    renderChips();
+    renderEntries();
+  }
+
+  document.getElementById("searchBox").addEventListener("input", function () {
+    searchQuery = this.value.trim();
+    renderEntries();
+  });
+
+  renderAll();
+})();
+</script>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------------- tabs ----------------
+  document.querySelectorAll(".bos-tab").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".bos-tab").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      const tab = btn.getAttribute("data-tab");
+      document.getElementById("panel-readings").style.display = tab === "readings" ? "" : "none";
+      document.getElementById("panel-diary").style.display = tab === "diary" ? "" : "none";
+      if (tab === "diary") renderDiaryPanel();
+    });
+  });
+
+  function escapeHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  // ---------------- diary panel state machine ----------------
+  // States: no-support | set-pin-prompt | locked | unlocked
+  let pendingMedia = []; // media attached to the entry currently being composed, not yet saved
+  let activeRecorder = null; // {kind, mediaRecorder, stream, chunks}
+
+  function renderDiaryPanel() {
+    const el = document.getElementById("panel-diary");
+
+    if (!window.MysticDiary || !MysticDiary.supported) {
+      el.innerHTML = `
+        <div class="diary-gate">
+          <div class="big">🔒</div>
+          <p>This browser (or how this page was opened) doesn't allow local storage for the private journal — that can happen when a page is opened directly from a file instead of through a web address. Try opening the Mystic Realm through its usual http/https link instead.</p>
+        </div>`;
+      return;
+    }
+
+    if (MysticDiary.hasPin() && !MysticDiary.isUnlockedThisSession()) {
+      renderLockGate(el);
+      return;
+    }
+
+    renderUnlockedDiary(el);
+  }
+
+  function renderLockGate(el) {
+    el.innerHTML = `
+      <div class="diary-gate">
+        <div class="big">🔒</div>
+        <p>This section is locked. Enter your PIN to open your private journal.</p>
+        <input type="password" inputmode="numeric" class="diary-pin-input" id="diaryPinInput" placeholder="••••" maxlength="12" autocomplete="off">
+        <div class="diary-gate-error" id="diaryGateError">&nbsp;</div>
+        <div class="diary-btn-row">
+          <button type="button" class="bos-btn" id="diaryUnlockBtn">Unlock</button>
+        </div>
+        <div class="diary-note">
+          Forgot your PIN? <a href="#" id="diaryForgotLink" style="color:#e9c9ff">Remove the lock</a> — your entries stay exactly where they are, only the lock is cleared.
+          <br><br>
+          Heads up: this PIN is a casual privacy screen, not real encryption. Anyone with direct access to this browser's storage could still get in — it just keeps your journal out of casual view.
+        </div>
+      </div>`;
+
+    const input = el.querySelector("#diaryPinInput");
+    const err = el.querySelector("#diaryGateError");
+    input.focus();
+
+    function tryUnlock() {
+      const val = input.value.trim();
+      if (!val) return;
+      if (MysticDiary.verifyPin(val)) {
+        MysticDiary.unlockSession();
+        renderDiaryPanel();
+      } else {
+        err.textContent = "That's not the right PIN.";
+        input.value = "";
+        input.focus();
+      }
+    }
+    el.querySelector("#diaryUnlockBtn").addEventListener("click", tryUnlock);
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") tryUnlock(); });
+
+    el.querySelector("#diaryForgotLink").addEventListener("click", (e) => {
+      e.preventDefault();
+      if (!confirm("Remove the PIN lock? Your journal entries themselves will NOT be deleted.")) return;
+      MysticDiary.clearPin();
+      MysticDiary.unlockSession();
+      renderDiaryPanel();
+    });
+  }
+
+  function renderSetPinPrompt(el, onDone) {
+    el.innerHTML = `
+      <div class="diary-gate">
+        <div class="big">🕯️</div>
+        <p>Want to keep this section private with a PIN? Totally optional — you can always add one later from the toolbar above the journal.</p>
+        <input type="password" inputmode="numeric" class="diary-pin-input" id="diaryPinInput" placeholder="Choose a PIN" maxlength="12" autocomplete="off">
+        <div class="diary-gate-error" id="diaryGateError">&nbsp;</div>
+        <div class="diary-btn-row">
+          <button type="button" class="bos-btn" id="diarySetPinBtn">Set PIN</button>
+          <button type="button" class="bos-btn subtle" id="diarySkipPinBtn">Skip for now</button>
+        </div>
+        <div class="diary-note">This is a casual privacy screen, not real encryption — it keeps your journal out of casual view, nothing more.</div>
+      </div>`;
+
+    const input = el.querySelector("#diaryPinInput");
+    input.focus();
+    el.querySelector("#diarySetPinBtn").addEventListener("click", () => {
+      const val = input.value.trim();
+      if (val.length < 3) {
+        el.querySelector("#diaryGateError").textContent = "Use at least 3 characters.";
+        return;
+      }
+      MysticDiary.setPin(val);
+      MysticDiary.unlockSession();
+      onDone();
+    });
+    el.querySelector("#diarySkipPinBtn").addEventListener("click", () => {
+      try { sessionStorage.setItem("mysticDiary_skippedPinPrompt", "1"); } catch (e) { /* noop */ }
+      onDone();
+    });
+  }
+
+  function renderUnlockedDiary(el, skipFirstRunCheck) {
+    const skipped = (() => { try { return sessionStorage.getItem("mysticDiary_skippedPinPrompt") === "1"; } catch (e) { return false; } })();
+    if (!skipFirstRunCheck && !MysticDiary.hasPin() && !skipped) {
+      renderSetPinPrompt(el, () => renderUnlockedDiary(el, true));
+      return;
+    }
+
+    el.innerHTML = `
+      <div class="diary-toolbar">
+        <div class="diary-toolbar-title">A private space for your own words — thoughts, dreams, whatever you don't want mixed in with your readings.</div>
+        <div class="diary-btn-row" style="margin:0">
+          ${MysticDiary.hasPin()
+            ? `<button type="button" class="bos-btn subtle" id="diaryLockNowBtn">🔒 Lock now</button>`
+            : `<button type="button" class="bos-btn subtle" id="diarySetPinLaterBtn">🔒 Set a PIN</button>`}
+        </div>
+      </div>
+
+      <div class="diary-composer">
+        <input type="text" class="diary-title-input" id="diaryEntryTitle" placeholder="Title (optional)">
+        <textarea class="diary-text-input" id="diaryEntryText" placeholder="Write whatever you like…"></textarea>
+        <div id="diaryLiveWrap"></div>
+        <div class="diary-media-row" id="diaryMediaRow"></div>
+        <div class="diary-media-row">
+          ${(navigator.mediaDevices && window.MediaRecorder) ? `
+            <button type="button" class="bos-btn" id="diaryRecordAudioBtn">🎙️ Record audio</button>
+            <button type="button" class="bos-btn" id="diaryRecordVideoBtn">🎥 Record video</button>
+          ` : ``}
+          <label class="bos-btn subtle" style="cursor:pointer">📎 Attach a file
+            <input type="file" id="diaryFileInput" accept="audio/*,video/*" style="display:none">
+          </label>
+        </div>
+        <div class="diary-btn-row" style="justify-content:flex-start">
+          <button type="button" class="bos-btn" id="diarySaveBtn">💾 Save entry</button>
+        </div>
+      </div>
+
+      <div id="diaryEntryList"></div>
+    `;
+
+    pendingMedia = [];
+    renderPendingMedia();
+
+    if (MysticDiary.hasPin()) {
+      el.querySelector("#diaryLockNowBtn").addEventListener("click", () => {
+        MysticDiary.lockSession();
+        renderDiaryPanel();
+      });
+    } else {
+      el.querySelector("#diarySetPinLaterBtn").addEventListener("click", () => {
+        renderSetPinPrompt(el, () => renderUnlockedDiary(el, true));
+      });
+    }
+
+    el.querySelector("#diaryFileInput").addEventListener("change", function () {
+      const f = this.files && this.files[0];
+      if (!f) return;
+      const kind = f.type.startsWith("video") ? "video" : "audio";
+      pendingMedia.push({ blob: f, type: kind, mime: f.type, name: f.name });
+      renderPendingMedia();
+      this.value = "";
+    });
+
+    const audioBtn = el.querySelector("#diaryRecordAudioBtn");
+    const videoBtn = el.querySelector("#diaryRecordVideoBtn");
+    if (audioBtn) audioBtn.addEventListener("click", () => toggleRecording("audio", audioBtn));
+    if (videoBtn) videoBtn.addEventListener("click", () => toggleRecording("video", videoBtn));
+
+    el.querySelector("#diarySaveBtn").addEventListener("click", saveEntry);
+
+    renderDiaryEntries();
+  }
+
+  function renderPendingMedia() {
+    const row = document.getElementById("diaryMediaRow");
+    if (!row) return;
+    row.innerHTML = pendingMedia.map((m, i) => `
+      <span class="diary-media-chip">${m.thumbnail ? `<img src="${m.thumbnail}" alt="">` : (m.type === "video" ? "🎥" : "🎙️")} ${escapeHtml(m.name || (m.type + " note"))}
+        <button type="button" data-idx="${i}" title="Remove">✕</button>
+      </span>
+    `).join("");
+    row.querySelectorAll("button[data-idx]").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        pendingMedia.splice(Number(this.getAttribute("data-idx")), 1);
+        renderPendingMedia();
+      });
+    });
+  }
+
+  async function toggleRecording(kind, btn) {
+    if (activeRecorder && activeRecorder.kind === kind) {
+      activeRecorder.mediaRecorder.stop();
+      return;
+    }
+    if (activeRecorder) return; // a different recording is already in progress
+
+    const otherBtn = document.getElementById(kind === "video" ? "diaryRecordAudioBtn" : "diaryRecordVideoBtn");
+    const liveWrap = document.getElementById("diaryLiveWrap");
+
+    try {
+      const constraints = kind === "video" ? { audio: true, video: true } : { audio: true };
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const mime = kind === "video"
+        ? (MediaRecorder.isTypeSupported("video/webm") ? "video/webm" : "")
+        : (MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "");
+      const mediaRecorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+      const chunks = [];
+      mediaRecorder.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
+
+      // ---- live preview, so it's obvious recording is happening ----
+      let waveformCanvas = null, waveformCtx = null, audioCtx = null, analyser = null, rafId = null, bars = [];
+      if (liveWrap) {
+        if (kind === "video") {
+          liveWrap.innerHTML = `
+            <div class="diary-live-wrap">
+              <div class="diary-live-badge"><span class="diary-rec-dot"></span>Recording…</div>
+              <video id="diaryLiveVideo" autoplay muted playsinline></video>
+            </div>`;
+          const liveVideo = liveWrap.querySelector("#diaryLiveVideo");
+          liveVideo.srcObject = stream;
+        } else {
+          liveWrap.innerHTML = `
+            <div class="diary-live-wrap">
+              <div class="diary-live-badge"><span class="diary-rec-dot"></span>Recording…</div>
+              <canvas id="diaryLiveCanvas" width="640" height="90"></canvas>
+            </div>`;
+          waveformCanvas = liveWrap.querySelector("#diaryLiveCanvas");
+          waveformCtx = waveformCanvas.getContext("2d");
+          try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioCtx.createMediaStreamSource(stream);
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 256;
+            source.connect(analyser);
+            const dataArr = new Uint8Array(analyser.frequencyBinCount);
+            const barWidth = 4, gap = 2;
+            const maxBars = Math.floor(waveformCanvas.width / (barWidth + gap));
+            const draw = () => {
+              analyser.getByteFrequencyData(dataArr);
+              let sum = 0;
+              for (let i = 0; i < dataArr.length; i++) sum += dataArr[i];
+              const level = Math.min(1, (sum / dataArr.length) / 130); // normalized 0..1
+              bars.push(level);
+              if (bars.length > maxBars) bars.shift();
+
+              waveformCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
+              waveformCtx.fillStyle = "#ffd700";
+              const midY = waveformCanvas.height / 2;
+              bars.forEach((lvl, i) => {
+                const h = Math.max(3, lvl * (waveformCanvas.height - 10));
+                const x = i * (barWidth + gap);
+                waveformCtx.fillRect(x, midY - h / 2, barWidth, h);
+              });
+              rafId = requestAnimationFrame(draw);
+            };
+            draw();
+          } catch (waveErr) { /* visualization is best-effort only; recording itself is unaffected */ }
+        }
+      }
+
+      mediaRecorder.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        if (rafId) cancelAnimationFrame(rafId);
+        if (audioCtx) { try { audioCtx.close(); } catch (e) { /* noop */ } }
+
+        const blob = new Blob(chunks, { type: mediaRecorder.mimeType || mime || (kind + "/webm") });
+        let thumbnail = null;
+
+        if (kind === "video") {
+          thumbnail = await grabVideoFrameThumbnail(blob).catch(() => null);
+        } else if (waveformCanvas) {
+          try { thumbnail = waveformCanvas.toDataURL("image/png"); } catch (e) { thumbnail = null; }
+        }
+
+        if (liveWrap) liveWrap.innerHTML = "";
+        pendingMedia.push({ blob, type: kind, mime: blob.type, name: kind + " recording", thumbnail });
+        renderPendingMedia();
+        activeRecorder = null;
+        btn.innerHTML = kind === "video" ? "🎥 Record video" : "🎙️ Record audio";
+        if (otherBtn) otherBtn.disabled = false;
+      };
+
+      mediaRecorder.start();
+      activeRecorder = { kind, mediaRecorder, stream };
+      btn.innerHTML = `<span class="diary-rec-dot"></span>Stop ${kind === "video" ? "video" : "audio"}`;
+      if (otherBtn) otherBtn.disabled = true;
+    } catch (err) {
+      alert("Couldn't access the " + (kind === "video" ? "camera/microphone" : "microphone") + ": " + (err && err.message ? err.message : err));
+    }
+  }
+
+  function grabVideoFrameThumbnail(blob) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(blob);
+      const v = document.createElement("video");
+      v.muted = true;
+      v.src = url;
+      v.addEventListener("loadeddata", () => {
+        const seekTo = Math.min(0.3, (v.duration || 1) / 4);
+        const onSeeked = () => {
+          try {
+            const canvas = document.createElement("canvas");
+            canvas.width = v.videoWidth || 320;
+            canvas.height = v.videoHeight || 180;
+            canvas.getContext("2d").drawImage(v, 0, 0, canvas.width, canvas.height);
+            URL.revokeObjectURL(url);
+            resolve(canvas.toDataURL("image/jpeg", 0.8));
+          } catch (e) { URL.revokeObjectURL(url); reject(e); }
+        };
+        v.addEventListener("seeked", onSeeked, { once: true });
+        v.currentTime = seekTo;
+      }, { once: true });
+      v.addEventListener("error", () => { URL.revokeObjectURL(url); reject(new Error("Could not read video for thumbnail")); });
+    });
+  }
+
+  async function saveEntry() {
+    const titleEl = document.getElementById("diaryEntryTitle");
+    const textEl = document.getElementById("diaryEntryText");
+    const title = titleEl.value.trim();
+    const text = textEl.value.trim();
+    if (!title && !text && !pendingMedia.length) return;
+
+    try {
+      await MysticDiary.addEntry({ title, text, media: pendingMedia });
+      titleEl.value = ""; textEl.value = "";
+      pendingMedia = [];
+      renderPendingMedia();
+      renderDiaryEntries();
+    } catch (err) {
+      alert("Couldn't save that entry — your browser's local storage may be full. (" + (err && err.message ? err.message : err) + ")");
+    }
+  }
+
+  async function renderDiaryEntries() {
+    const el = document.getElementById("diaryEntryList");
+    if (!el) return;
+    let entries = [];
+    try { entries = await MysticDiary.listEntries(); } catch (e) { /* noop */ }
+
+    if (!entries.length) {
+      el.innerHTML = `<div class="empty-state"><div class="big">🕯️</div>Nothing written yet — this page is yours.</div>`;
+      return;
+    }
+
+    el.innerHTML = entries.map((entry) => {
+      let dateText = "";
+      try { dateText = new Date(entry.timestamp).toLocaleString(); } catch (e) { /* noop */ }
+
+      const mediaHtml = (entry.media || []).map((m, i) => {
+        const url = URL.createObjectURL(m.blob);
+        const mediaId = entry.id + "-" + i;
+        if (m.type === "video") {
+          return `<div class="diary-media-item">
+            <video controls preload="metadata" ${m.thumbnail ? `poster="${m.thumbnail}"` : ""} src="${url}"></video>
+          </div>`;
+        }
+        // audio: custom waveform-thumbnail with a play/pause toggle
+        return `<div class="diary-media-item">
+          <div class="thumb-wrap" data-audio-toggle="${mediaId}">
+            ${m.thumbnail ? `<img class="thumb" src="${m.thumbnail}" alt="Voice note waveform">` : `<div class="thumb" style="height:70px;background:rgba(255,215,0,.08)"></div>`}
+            <div class="play-overlay" data-icon-for="${mediaId}">▶</div>
+          </div>
+          <audio data-audio-id="${mediaId}" src="${url}" style="display:none"></audio>
+        </div>`;
+      }).join("");
+
+      return `
+        <div class="diary-entry" data-id="${escapeHtml(entry.id)}">
+          <div class="diary-entry-top">
+            <div>
+              ${entry.title ? `<div class="entry-title">${escapeHtml(entry.title)}</div>` : ""}
+              <div class="diary-entry-date">${escapeHtml(dateText)}</div>
+            </div>
+            <button class="entry-del" data-id="${escapeHtml(entry.id)}" title="Delete this entry">🗑️</button>
+          </div>
+          ${entry.text ? `<div class="diary-entry-text">${escapeHtml(entry.text)}</div>` : ""}
+          ${mediaHtml ? `<div class="diary-media-players">${mediaHtml}</div>` : ""}
+        </div>`;
+    }).join("");
+
+    el.querySelectorAll(".entry-del").forEach((btn) => {
+      btn.addEventListener("click", async function () {
+        const id = this.getAttribute("data-id");
+        if (!confirm("Delete this journal entry? This cannot be undone.")) return;
+        await MysticDiary.deleteEntry(id);
+        renderDiaryEntries();
+      });
+    });
+
+    // audio thumbnail play/pause toggle
+    el.querySelectorAll("[data-audio-toggle]").forEach((wrap) => {
+      wrap.addEventListener("click", function () {
+        const mediaId = this.getAttribute("data-audio-toggle");
+        const audioEl = el.querySelector(`audio[data-audio-id="${CSS.escape(mediaId)}"]`);
+        const icon = el.querySelector(`[data-icon-for="${CSS.escape(mediaId)}"]`);
+        if (!audioEl) return;
+        // pause every other playing clip first, so only one plays at a time
+        el.querySelectorAll("audio[data-audio-id]").forEach((a) => {
+          if (a !== audioEl && !a.paused) {
+            a.pause();
+            const otherIcon = el.querySelector(`[data-icon-for="${CSS.escape(a.getAttribute("data-audio-id"))}"]`);
+            if (otherIcon) otherIcon.textContent = "▶";
+          }
+        });
+        if (audioEl.paused) {
+          audioEl.play();
+          if (icon) icon.textContent = "⏸";
+        } else {
+          audioEl.pause();
+          if (icon) icon.textContent = "▶";
+        }
+        audioEl.onended = () => { if (icon) icon.textContent = "▶"; };
+      });
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Magic 8 Ball — Mystic Oracle</title>
+<script src="../mystic-ai-config.js"></script>
+<script src="../mystic-persona-prompts.js"></script>
+<script src="../theme-boot.js"></script>
+<script src="../mystic-effects.js"></script>
+<style>
+  :root{
+    --mystic-accent:#ffd700;
+    --mystic-accent-2:#9d2048;
+    --mystic-glow:rgba(255,215,0,.25);
+    --mystic-bg-1:rgba(28,15,40,.9);
+    --mystic-bg-2:rgba(157,32,72,.78);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background:
+      radial-gradient(circle at 50% 10%, rgba(116, 66, 173, 0.24), transparent 32%),
+      radial-gradient(circle at 15% 65%, rgba(128, 20, 67, 0.15), transparent 28%),
+      radial-gradient(circle at 85% 70%, rgba(67, 30, 126, 0.15), transparent 28%),
+      linear-gradient(rgba(5, 2, 10, 0.55), rgba(5, 2, 10, 0.82)),
+      url('../stars and moons.png') center top / cover no-repeat fixed;
+    color: white;
+    font-family: 'Cinzel', Georgia, serif;
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(75, 0, 130, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.3) 0%, transparent 70%);
+    pointer-events: none;
+    animation: fogMove 20s ease-in-out infinite;
+    z-index: 1;
+  }
+
+  @keyframes fogMove {
+    0%, 100% { opacity: 0.6; transform: scale(1) translateX(0); }
+    50% { opacity: 0.8; transform: scale(1.1) translateX(20px); }
+  }
+
+  .mystical-symbol {
+    position: fixed; font-size: 2em; opacity: 0.15; pointer-events: none;
+    z-index: 0; animation: float 15s ease-in-out infinite;
+  }
+  .symbol-1 { top: 10%; left: 8%; animation-delay: 0s; }
+  .symbol-2 { top: 15%; right: 10%; animation-delay: 2s; }
+  .symbol-3 { bottom: 12%; left: 12%; animation-delay: 4s; }
+  .symbol-4 { bottom: 20%; right: 8%; animation-delay: 6s; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(10deg); }
+  }
+
+  .back-btn {
+    position: fixed; top: 20px; left: 20px; z-index: 200;
+    background: rgba(28, 15, 40, 0.85); color: var(--mystic-accent);
+    border: 2px solid rgba(255, 215, 0, 0.5); padding: 10px 20px;
+    border-radius: 999px; font-weight: bold; font-size: 1em;
+    text-decoration: none; cursor: pointer; transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  }
+  .back-btn:hover { background: rgba(157, 32, 72, 0.5); border-color: #ffed4e; transform: translateY(-2px); }
+
+  .history-btn {
+    position: fixed; top: 20px; right: 20px; z-index: 200;
+    background: rgba(28, 15, 40, 0.85); color: var(--mystic-accent);
+    border: 2px solid rgba(255, 215, 0, 0.5); padding: 10px 16px;
+    border-radius: 999px; font-weight: bold; font-size: 1em;
+    font-family: 'Cinzel', Georgia, serif;
+    text-decoration: none; cursor: pointer; transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  }
+  .history-btn:hover { background: rgba(157, 32, 72, 0.5); border-color: #ffed4e; transform: translateY(-2px); }
+
+  .container {
+    position: relative; z-index: 2; text-align: center;
+    max-width: 900px; width: 100%; margin: 0 auto;
+    padding-top: 70px;
+  }
+
+  h1 {
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: 3.2em;
+    margin-bottom: 8px;
+    color: var(--mystic-accent);
+    text-shadow: 0 0 10px rgba(255,215,0,.8), 0 0 20px rgba(255,215,0,.6), 3px 3px 6px rgba(0,0,0,.8);
+    animation: titleFloat 3s ease-in-out infinite;
+    letter-spacing: 2px;
+  }
+  @keyframes titleFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .subtitle {
+    font-size: 1.15em; color: #b9a9c8; margin-bottom: 35px; font-style: italic;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  }
+
+  .panel {
+    background: rgba(28, 15, 40, 0.85);
+    border: 3px solid rgba(255, 215, 0, 0.5);
+    border-radius: 15px;
+    padding: 34px 30px;
+    box-shadow: 0 0 30px rgba(138, 43, 226, 0.35), 0 8px 32px rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+    margin-bottom: 26px;
+  }
+
+  /* ---- Interactive 8-ball ---- */
+  .eightball-wrap {
+    position: relative;
+    width: min(300px, 70vw);
+    aspect-ratio: 1;
+    cursor: pointer;
+    margin: 0 auto;
+  }
+
+  .eightball-img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    filter:
+      drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6))
+      drop-shadow(0 0 30px rgba(141, 92, 255, 0.45))
+      drop-shadow(0 0 60px rgba(141, 92, 255, 0.25));
+  }
+
+  .eightball-answer-layer {
+    position: absolute;
+    top: 38%;
+    left: 30%;
+    width: 40%;
+    height: 34%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4%;
+    pointer-events: none;
+  }
+
+  .eightball-answer-text {
+    color: #e5d9ff;
+    font-family: "Cinzel", Georgia, serif;
+    font-size: clamp(0.5rem, 2vw, 0.82rem);
+    font-weight: 600;
+    line-height: 1.25;
+    text-shadow: 0 0 10px rgba(141, 92, 255, 0.9), 0 0 22px rgba(141, 92, 255, 0.5), 0 0 2px rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    transform: scale(0.85);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    letter-spacing: 0.02em;
+  }
+
+  .eightball-answer-text.visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .eightball-hint {
+    margin-top: 18px;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #b9a9c8;
+    text-align: center;
+    min-height: 1.2em;
+  }
+
+  @keyframes eightballShake {
+    0%   { transform: translate(0,0) rotate(0deg); }
+    10%  { transform: translate(-10px,-4px) rotate(-6deg); }
+    20%  { transform: translate(12px,3px) rotate(7deg); }
+    30%  { transform: translate(-14px,4px) rotate(-8deg); }
+    40%  { transform: translate(14px,-6px) rotate(8deg); }
+    50%  { transform: translate(-10px,5px) rotate(-6deg); }
+    60%  { transform: translate(10px,-3px) rotate(6deg); }
+    70%  { transform: translate(-8px,3px) rotate(-4deg); }
+    80%  { transform: translate(6px,-2px) rotate(3deg); }
+    90%  { transform: translate(-4px,2px) rotate(-2deg); }
+    100% { transform: translate(0,0) rotate(0deg); }
+  }
+
+  .eightball-wrap.shaking .eightball-img {
+    animation: eightballShake 0.6s ease-in-out;
+  }
+
+  /* ---- AI toggle ---- */
+  .toggle-row {
+    display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; justify-content: center;
+  }
+  .toggle-card {
+    flex: 1 1 320px;
+    max-width: 420px;
+    background: rgba(11, 22, 34, 0.7);
+    border: 2px solid rgba(255, 215, 0, 0.25);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex; align-items: flex-start; gap: 10px;
+    text-align: left;
+  }
+  .toggle-card:hover { border-color: rgba(255, 215, 0, 0.6); }
+  .toggle-card.selected {
+    border-color: #ffd700;
+    background: linear-gradient(135deg, rgba(58, 16, 36,0.5), rgba(157, 32, 72,0.4));
+    box-shadow: 0 0 15px rgba(255,215,0,0.3);
+  }
+  .toggle-card input[type="checkbox"] { margin-top: 3px; accent-color: #ffd700; }
+  .toggle-title { font-weight: bold; color: #ffd700; font-size: 0.98em; }
+  .toggle-desc { color: #b9a9c8; font-size: 0.78em; margin-top: 3px; line-height: 1.35; display: block; }
+
+  /* ---- AI reading box ---- */
+  .reading-box {
+    display: none;
+    background: rgba(28, 15, 40, 0.92);
+    border: 2px solid rgba(255, 215, 0, 0.5);
+    border-radius: 14px;
+    padding: 30px;
+    margin-top: 26px;
+    text-align: left;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .reading-box.show { display: block; }
+  .reading-box.revealed { opacity: 1; transform: translateY(0); }
+  .reading-box h2 {
+    text-align: center; color: #ffd700; font-family: 'Cinzel', Georgia, serif;
+    font-size: 1.6em; letter-spacing: 1px; margin-bottom: 6px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  }
+  .reading-sub { text-align: center; color: #b9a9c8; font-style: italic; font-size: 0.9em; margin-bottom: 18px; }
+  .reading-body { color: #f7f0ff; line-height: 1.85; font-size: 1.05em; white-space: pre-wrap; text-align: center; }
+  .reading-loading { color: #b9a9c8; font-style: italic; text-align: center; }
+  .reading-error { color: #ff9bb0; text-align: center; }
+  .reading-footer { margin-top: 20px; text-align: center; }
+  .mini-btn {
+    background: transparent; border: 1px solid rgba(255,215,0,0.4); color: #ffd700;
+    padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85em;
+    font-family: inherit;
+  }
+  .mini-btn:hover { background: rgba(255,215,0,0.1); }
+
+  .footer-note {
+    text-align: center; margin-top: 20px; font-size: 0.85em; color: #b9a9c8;
+    font-style: italic; text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 2.2em; }
+    .panel { padding: 24px 18px; }
+    .back-btn { top: 10px; left: 10px; padding: 8px 12px; font-size: 0.85em; }
+    .history-btn { top: 10px; right: 10px; padding: 8px 12px; font-size: 0.85em; }
+    .container { padding-top: 55px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="mystical-symbol symbol-1">✨</div>
+<div class="mystical-symbol symbol-2">🌙</div>
+<div class="mystical-symbol symbol-3">⭐</div>
+<div class="mystical-symbol symbol-4">✨</div>
+
+<a href="../index.html" class="back-btn">&larr; Back</a>
+
+<button type="button" class="history-btn" title="Past Readings" onclick="openEightBallHistory()">📜 Past Readings</button>
+
+<div class="container">
+  <h1>🎱 Magic 8 Ball 🎱</h1>
+  <p class="subtitle">Think your question, then click, tap, or shake to ask</p>
+
+  <div class="panel">
+
+    <div class="eightball-wrap" id="eightballWrap" tabindex="0">
+      <img class="eightball-img" src="../eightball.png" alt="Magic 8 Ball" draggable="false">
+      <div class="eightball-answer-layer">
+        <div class="eightball-answer-text" id="eightballAnswerText"></div>
+      </div>
+    </div>
+
+    <div class="eightball-hint" id="eightballHint">Click, tap, or shake to ask Magic 8 Ball</div>
+
+    <div class="toggle-row">
+      <label class="toggle-card selected" id="aiToggleCard">
+        <input type="checkbox" id="aiToggle" checked>
+        <span>
+          <span class="toggle-title">🔮 Let <span data-mystic-name>your Mystic</span> comment</span>
+          <span class="toggle-desc">Get a short in-character reading on top of the classic answer. Turn off for just the plain answer, like the old ball.</span>
+        </span>
+      </label>
+    </div>
+
+  </div>
+
+  <div class="reading-box" id="readingBox">
+    <h2 id="readingTitle">🎱 Your Reading</h2>
+    <div class="reading-sub">Woven together by AI</div>
+    <div class="reading-body" id="readingBody"></div>
+    <div class="reading-footer">
+      <button type="button" class="mini-btn" id="reinterpretBtn">🔄 Re-comment</button>
+    </div>
+  </div>
+
+  <p class="footer-note">Enjoy these readings for entertainment purposes only.</p>
+</div>
+
+<script src="../tarot/reading-history.js"></script>
+<script src="../tarot/reading-history-modal.js"></script>
+<script>
+function openEightBallHistory() {
+    MysticHistoryModal.open({
+        title: "Magic 8 Ball Readings",
+        icon: "🎱",
+        filter: (entry) => entry.app === "Magic 8 Ball"
+    });
+}
+</script>
+<script src="eightball-ai.js"></script>
+<script>
+(function () {
+    "use strict";
+
+    const answers = [
+        "It is certain",
+        "It is decidedly so",
+        "Without a doubt",
+        "Yes definitely",
+        "You may rely on it",
+        "As I see it, yes",
+        "Most likely",
+        "Outlook good",
+        "Yes",
+        "Signs point to yes",
+        "Reply hazy, try again",
+        "Ask again later",
+        "Better not tell you now",
+        "Cannot predict now",
+        "Concentrate and ask again",
+        "Don't count on it",
+        "My reply is no",
+        "My sources say no",
+        "Outlook not so good",
+        "Very doubtful"
+    ];
+
+    const wrap = document.getElementById("eightballWrap");
+    const answerText = document.getElementById("eightballAnswerText");
+    const hint = document.getElementById("eightballHint");
+    const aiToggle = document.getElementById("aiToggle");
+    const aiToggleCard = document.getElementById("aiToggleCard");
+    const reinterpretBtn = document.getElementById("reinterpretBtn");
+
+    if (!wrap || !answerText || !hint) return;
+
+    const AI_PREF_KEY = "mysticEightBall_aiEnabled";
+
+    function loadAIPref() {
+        try {
+            const v = localStorage.getItem(AI_PREF_KEY);
+            return v === null ? true : v === "true";
+        } catch (e) {
+            return true;
+        }
+    }
+
+    function saveAIPref(v) {
+        try { localStorage.setItem(AI_PREF_KEY, v ? "true" : "false"); } catch (e) {}
+    }
+
+    let aiEnabled = loadAIPref();
+
+    if (aiToggle) {
+        aiToggle.checked = aiEnabled;
+        if (aiToggleCard) aiToggleCard.classList.toggle("selected", aiEnabled);
+
+        aiToggle.addEventListener("change", () => {
+            aiEnabled = aiToggle.checked;
+            saveAIPref(aiEnabled);
+            if (aiToggleCard) aiToggleCard.classList.toggle("selected", aiEnabled);
+            if (!aiEnabled && window.EightBallAI) window.EightBallAI.clear();
+        });
+    }
+
+    let shaking = false;
+    let lastAnswer = null;
+
+    function shakeAndAnswer() {
+        if (shaking) return;
+        shaking = true;
+
+        answerText.classList.remove("visible");
+        wrap.classList.add("shaking");
+        hint.textContent = "Shaking...";
+        if (window.EightBallAI) window.EightBallAI.clear();
+
+        setTimeout(() => {
+            wrap.classList.remove("shaking");
+
+            const answer = answers[Math.floor(Math.random() * answers.length)];
+            answerText.textContent = answer;
+            lastAnswer = answer;
+
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    answerText.classList.add("visible");
+                    hint.textContent = "Click, tap, or shake to ask Magic 8 Ball";
+                    shaking = false;
+
+                    if (aiEnabled && window.EightBallAI) {
+                        window.EightBallAI.interpretAnswer(answer);
+                    } else if (window.ReadingHistory) {
+                        ReadingHistory.record("Magic 8 Ball", [{ text: answer }], "Magic 8 Ball");
+                    }
+                }, 150);
+            });
+        }, 600);
+    }
+
+    wrap.addEventListener("click", shakeAndAnswer);
+    wrap.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") shakeAndAnswer();
+    });
+
+    if (reinterpretBtn) {
+        reinterpretBtn.addEventListener("click", () => {
+            if (lastAnswer && window.EightBallAI) window.EightBallAI.interpretAnswer(lastAnswer);
+        });
+    }
+
+    // Device motion shake detection (mobile)
+    let lastX = null, lastY = null, lastZ = null;
+    let lastShakeTime = 0;
+    const SHAKE_THRESHOLD = 18;
+
+    function handleMotion(event) {
+        const acc = event.accelerationIncludingGravity;
+        if (!acc) return;
+        const { x, y, z } = acc;
+        if (lastX === null) {
+            lastX = x; lastY = y; lastZ = z;
+            return;
+        }
+        const delta = Math.abs(x - lastX) + Math.abs(y - lastY) + Math.abs(z - lastZ);
+        const now = Date.now();
+        if (delta > SHAKE_THRESHOLD && now - lastShakeTime > 1000) {
+            lastShakeTime = now;
+            shakeAndAnswer();
+        }
+        lastX = x; lastY = y; lastZ = z;
+    }
+
+    function enableMotion() {
+        if (typeof DeviceMotionEvent !== "undefined" &&
+            typeof DeviceMotionEvent.requestPermission === "function") {
+            hint.textContent = "Tap the ball once to enable shake detection";
+            wrap.addEventListener("click", function requestOnce() {
+                DeviceMotionEvent.requestPermission()
+                    .then(state => {
+                        if (state === "granted") {
+                            window.addEventListener("devicemotion", handleMotion);
+                        }
+                    })
+                    .catch(() => {});
+                wrap.removeEventListener("click", requestOnce);
+            }, { once: true });
+        } else if (window.DeviceMotionEvent) {
+            window.addEventListener("devicemotion", handleMotion);
+        }
+    }
+
+    enableMotion();
+})();
+</script>
+
+<div class="scroll-hint" id="scrollHint" aria-hidden="true">⌄</div>
+<style>
+  .scroll-hint {
+    position: fixed;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    z-index: 500;
+    font-size: 2em;
+    line-height: 1;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+    opacity: 0;
+    pointer-events: none;
+    cursor: pointer;
+    animation: scrollHintBounce 1.6s ease-in-out infinite;
+    transition: opacity 0.4s ease;
+  }
+  .scroll-hint.show {
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  @keyframes scrollHintBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(10px); }
+  }
+</style>
+<script>
+(function () {
+  var hint = document.getElementById("scrollHint");
+  if (!hint) return;
+
+  function check() {
+    var scrollable = document.documentElement.scrollHeight > window.innerHeight + 60;
+    var atTop = window.scrollY < 40;
+    hint.classList.toggle("show", scrollable && atTop);
+  }
+
+  hint.addEventListener("click", function () {
+    window.scrollBy({ top: window.innerHeight * 0.8, behavior: "smooth" });
+  });
+
+  window.addEventListener("scroll", check, { passive: true });
+  window.addEventListener("resize", check);
+  setInterval(check, 700);
+  check();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Celestial Horoscope</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background:
+      radial-gradient(circle at 50% 10%, rgba(116, 66, 173, 0.24), transparent 32%),
+      radial-gradient(circle at 15% 65%, rgba(128, 20, 67, 0.15), transparent 28%),
+      radial-gradient(circle at 85% 70%, rgba(67, 30, 126, 0.15), transparent 28%),
+      linear-gradient(rgba(5, 2, 10, 0.55), rgba(5, 2, 10, 0.82)),
+      url('stars and moons.png') center top / cover no-repeat fixed;
+    color: white;
+    font-family: 'Cinzel', Georgia, serif;
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(75, 0, 130, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.3) 0%, transparent 70%);
+    pointer-events: none;
+    animation: fogMove 20s ease-in-out infinite;
+    z-index: 1;
+  }
+
+  @keyframes fogMove {
+    0%, 100% { opacity: 0.6; transform: scale(1) translateX(0); }
+    50% { opacity: 0.8; transform: scale(1.1) translateX(20px); }
+  }
+
+  .mystical-symbol {
+    position: fixed; font-size: 2em; opacity: 0.15; pointer-events: none;
+    z-index: 0; animation: float 15s ease-in-out infinite;
+  }
+  .symbol-1 { top: 10%; left: 8%; animation-delay: 0s; }
+  .symbol-2 { top: 15%; right: 10%; animation-delay: 2s; }
+  .symbol-3 { bottom: 12%; left: 12%; animation-delay: 4s; }
+  .symbol-4 { bottom: 20%; right: 8%; animation-delay: 6s; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(10deg); }
+  }
+
+  .back-btn{
+    position:fixed; top:20px; left:20px; z-index:200;
+    background:rgba(28, 15, 40,0.85); color:#ffd700;
+    border:2px solid rgba(255,215,0,0.5); padding:10px 20px;
+    border-radius:999px; font-weight:bold; font-size:1em;
+    text-decoration:none; cursor:pointer; transition:all .3s ease;
+    box-shadow:0 4px 10px rgba(0,0,0,0.4);
+  }
+  .back-btn:hover{ background:rgba(157, 32, 72,0.5); border-color:#ffed4e; transform:translateY(-2px); }
+.history-btn{
+  position:fixed; top:20px; right:20px; z-index:200;
+  background:rgba(28, 15, 40,0.85); color:#ffd700;
+  border:2px solid rgba(255,215,0,0.5); padding:10px 16px;
+  border-radius:999px; font-weight:bold; font-size:1em;
+  text-decoration:none; cursor:pointer; transition:all .3s ease;
+  box-shadow:0 4px 10px rgba(0,0,0,0.4);
+  font-family: 'Cinzel', Georgia, serif;
+}
+.history-btn:hover{ background:rgba(157, 32, 72,0.5); border-color:#ffed4e; transform:translateY(-2px); }
+
+  .container {
+    position: relative; z-index: 2; text-align: center;
+    max-width: 900px; width: 100%; margin: 0 auto;
+    padding-top: 70px;
+  }
+
+  h1 {
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: 3.2em;
+    margin-bottom: 8px;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255,215,0,.8), 0 0 20px rgba(255,215,0,.6), 3px 3px 6px rgba(0,0,0,.8);
+    animation: titleFloat 3s ease-in-out infinite;
+    letter-spacing: 2px;
+  }
+  @keyframes titleFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .subtitle {
+    font-size: 1.15em; color: #b9a9c8; margin-bottom: 35px; font-style: italic;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  }
+
+  .panel {
+    background: rgba(28, 15, 40, 0.85);
+    border: 3px solid rgba(255, 215, 0, 0.5);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 0 30px rgba(138, 43, 226, 0.35), 0 8px 32px rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+    margin-bottom: 26px;
+    text-align: left;
+  }
+
+  .section-title {
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: 1.5em;
+    color: #ffd700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    text-align: center;
+  }
+
+  .section-hint {
+    text-align: center; color: #b9a9c8; font-style: italic; font-size: 0.92em;
+    margin-bottom: 20px;
+  }
+
+  .birthday-row {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    flex-wrap: wrap; margin-bottom: 22px;
+  }
+  .birthday-row label { color: #ffd700; font-weight: bold; font-size: 0.92em; }
+  .birthday-row select.bday-select {
+    background: rgba(11, 22, 34, 0.9);
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    border-radius: 6px; color: #fff; padding: 8px 10px; font-size: 0.92em;
+    cursor: pointer;
+  }
+  .birthday-row select.bday-select:focus { outline: none; border-color: #ffd700; }
+  #bdayMonth { min-width: 108px; }
+  #bdayDay { min-width: 72px; }
+  #bdayYear { min-width: 88px; }
+  .birthday-row .clear-btn {
+    background: none; border: 1px solid rgba(255,215,0,0.3); color: #b9a9c8;
+    border-radius: 6px; padding: 7px 12px; font-size: 0.85em; cursor: pointer;
+  }
+  .birthday-row .clear-btn:hover { border-color: #ffd700; color: #ffd700; }
+
+  .sign-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  .sign-card {
+    background: rgba(11, 22, 34, 0.7);
+    border: 2px solid rgba(255, 215, 0, 0.25);
+    border-radius: 10px;
+    padding: 14px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .sign-card:hover { border-color: rgba(255, 215, 0, 0.6); transform: translateY(-2px); }
+  .sign-card.selected {
+    border-color: #ffd700;
+    background: linear-gradient(135deg, rgba(58, 16, 36,0.5), rgba(157, 32, 72,0.4));
+    box-shadow: 0 0 15px rgba(255,215,0,0.3);
+  }
+  .sign-symbol { font-size: 1.8em; display: block; margin-bottom: 4px; filter: drop-shadow(0 0 4px rgba(255,215,0,.4)); }
+  .sign-name { font-weight: bold; color: #ffd700; font-size: 0.95em; display: block; }
+  .sign-dates { color: #8a94a3; font-size: 0.72em; display: block; margin-top: 2px; }
+
+  .type-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+  }
+
+  .type-card {
+    background: rgba(11, 22, 34, 0.7);
+    border: 2px solid rgba(255, 215, 0, 0.25);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .type-card:hover { border-color: rgba(255, 215, 0, 0.6); transform: translateY(-2px); }
+  .type-card.selected {
+    border-color: #ffd700;
+    background: linear-gradient(135deg, rgba(58, 16, 36,0.5), rgba(157, 32, 72,0.4));
+    box-shadow: 0 0 15px rgba(255,215,0,0.3);
+  }
+  .type-icon { font-size: 1.4em; margin-right: 6px; }
+  .type-title { font-weight: bold; color: #ffd700; font-size: 0.98em; }
+  .type-desc { color: #b9a9c8; font-size: 0.78em; margin-top: 4px; line-height: 1.35; }
+
+  .compat-section { display: none; margin-top: 22px; }
+  .compat-section.show { display: block; }
+  .compat-section .section-title { font-size: 1.15em; }
+
+  .reveal-btn {
+    width: 100%;
+    margin-top: 26px;
+    background: linear-gradient(135deg, #3a1024 0%, #9d2048 100%);
+    color: white;
+    border: 2px solid #ffd700;
+    padding: 16px 30px;
+    font-size: 1.2em;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+  }
+  .reveal-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #7a1030 0%, #9d2048 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.6), 0 0 20px rgba(255,215,0,0.3);
+    border-color: #ffed4e;
+  }
+  .reveal-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .reading-box {
+    display: none;
+    background: rgba(28, 15, 40, 0.92);
+    border: 2px solid rgba(255, 215, 0, 0.5);
+    border-radius: 14px;
+    padding: 30px;
+    margin-top: 26px;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .reading-box.show { display: block; }
+  .reading-box.revealed { opacity: 1; transform: translateY(0); }
+  .reading-box h2 {
+    text-align: center; color: #ffd700; font-family: 'Cinzel', Georgia, serif;
+    font-size: 1.8em; letter-spacing: 1px; margin-bottom: 6px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  }
+  .reading-sub { text-align: center; color: #b9a9c8; font-style: italic; font-size: 0.9em; margin-bottom: 18px; }
+  .reading-body { color: #f7f0ff; line-height: 1.85; font-size: 1.05em; white-space: pre-wrap; }
+  .reading-loading { color: #b9a9c8; font-style: italic; text-align: center; }
+  .reading-error { color: #ff9bb0; text-align: center; }
+  .reading-footer { margin-top: 20px; text-align: center; }
+  .mini-btn {
+    background: transparent; border: 1px solid rgba(255,215,0,0.4); color: #ffd700;
+    padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85em;
+  }
+  .mini-btn:hover { background: rgba(255,215,0,0.1); }
+
+  .footer-note {
+    text-align: center; margin-top: 20px; font-size: 0.85em; color: #b9a9c8;
+    font-style: italic; text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 2.2em; }
+    .panel { padding: 20px; }
+    .back-btn { top: 10px; left: 10px; padding: 8px 12px; font-size: 0.85em; }
+    .history-btn { top: 10px; right: 10px; padding: 8px 12px; font-size: 0.85em; }
+    .container { padding-top: 55px; }
+  }
+</style>
+<script src="../mystic-ai-config.js"></script>
+<script src="../mystic-persona-prompts.js"></script>
+<script src="../theme-boot.js"></script>
+<script src="../mystic-effects.js"></script>
+</head>
+<body>
+
+<div class="mystical-symbol symbol-1">✨</div>
+<div class="mystical-symbol symbol-2">🌙</div>
+<div class="mystical-symbol symbol-3">⭐</div>
+<div class="mystical-symbol symbol-4">✨</div>
+
+<a href="../index.html" class="back-btn">&larr; Back</a>
+
+<button type="button" class="history-btn" title="Past Readings" onclick="openHoroscopeHistory()">📜 Past Readings</button>
+
+<div class="container">
+  <h1>✨Celestial Horoscope✨</h1>
+  <p class="subtitle">Let the stars speak — the AI will read what they say about you...</p>
+
+  <div class="panel">
+    <div class="section-title">Choose Your Sign</div>
+    <div class="section-hint">Tap your sign below, or enter your birthday and we'll find it for you.</div>
+
+    <div class="birthday-row">
+      <label>Your birthday:</label>
+      <select id="bdayMonth" class="bday-select"></select>
+      <select id="bdayDay" class="bday-select"></select>
+      <select id="bdayYear" class="bday-select"></select>
+      <button type="button" class="clear-btn" id="clearBirthdayBtn">Clear</button>
+    </div>
+
+    <div class="sign-grid" id="signGrid"></div>
+  </div>
+
+  <div class="panel">
+    <div class="section-title">Choose a Reading</div>
+    <div class="section-hint">What kind of horoscope would you like?</div>
+    <div class="type-grid" id="typeGrid"></div>
+
+    <div class="compat-section" id="compatSection">
+      <div class="section-title">Their Sign</div>
+      <div class="section-hint">Who are you checking compatibility with?</div>
+      <div class="sign-grid" id="compatSignGrid"></div>
+    </div>
+
+    <button class="reveal-btn" id="revealBtn" disabled>🔮 Reveal My Horoscope</button>
+  </div>
+
+  <div class="reading-box" id="readingBox">
+    <h2 id="readingTitle">Your Horoscope</h2>
+    <div class="reading-sub" id="readingSub"></div>
+    <div class="reading-body" id="readingBody"></div>
+    <div class="reading-footer">
+      <button type="button" class="mini-btn" id="reinterpretBtn">🔄 Read Again</button>
+    </div>
+  </div>
+
+  <p class="footer-note">Enjoy these readings for entertainment purposes only.</p>
+</div>
+
+<script>
+/* =====================================================================
+   ZODIAC DATA
+===================================================================== */
+const ZODIAC = [
+  { key:"aries",       name:"Aries",       symbol:"♈", element:"Fire",  planet:"Mars",    start:[3,21],  end:[4,19]  },
+  { key:"taurus",      name:"Taurus",      symbol:"♉", element:"Earth", planet:"Venus",   start:[4,20],  end:[5,20]  },
+  { key:"gemini",      name:"Gemini",      symbol:"♊", element:"Air",   planet:"Mercury", start:[5,21],  end:[6,20]  },
+  { key:"cancer",      name:"Cancer",      symbol:"♋", element:"Water", planet:"the Moon",start:[6,21],  end:[7,22]  },
+  { key:"leo",         name:"Leo",         symbol:"♌", element:"Fire",  planet:"the Sun", start:[7,23],  end:[8,22]  },
+  { key:"virgo",       name:"Virgo",       symbol:"♍", element:"Earth", planet:"Mercury", start:[8,23],  end:[9,22]  },
+  { key:"libra",       name:"Libra",       symbol:"♎", element:"Air",   planet:"Venus",   start:[9,23],  end:[10,22] },
+  { key:"scorpio",     name:"Scorpio",     symbol:"♏", element:"Water", planet:"Pluto",   start:[10,23], end:[11,21] },
+  { key:"sagittarius", name:"Sagittarius", symbol:"♐", element:"Fire",  planet:"Jupiter", start:[11,22], end:[12,21] },
+  { key:"capricorn",   name:"Capricorn",   symbol:"♑", element:"Earth", planet:"Saturn",  start:[12,22], end:[1,19]  },
+  { key:"aquarius",    name:"Aquarius",    symbol:"♒", element:"Air",   planet:"Uranus",  start:[1,20],  end:[2,18]  },
+  { key:"pisces",      name:"Pisces",      symbol:"♓", element:"Water", planet:"Neptune", start:[2,19],  end:[3,20]  },
+];
+
+function monthName(m){
+  return ["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m];
+}
+function dateRangeLabel(z){
+  return `${monthName(z.start[0])} ${z.start[1]} – ${monthName(z.end[0])} ${z.end[1]}`;
+}
+function signFromDate(month, day){
+  for (const z of ZODIAC){
+    const [sm, sd] = z.start, [em, ed] = z.end;
+    if (sm > em) { // wraps year end (Capricorn)
+      if ((month === sm && day >= sd) || (month === em && day <= ed)) return z.key;
+    } else {
+      if ((month === sm && day >= sd) || (month === em && day <= ed) || (month > sm && month < em)) return z.key;
+    }
+  }
+  return "aries";
+}
+
+/* =====================================================================
+   READING TYPES
+===================================================================== */
+const READING_TYPES = [
+  { key:"daily",   icon:"☀️", title:"Daily",         desc:"What today holds for you." },
+  { key:"weekly",  icon:"🌙", title:"Weekly",        desc:"The week ahead, at a glance." },
+  { key:"monthly", icon:"📅", title:"Monthly",       desc:"This month's bigger picture." },
+  { key:"yearly",  icon:"🌟", title:"Year Ahead",    desc:"The whole year, mapped out." },
+  { key:"love",    icon:"💕", title:"Love",          desc:"Romance & relationships." },
+  { key:"career",  icon:"💼", title:"Career & Money",desc:"Work, ambition, and finances." },
+  { key:"health",  icon:"🌿", title:"Health & Wellness", desc:"Body, mind, and energy." },
+  { key:"birthday",icon:"🎂", title:"Birthday",      desc:"A reading for your solar return." },
+  { key:"compat",  icon:"💫", title:"Compatibility", desc:"How you match with another sign." },
+];
+
+/* =====================================================================
+   STATE + RENDERING
+===================================================================== */
+let selectedSign = null;
+let selectedCompatSign = null;
+let selectedType = null;
+
+const signGrid = document.getElementById("signGrid");
+const compatSignGrid = document.getElementById("compatSignGrid");
+const typeGrid = document.getElementById("typeGrid");
+const compatSection = document.getElementById("compatSection");
+const revealBtn = document.getElementById("revealBtn");
+const bdayMonth = document.getElementById("bdayMonth");
+const bdayDay = document.getElementById("bdayDay");
+const bdayYear = document.getElementById("bdayYear");
+
+function renderSignGrid(container, onSelect, selectedGetter){
+  container.innerHTML = ZODIAC.map(z => `
+    <div class="sign-card" data-key="${z.key}">
+      <span class="sign-symbol">${z.symbol}</span>
+      <span class="sign-name">${z.name}</span>
+      <span class="sign-dates">${dateRangeLabel(z)}</span>
+    </div>
+  `).join("");
+  container.querySelectorAll(".sign-card").forEach(card => {
+    card.addEventListener("click", () => {
+      onSelect(card.dataset.key);
+      [...container.querySelectorAll(".sign-card")].forEach(c => c.classList.toggle("selected", c.dataset.key === selectedGetter()));
+      updateRevealState();
+    });
+  });
+}
+
+renderSignGrid(signGrid, (key) => { selectedSign = key; }, () => selectedSign);
+renderSignGrid(compatSignGrid, (key) => { selectedCompatSign = key; }, () => selectedCompatSign);
+
+typeGrid.innerHTML = READING_TYPES.map(t => `
+  <div class="type-card" data-key="${t.key}">
+    <div><span class="type-icon">${t.icon}</span><span class="type-title">${t.title}</span></div>
+    <div class="type-desc">${t.desc}</div>
+  </div>
+`).join("");
+typeGrid.querySelectorAll(".type-card").forEach(card => {
+  card.addEventListener("click", () => {
+    selectedType = card.dataset.key;
+    [...typeGrid.querySelectorAll(".type-card")].forEach(c => c.classList.toggle("selected", c.dataset.key === selectedType));
+    compatSection.classList.toggle("show", selectedType === "compat");
+    updateRevealState();
+  });
+});
+
+function daysInMonth(year, month){
+  // year may be "" (unknown) — default to 2024, a leap year, so Feb shows all 29 days
+  const y = year || 2024;
+  return new Date(y, month, 0).getDate();
+}
+
+function populateBirthdaySelects(){
+  bdayMonth.innerHTML = '<option value="">Month</option>' +
+    Array.from({ length: 12 }, (_, i) => i + 1)
+      .map(m => `<option value="${m}">${monthName(m)}</option>`)
+      .join("");
+
+  bdayYear.innerHTML = '<option value="">Year</option>' +
+    Array.from({ length: (new Date().getFullYear() - 1900 + 1) }, (_, i) => new Date().getFullYear() - i)
+      .map(y => `<option value="${y}">${y}</option>`)
+      .join("");
+
+  refreshDayOptions();
+}
+
+function refreshDayOptions(){
+  const prevDay = bdayDay.value;
+  const month = Number(bdayMonth.value) || null;
+  const year = Number(bdayYear.value) || "";
+  const maxDay = month ? daysInMonth(year, month) : 31;
+
+  bdayDay.innerHTML = '<option value="">Day</option>' +
+    Array.from({ length: maxDay }, (_, i) => i + 1)
+      .map(d => `<option value="${d}">${d}</option>`)
+      .join("");
+
+  if (prevDay && Number(prevDay) <= maxDay) bdayDay.value = prevDay;
+}
+
+populateBirthdaySelects();
+
+function handleBirthdayChange(){
+  refreshDayOptions();
+  const m = Number(bdayMonth.value);
+  const d = Number(bdayDay.value);
+  if (!m || !d) return;
+  selectedSign = signFromDate(m, d);
+  [...signGrid.querySelectorAll(".sign-card")].forEach(c => c.classList.toggle("selected", c.dataset.key === selectedSign));
+  updateRevealState();
+}
+
+bdayMonth.addEventListener("change", handleBirthdayChange);
+bdayDay.addEventListener("change", handleBirthdayChange);
+bdayYear.addEventListener("change", handleBirthdayChange);
+
+document.getElementById("clearBirthdayBtn").addEventListener("click", () => {
+  bdayMonth.value = "";
+  bdayYear.value = "";
+  refreshDayOptions();
+  bdayDay.value = "";
+});
+
+function updateRevealState(){
+  let ready = !!selectedSign && !!selectedType;
+  if (selectedType === "compat") ready = ready && !!selectedCompatSign;
+  revealBtn.disabled = !ready;
+}
+
+/* =====================================================================
+   AI SETTINGS (shared storage key with Mystic Tarot)
+===================================================================== */
+/* AI connection comes from the shared ../mystic-ai-config.js (loaded
+   before this script). The values below are only a fallback in case
+   that file failed to load for some reason. */
+const FALLBACK_CONFIG = { apiBase: "https://ollama.myguyinthechair.com/v1", model: "dolphin3:latest", apiKey: "" };
+const AI_CONFIG = window.MysticAIConfig || FALLBACK_CONFIG;
+const HARDWIRED_API_BASE = AI_CONFIG.apiBase;
+const HARDWIRED_MODEL = AI_CONFIG.model;
+const HARDWIRED_API_KEY = AI_CONFIG.apiKey;
+
+function loadAISettings(){
+  return { apiBase: HARDWIRED_API_BASE, apiKey: HARDWIRED_API_KEY, model: HARDWIRED_MODEL };
+}
+
+let aiSettings = loadAISettings();
+
+/* =====================================================================
+   PROMPT BUILDING
+===================================================================== */
+function ordinal(n){
+  const s = ["th","st","nd","rd"], v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+function currentWeekLabel(){
+  const now = new Date();
+  const day = now.getDay(); // 0=Sun
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - ((day + 6) % 7));
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  const fmt = d => `${monthName(d.getMonth()+1)} ${d.getDate()}`;
+  return `${fmt(monday)} – ${fmt(sunday)}, ${sunday.getFullYear()}`;
+}
+
+function todayLabel(){
+  const now = new Date();
+  const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  return `${days[now.getDay()]}, ${monthName(now.getMonth()+1)} ${ordinal(now.getDate())}, ${now.getFullYear()}`;
+}
+
+function monthLabel(){
+  const now = new Date();
+  return `${monthName(now.getMonth()+1)} ${now.getFullYear()}`;
+}
+
+function yearLabel(){
+  return String(new Date().getFullYear());
+}
+
+function signDesc(z){
+  return `${z.name} (${z.symbol}), a ${z.element} sign ruled by ${z.planet}`;
+}
+
+const TYPE_META = {
+  daily:   { title: "Daily Horoscope",   sub: () => todayLabel() },
+  weekly:  { title: "Weekly Horoscope",  sub: () => "Week of " + currentWeekLabel() },
+  monthly: { title: "Monthly Horoscope", sub: () => monthLabel() },
+  yearly:  { title: "Year Ahead",        sub: () => yearLabel() },
+  love:    { title: "Love & Relationships", sub: () => "" },
+  career:  { title: "Career & Money",    sub: () => "" },
+  health:  { title: "Health & Wellness", sub: () => "" },
+  birthday:{ title: "Birthday Reading",  sub: () => "" },
+  compat:  { title: "Compatibility Reading", sub: () => "" },
+};
+
+function buildPrompt(){
+  const z = ZODIAC.find(s => s.key === selectedSign);
+  const type = selectedType;
+
+  const system =
+    "You are a warm, perceptive astrologer writing a horoscope reading for someone. " +
+    "Speak directly to the reader in second person. Weave in the sign's element and " +
+    "ruling planet naturally rather than listing facts. Keep the tone empowering, " +
+    "specific, and grounded — avoid vague filler and avoid predicting doom. " +
+    "Plain flowing prose only, no markdown headers or bullet lists.";
+
+  let user = "";
+
+  switch (type){
+    case "daily":
+      user = `Write a daily horoscope for ${signDesc(z)} for today, ${todayLabel()}. Cover the day's general mood, focus, and one practical piece of guidance. Keep it to 2-3 short paragraphs.`;
+      break;
+    case "weekly":
+      user = `Write a weekly horoscope for ${signDesc(z)} for the week of ${currentWeekLabel()}. Cover the overall energy of the week, what to focus on, and where to be cautious. 3 short paragraphs.`;
+      break;
+    case "monthly":
+      user = `Write a monthly horoscope for ${signDesc(z)} for ${monthLabel()}. Cover the month's key themes across love, work, and personal growth. 3-4 short paragraphs.`;
+      break;
+    case "yearly":
+      user = `Write a year-ahead horoscope for ${signDesc(z)} for ${yearLabel()}. Cover the arc of the year — major themes, opportunities, and challenges across love, career, and personal growth. 4-5 short paragraphs.`;
+      break;
+    case "love":
+      user = `Write a love & relationships horoscope for ${signDesc(z)}. Cover current romantic energy, how this sign tends to love, and guidance for singles and those in relationships alike. 3 short paragraphs.`;
+      break;
+    case "career":
+      user = `Write a career & money horoscope for ${signDesc(z)}. Cover work momentum, opportunities, financial guidance, and how this sign's traits play out professionally right now. 3 short paragraphs.`;
+      break;
+    case "health":
+      user = `Write a health & wellness horoscope for ${signDesc(z)}. Cover physical energy, emotional wellbeing, and one grounded self-care suggestion suited to this sign. 3 short paragraphs. Do not give specific medical advice.`;
+      break;
+    case "birthday": {
+      const bday = (bdayMonth.value && bdayDay.value)
+        ? ` Their birthday is ${monthName(Number(bdayMonth.value))} ${Number(bdayDay.value)}.`
+        : "";
+      user = `Write a birthday / solar-return horoscope for ${signDesc(z)}, welcoming them into their new personal year.${bday} Cover the themes and energy for their year ahead starting from their birthday. 3-4 short paragraphs.`;
+      break;
+    }
+    case "compat": {
+      const z2 = ZODIAC.find(s => s.key === selectedCompatSign);
+      user = `Write a compatibility reading between ${signDesc(z)} and ${signDesc(z2)}. Cover communication style, emotional connection, elemental compatibility (${z.element} + ${z2.element}), strengths of the pairing, and one honest challenge to be aware of. 3-4 short paragraphs. This applies to any kind of close relationship (romantic or otherwise) unless context suggests romance.`;
+      break;
+    }
+    default:
+      user = `Write a horoscope for ${signDesc(z)}.`;
+  }
+
+  return { system, user };
+}
+
+/* =====================================================================
+   REVEAL / API CALL
+===================================================================== */
+const readingBox = document.getElementById("readingBox");
+const readingTitle = document.getElementById("readingTitle");
+const readingSub = document.getElementById("readingSub");
+const readingBody = document.getElementById("readingBody");
+
+async function revealHoroscope(){
+  aiSettings = loadAISettings();
+
+  const meta = TYPE_META[selectedType] || { title: "Your Horoscope", sub: () => "" };
+  const z = ZODIAC.find(s => s.key === selectedSign);
+  let titleText = `${meta.title} — ${z.symbol} ${z.name}`;
+  if (selectedType === "compat") {
+    const z2 = ZODIAC.find(s => s.key === selectedCompatSign);
+    titleText = `${meta.title} — ${z.symbol} ${z.name} & ${z2.symbol} ${z2.name}`;
+  }
+  readingTitle.textContent = titleText;
+  readingSub.textContent = meta.sub();
+
+  readingBox.classList.add("show");
+  setTimeout(() => readingBox.classList.add("revealed"), 30);
+  readingBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+  if (!aiSettings.apiBase || !aiSettings.model) {
+    readingBody.innerHTML = `<div class="reading-error">The AI server is not reachable right now.</div>`;
+    return;
+  }
+
+  readingBody.innerHTML = `<div class="reading-loading">🔮 Consulting the stars...</div>`;
+
+  const { system, user } = buildPrompt();
+  const headers = { "Content-Type": "application/json", Accept: "application/json" };
+  if (aiSettings.apiKey) headers.Authorization = "Bearer " + aiSettings.apiKey;
+
+  try{
+    const res = await fetch(aiSettings.apiBase + "/chat/completions", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        model: aiSettings.model,
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: user },
+        ],
+        stream: false,
+        temperature: 0.9,
+        max_tokens: 700,
+      }),
+    });
+    if (!res.ok) {
+      const t = await res.text().catch(() => "");
+      throw new Error("HTTP " + res.status + (t ? ": " + t : ""));
+    }
+    const data = await res.json();
+    let text = data?.choices?.[0]?.message?.content || "";
+    text = text.replace(/<think>[\s\S]*?<\/think>/gi, "").replace(/<think>[\s\S]*$/gi, "").trim();
+    readingBody.textContent = text || "(The AI returned an empty response.)";
+
+    if (window.ReadingHistory && text) {
+      const details = readingSub.textContent ? [{ text: readingSub.textContent }] : [];
+      const historyId = ReadingHistory.record(titleText, details, "Celestial Horoscope");
+      ReadingHistory.updateAI(historyId, text);
+    }
+  }catch(e){
+    readingBody.innerHTML = `<div class="reading-error">Couldn't reach the AI (${e.message}). Make sure the Ollama server is running and reachable, then try again.</div>`;
+  }
+}
+
+revealBtn.addEventListener("click", revealHoroscope);
+document.getElementById("reinterpretBtn").addEventListener("click", revealHoroscope);
+</script>
+<script src="../tarot/reading-history.js"></script>
+<script src="../tarot/reading-history-modal.js"></script>
+<script>
+function openHoroscopeHistory() {
+    MysticHistoryModal.open({
+        title: "Horoscope Readings",
+        icon: "✨",
+        filter: (entry) => entry.app === "Celestial Horoscope"
+    });
+}
+</script>
+<div class="scroll-hint" id="scrollHint" aria-hidden="true">⌄</div>
+<style>
+  .scroll-hint {
+    position: fixed;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    z-index: 500;
+    font-size: 2em;
+    line-height: 1;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+    opacity: 0;
+    pointer-events: none;
+    cursor: pointer;
+    animation: scrollHintBounce 1.6s ease-in-out infinite;
+    transition: opacity 0.4s ease;
+  }
+  .scroll-hint.show {
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  @keyframes scrollHintBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(10px); }
+  }
+</style>
+<script>
+(function () {
+  var hint = document.getElementById("scrollHint");
+  if (!hint) return;
+
+  function check() {
+    var scrollable = document.documentElement.scrollHeight > window.innerHeight + 60;
+    var atTop = window.scrollY < 40;
+    hint.classList.toggle("show", scrollable && atTop);
+  }
+
+  hint.addEventListener("click", function () {
+    window.scrollBy({ top: window.innerHeight * 0.8, behavior: "smooth" });
+  });
+
+  window.addEventListener("scroll", check, { passive: true });
+  window.addEventListener("resize", check);
+  setInterval(check, 700);
+  check();
+})();
+</script>
+
+</body>
+</html>

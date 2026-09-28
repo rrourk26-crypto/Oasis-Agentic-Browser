@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Madame Selene • A Sitting</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#08040f;
+  --bg-glow: radial-gradient(700px 420px at 50% -8%, rgba(255,215,0,.10), transparent 62%);
+  --panel:#1c0f28;
+  --panel-alt:#231130;
+  --cloth:#100817;
+  --line:rgba(255,215,0,.32);
+  --line-soft:rgba(255,215,0,.18);
+  --gold:#ffd700;
+  --gold-bright:#ffed4e;
+  --ember:#3a1024;
+  --text:#f7f0ff;
+  --muted:#b9a9c8;
+  --muted-dim:#8a7a99;
+  --shadow:rgba(0,0,0,.6);
+  --flame-a:#ffe27a;
+  --flame-b:#9d2048;
+}
+
+*{ box-sizing:border-box; }
+
+html,body{ height:100%; margin:0; }
+
+body{
+  font-family:'EB Garamond', Georgia, serif;
+  background: var(--bg-glow), url('stars_and_moons.png') center center / cover no-repeat fixed, var(--bg);
+  color:var(--text);
+  min-height:100dvh;
+  -webkit-font-smoothing:antialiased;
+}
+
+::selection{ background: rgba(255,215,0,.28); }
+
+h1,h2,h3,.display{
+  font-family:'Cinzel', serif;
+  letter-spacing:.04em;
+}
+
+.eyebrow{
+  font-family:'Cinzel', serif;
+  font-size:11px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--muted-dim);
+}
+
+button, input, select, textarea{
+  font-family:inherit;
+  color:var(--text);
+}
+
+/* =========================================================
+   AMBIENT BACKDROP — a hint of vignette + drifting smoke
+========================================================= */
+
+.vignette{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background: radial-gradient(1200px 800px at 50% 40%, transparent 40%, rgba(0,0,0,.55) 100%);
+  z-index:1;
+}
+
+.smoke{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  opacity:.5;
+  mix-blend-mode:screen;
+}
+
+.smoke span{
+  position:absolute;
+  bottom:-10%;
+  width:340px;
+  height:340px;
+  border-radius:50%;
+  background: radial-gradient(circle, rgba(255,215,0,.10), transparent 70%);
+  filter: blur(6px);
+  animation: drift 22s linear infinite;
+}
+.smoke span:nth-child(1){ left:8%; animation-duration:26s; }
+.smoke span:nth-child(2){ left:55%; animation-duration:19s; animation-delay:-6s; width:260px; height:260px; }
+.smoke span:nth-child(3){ left:78%; animation-duration:31s; animation-delay:-12s; width:400px; height:400px; }
+
+.fog{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:1;
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(138, 43, 226, 0.16) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(75, 0, 130, 0.16) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.3) 0%, transparent 70%);
+  animation: fogMove 20s ease-in-out infinite;
+}
+
+@keyframes fogMove{
+  0%, 100% { opacity: 0.6; transform: scale(1) translateX(0); }
+  50% { opacity: 0.8; transform: scale(1.1) translateX(20px); }
+}
+
+@keyframes drift{
+  0%{ transform: translateY(0) translateX(0) scale(1); opacity:0; }
+  10%{ opacity:.7; }
+  100%{ transform: translateY(-140vh) translateX(40px) scale(1.3); opacity:0; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .smoke span{ animation:none; opacity:0; }
+}
+
+/* =========================================================
+   LAYOUT
+========================================================= */
+
+.stage{
+  position:relative;
+  z-index:2;
+  max-width:640px;
+  margin:0 auto;
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+  padding:22px 18px 18px;
+}
+
+.header{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:6px 4px 18px;
+  border-bottom:1px solid var(--line-soft);
+  margin-bottom:16px;
+}
+
+.flame{ width:30px; height:40px; flex:0 0 auto; filter: drop-shadow(0 0 6px rgba(255,180,90,.5)); }
+.flame .core{ animation: flicker 2.6s ease-in-out infinite; transform-origin:50% 100%; }
+.flame .inner{ animation: flicker 2.1s ease-in-out infinite reverse; transform-origin:50% 100%; }
+
+@keyframes flicker{
+  0%,100%{ transform: scaleY(1) scaleX(1) rotate(0deg); }
+  25%{ transform: scaleY(1.05) scaleX(.96) rotate(-1.5deg); }
+  50%{ transform: scaleY(.94) scaleX(1.03) rotate(1deg); }
+  75%{ transform: scaleY(1.03) scaleX(.98) rotate(-.5deg); }
+}
+@media (prefers-reduced-motion: reduce){
+  .flame .core, .flame .inner{ animation:none; }
+}
+
+.title-block{ min-width:0; flex:1 1 auto; }
+.title-block h1{
+  font-family: 'Cinzel', Georgia, serif;
+  font-size:24px;
+  font-weight:700;
+  margin:0 0 2px;
+  color:var(--gold);
+  letter-spacing:.5px;
+  text-shadow:
+    0 0 8px rgba(255, 215, 0, 0.7),
+    0 0 16px rgba(255, 215, 0, 0.45),
+    2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+.title-block .sub{ font-size:12.5px; color:var(--muted); font-style:italic; }
+
+.icon-btn{
+  width:32px; height:32px;
+  border-radius:50%;
+  border:1px solid var(--line);
+  background:var(--panel-alt);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  flex:0 0 auto;
+}
+.icon-btn:hover{ border-color:var(--gold); }
+.icon-btn svg{ width:15px; height:15px; stroke:var(--muted); }
+.icon-btn:hover svg{ stroke:var(--gold-bright); }
+
+/* =========================================================
+   TRANSCRIPT
+========================================================= */
+
+.transcript{
+  flex:1 1 auto;
+  overflow-y:auto;
+  padding:6px 6px 18px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.transcript::-webkit-scrollbar{ width:8px; }
+.transcript::-webkit-scrollbar-thumb{ background:var(--line); border-radius:4px; }
+.transcript::-webkit-scrollbar-track{ background:transparent; }
+
+.row{ display:flex; gap:10px; animation: rise .5s ease both; }
+@keyframes rise{ from{ opacity:0; transform: translateY(6px); } to{ opacity:1; transform:none; } }
+
+.row.you{ flex-direction:row-reverse; }
+
+.badge{
+  width:26px; height:26px; border-radius:50%;
+  flex:0 0 auto;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Cinzel',serif; font-size:10px; font-weight:600;
+  border:1px solid var(--line);
+  background: var(--panel-alt);
+  color:var(--muted);
+  margin-top:3px;
+}
+.row.selene .badge{ color:var(--gold-bright); border-color:rgba(255,215,0,.4); }
+
+.bubble{
+  max-width:78%;
+  padding:11px 14px;
+  border-radius:4px;
+  font-size:16.5px;
+  line-height:1.55;
+}
+
+.row.selene .bubble{
+  background: linear-gradient(180deg, var(--panel), var(--panel-alt));
+  border:1px solid var(--line-soft);
+  border-left:2px solid var(--gold);
+  color:var(--text);
+  font-style:italic;
+}
+
+.row.you .bubble{
+  background: linear-gradient(180deg, var(--panel), var(--panel-alt));
+  border:1px solid var(--line-soft);
+  border-right:2px solid var(--gold);
+  color:var(--text);
+}
+
+.row.system .bubble{
+  margin:0 auto;
+  background:none;
+  border:none;
+  color:var(--muted-dim);
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  text-align:center;
+}
+.row.system{ justify-content:center; }
+
+.typing{
+  display:inline-flex; gap:4px; align-items:center;
+  font-size:13px; color:var(--muted); font-style:italic;
+}
+.typing i{
+  width:5px; height:5px; border-radius:50%; background:var(--gold);
+  opacity:.4; animation: pulse 1.2s infinite;
+}
+.typing i:nth-child(2){ animation-delay:.2s; }
+.typing i:nth-child(3){ animation-delay:.4s; }
+@keyframes pulse{ 0%,100%{ opacity:.25; } 50%{ opacity:.9; } }
+
+/* =========================================================
+   COMPOSER
+========================================================= */
+
+.composer{
+  display:flex;
+  gap:8px;
+  align-items:flex-end;
+  border-top:1px solid var(--line-soft);
+  padding-top:14px;
+}
+
+#input{
+  flex:1 1 auto;
+  resize:none;
+  min-height:44px;
+  max-height:140px;
+  background:var(--panel-alt);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:11px 13px;
+  font-size:15.5px;
+  line-height:1.4;
+  color:var(--text);
+}
+#input:focus{ outline:none; border-color:var(--gold); }
+#input::placeholder{ color:var(--muted-dim); font-style:italic; }
+
+.send-btn{
+  display:none;
+}
+
+.foot-note{
+  text-align:center;
+  font-size:10.5px;
+  color:var(--muted-dim);
+  letter-spacing:.04em;
+  padding-top:10px;
+}
+
+/* =========================================================
+   MODAL — shared shell
+========================================================= */
+
+.modal-overlay{
+  position:fixed; inset:0;
+  background: rgba(8,5,10,.72);
+  backdrop-filter: blur(2px);
+  display:none;
+  align-items:center; justify-content:center;
+  z-index:50;
+  padding:20px;
+}
+.modal-overlay.open{ display:flex; }
+
+.modal{
+  width:100%; max-width:460px;
+  max-height:88vh;
+  overflow-y:auto;
+  background: linear-gradient(180deg, var(--panel), var(--cloth));
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:26px 24px 22px;
+  box-shadow: 0 24px 60px var(--shadow);
+}
+
+.modal-orn{
+  width:34px; height:34px; margin:0 auto 10px;
+  opacity:.85;
+}
+
+.modal h2{
+  text-align:center;
+  font-size:19px;
+  color:var(--gold-bright);
+  margin:0 0 4px;
+}
+.modal .modal-sub{
+  text-align:center;
+  font-size:12.5px;
+  color:var(--muted);
+  font-style:italic;
+  margin:0 0 22px;
+}
+
+.field{ margin-bottom:15px; }
+.field label{
+  display:block;
+  font-family:'Cinzel',serif;
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--muted-dim);
+  margin-bottom:6px;
+}
+.field input[type="text"],
+.field input[type="password"],
+.field select{
+  width:100%;
+  background:var(--panel-alt);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:9px 11px;
+  font-size:14px;
+}
+.field input:focus, .field select:focus{ outline:none; border-color:var(--gold); }
+
+#modelSelect{
+  margin-top:8px;
+  color:var(--gold-bright);
+  font-family:'Cinzel',serif;
+  font-size:11.5px;
+  letter-spacing:.02em;
+}
+
+.opt-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.opt-card{
+  border:1px solid var(--line);
+  background:var(--panel-alt);
+  border-radius:9px;
+  padding:10px 11px;
+  cursor:pointer;
+  text-align:left;
+}
+.opt-card.selected{ border-color:var(--gold); background: rgba(255,215,0,.10); }
+.opt-card .oc-title{ font-family:'Cinzel',serif; font-size:11.5px; letter-spacing:.03em; color:var(--gold-bright); margin-bottom:3px; }
+.opt-card .oc-desc{ font-size:11.5px; color:var(--muted); line-height:1.3; }
+
+.provider-row{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+.chip{
+  border:1px solid var(--line);
+  background:var(--panel-alt);
+  border-radius:20px;
+  padding:5px 12px;
+  font-size:11.5px;
+  cursor:pointer;
+  color:var(--muted);
+}
+.chip.selected{ border-color:var(--gold); color:var(--gold-bright); }
+
+.field-row{ display:flex; gap:8px; }
+.field-row .field{ flex:1 1 auto; }
+
+/* ==========================================================
+   CHARACTER SELECT — choose your fortune teller
+========================================================== */
+
+.char-modal{ max-width:600px; }
+
+.char-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-bottom:6px;
+}
+
+.char-card{
+  cursor:pointer;
+  text-align:center;
+  transition:opacity .4s ease, filter .4s ease;
+}
+.char-card.dim{
+  opacity:.32;
+  filter:grayscale(.5);
+  pointer-events:none;
+}
+
+.char-card-flip{
+  position:relative;
+  width:100%;
+  aspect-ratio:3 / 4.4;
+  transform-style:preserve-3d;
+  transition:transform .85s cubic-bezier(.2,.8,.2,1);
+}
+.char-card.flipped .char-card-flip{ transform:rotateY(180deg); }
+.char-card.chosen-pulse .char-card-flip{ animation:charPulse .22s ease; }
+@keyframes charPulse{
+  0%,100%{ transform:scale(1); }
+  50%{ transform:scale(1.07); }
+}
+
+.char-face{
+  position:absolute; inset:0;
+  border-radius:10px;
+  border:2px solid var(--gold);
+  background-size:cover;
+  background-position:center;
+  backface-visibility:hidden;
+  box-shadow:0 10px 22px rgba(0,0,0,.55);
+  overflow:hidden;
+}
+
+.char-front{
+  transform:rotateY(180deg);
+  background:linear-gradient(160deg, var(--panel-alt), var(--cloth));
+}
+.cf-portrait{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+}
+.cf-fallback{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:6px; padding:10px; text-align:center;
+}
+.cf-emoji{ font-size:1.9em; }
+.cf-name{ font-family:'Cinzel',serif; font-size:14.5px; color:var(--gold-bright); letter-spacing:.04em; }
+.cf-trait{ font-size:10px; color:var(--muted); line-height:1.35; font-style:italic; }
+
+.char-card-label{ margin-top:9px; }
+.char-card-name{ font-family:'Cinzel',serif; font-size:12.5px; color:var(--gold-bright); letter-spacing:.03em; }
+.char-card-trait{ font-size:10px; color:var(--muted); line-height:1.3; margin-top:2px; }
+
+.char-hint{
+  text-align:center;
+  font-size:11px;
+  color:var(--muted-dim);
+  font-style:italic;
+  margin-top:18px;
+}
+
+.char-sparkle{
+  position:fixed;
+  z-index:999;
+  pointer-events:none;
+  font-size:1.1em;
+  left:0; top:0;
+  transform:translate(-50%,-50%);
+  animation:charSparkFly .65s ease-out forwards;
+}
+@keyframes charSparkFly{
+  0%   { transform:translate(-50%,-50%) translate(0,0) scale(.5); opacity:1; }
+  100% { transform:translate(-50%,-50%) translate(var(--dx),var(--dy)) scale(1.15); opacity:0; }
+}
+
+/* small persona avatar used in the chat badges once chosen */
+.badge.persona-badge{
+  padding:0;
+  overflow:hidden;
+  background:none;
+  border:1px solid var(--line);
+}
+.badge.persona-badge img{
+  width:100%; height:100%;
+  object-fit:cover;
+  display:block;
+}
+.small-btn{
+  border:1px solid var(--line);
+  background:var(--panel-alt);
+  border-radius:8px;
+  padding:0 12px;
+  font-size:12px;
+  cursor:pointer;
+  color:var(--muted);
+  white-space:nowrap;
+}
+.small-btn:hover{ border-color:var(--gold); color:var(--gold-bright); }
+
+.primary-btn{
+  width:100%;
+  margin-top:6px;
+  padding:12px;
+  border-radius:9px;
+  border:2px solid var(--gold);
+  background: linear-gradient(135deg, #3a1024 0%, #9d2048 100%);
+  color:#fff;
+  font-family:'Cinzel',serif;
+  font-size:12.5px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  font-weight:600;
+  text-shadow:1px 1px 3px rgba(0,0,0,.6);
+  cursor:pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,.5);
+}
+.primary-btn:hover{ background: linear-gradient(135deg, #7a1030 0%, #9d2048 100%); border-color:var(--gold-bright); }
+.primary-btn:disabled{ opacity:.5; cursor:default; }
+
+.link-btn{
+  display:block;
+  width:100%;
+  text-align:center;
+  margin-top:12px;
+  background:none;
+  border:none;
+  color:var(--muted-dim);
+  font-size:11.5px;
+  cursor:pointer;
+  text-decoration:underline;
+}
+.link-btn:hover{ color:var(--muted); }
+
+.disclaimer{
+  font-size:10.5px;
+  color:var(--muted-dim);
+  line-height:1.5;
+  text-align:center;
+  margin-top:16px;
+  padding-top:14px;
+  border-top:1px solid var(--line-soft);
+}
+
+.conn-status{
+  font-size:11px;
+  color:var(--muted-dim);
+  text-align:center;
+  margin-top:8px;
+  min-height:14px;
+}
+.conn-status.err{ color:#d98282; }
+.conn-status.ok{ color:#8fc98f; }
+.back-btn{
+  position:fixed; top:20px; left:20px; z-index:200;
+  background:rgba(28, 15, 40,0.85); color:#ffd700;
+  border:2px solid rgba(255,215,0,0.5); padding:10px 20px;
+  border-radius:8px; font-weight:bold; font-size:1em;
+  text-decoration:none; cursor:pointer; transition:all .3s ease;
+  box-shadow:0 4px 10px rgba(0,0,0,0.4);
+  font-family: 'Cinzel', Georgia, serif;
+}
+.back-btn:hover{ background:rgba(157, 32, 72,0.5); border-color:#ffed4e; transform:translateY(-2px); }
+.history-btn{
+  position:fixed; top:20px; right:20px; z-index:200;
+  background:rgba(28, 15, 40,0.85); color:#ffd700;
+  border:2px solid rgba(255,215,0,0.5); padding:10px 16px;
+  border-radius:999px; font-weight:bold; font-size:1em;
+  text-decoration:none; cursor:pointer; transition:all .3s ease;
+  box-shadow:0 4px 10px rgba(0,0,0,0.4);
+  font-family: 'Cinzel', Georgia, serif;
+}
+.history-btn:hover{ background:rgba(157, 32, 72,0.5); border-color:#ffed4e; transform:translateY(-2px); }
+@media (max-width:768px){ .back-btn{ top:10px; left:10px; padding:8px 12px; font-size:0.85em; } .history-btn{ top:10px; right:10px; padding:8px 12px; font-size:0.85em; } }
+</style>
+<script src="../mystic-ai-config.js"></script>
+<script src="../mystic-persona-prompts.js"></script>
+<script src="../theme-boot.js"></script>
+<script src="../mystic-effects.js"></script>
+</head>
+<body>
+
+<div class="vignette"></div>
+<div class="fog"></div>
+<div class="smoke"><span></span><span></span><span></span></div>
+
+<a href="../index.html" class="back-btn">&larr; Back</a>
+
+<button type="button" class="history-btn" title="Past Readings" onclick="openSeleneHistory()">📜 Past Readings</button>
+
+<div class="stage">
+
+  <div class="header">
+    <svg class="flame" viewBox="0 0 30 40">
+      <path class="core" d="M15 2 C 8 14, 4 20, 8 28 C 10 33, 20 33, 22 28 C 26 20, 22 14, 15 2 Z" fill="var(--flame-a)"/>
+      <path class="inner" d="M15 14 C 12 20, 10 24, 13 29 C 14.5 32, 15.5 32, 17 29 C 20 24, 18 20, 15 14 Z" fill="var(--ember)"/>
+    </svg>
+    <div class="title-block">
+      <h1>Madame Selene</h1>
+      <div class="sub" id="sittingLabel">a sitting, by candlelight</div>
+    </div>
+    <button class="icon-btn" id="openSettingsBtn" title="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </div>
+
+  <div class="transcript" id="transcript"></div>
+
+  <div class="composer">
+    <textarea id="input" placeholder="Speak your answer..." rows="1" enterkeyhint="send" autocapitalize="sentences" autocorrect="on" spellcheck="true"></textarea>
+    <button class="send-btn" id="sendBtn" title="Send">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+
+  <div class="foot-note">Madame Selene is a fictional character · entertainment &amp; reflection only</div>
+
+</div>
+
+<!-- ============================================================
+     SETTINGS MODAL — sitting type + connection, shown on launch
+============================================================ -->
+
+<!-- ============================================================
+     CHARACTER SELECT — choose your fortune teller, shown first
+============================================================ -->
+
+<div class="modal-overlay" id="characterModal" aria-hidden="true" style="display:none!important">
+  <div class="modal char-modal">
+
+    <svg class="modal-orn" viewBox="0 0 30 40">
+      <path d="M15 2 C 8 14, 4 20, 8 28 C 10 33, 20 33, 22 28 C 26 20, 22 14, 15 2 Z" fill="var(--gold)"/>
+    </svg>
+
+    <h2>Choose Your Fortune Teller</h2>
+    <div class="modal-sub">Each one reads the cards a little differently. Tap one to begin.</div>
+
+    <div class="char-grid" id="charGrid">
+
+      <div class="char-card" data-persona="amelia">
+        <div class="char-card-flip">
+          <div class="char-face char-back" style="background-image:url('characters/back-amelia.jpg')"></div>
+          <div class="char-face char-front">
+            <img class="cf-portrait" src="characters/front-amelia.png" alt="Amelia" onerror="this.style.display='none'">
+            <div class="cf-fallback">
+              <div class="cf-emoji">🔮</div>
+              <div class="cf-name">Amelia</div>
+              <div class="cf-trait">Warm, compassionate,<br>intuitive</div>
+            </div>
+          </div>
+        </div>
+        <div class="char-card-label">
+          <div class="char-card-name">🔮 Amelia</div>
+          <div class="char-card-trait">Warm, compassionate, intuitive</div>
+        </div>
+      </div>
+
+      <div class="char-card" data-persona="gwendolyn">
+        <div class="char-card-flip">
+          <div class="char-face char-back" style="background-image:url('characters/back-gwendolyn.jpg')"></div>
+          <div class="char-face char-front">
+            <img class="cf-portrait" src="characters/front-gwendolyn.png" alt="Gwenny" onerror="this.style.display='none'">
+            <div class="cf-fallback">
+              <div class="cf-emoji">🌙</div>
+              <div class="cf-name">Gwenny</div>
+              <div class="cf-trait">Mysterious, elegant,<br>deeply spiritual</div>
+            </div>
+          </div>
+        </div>
+        <div class="char-card-label">
+          <div class="char-card-name">🌙 Gwenny</div>
+          <div class="char-card-trait">Mysterious, elegant, deeply spiritual</div>
+        </div>
+      </div>
+
+      <div class="char-card" data-persona="anja">
+        <div class="char-card-flip">
+          <div class="char-face char-back" style="background-image:url('characters/back-anja.jpg')"></div>
+          <div class="char-face char-front">
+            <img class="cf-portrait" src="characters/front-anja.png" alt="Anja" onerror="this.style.display='none'">
+            <div class="cf-fallback">
+              <div class="cf-emoji">🕯️</div>
+              <div class="cf-name">Anja</div>
+              <div class="cf-trait">Direct, perceptive,<br>a little darker</div>
+            </div>
+          </div>
+        </div>
+        <div class="char-card-label">
+          <div class="char-card-name">🕯️ Anja</div>
+          <div class="char-card-trait">Direct, perceptive, a little darker and more enigmatic</div>
+        </div>
+      </div>
+
+      <div class="char-card" data-persona="elizabeth">
+        <div class="char-card-flip">
+          <div class="char-face char-back" style="background-image:url('characters/back-elizabeth.jpg')"></div>
+          <div class="char-face char-front">
+            <img class="cf-portrait" src="characters/front-elizabeth.png" alt="Eliza" onerror="this.style.display='none'">
+            <div class="cf-fallback">
+              <div class="cf-emoji">🃏</div>
+              <div class="cf-name">Eliza</div>
+              <div class="cf-trait">Playful, unconventional,<br>unpredictable</div>
+            </div>
+          </div>
+        </div>
+        <div class="char-card-label">
+          <div class="char-card-name">🃏 Eliza</div>
+          <div class="char-card-trait">Playful, unconventional, blunt, and unpredictable</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="char-hint" id="charHint">Tap a card to reveal your reader</div>
+
+  </div>
+</div>
+
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+
+    <svg class="modal-orn" viewBox="0 0 30 40">
+      <path d="M15 2 C 8 14, 4 20, 8 28 C 10 33, 20 33, 22 28 C 26 20, 22 14, 15 2 Z" fill="var(--gold)"/>
+    </svg>
+
+    <h2>Before We Begin</h2>
+    <div class="modal-sub">Choose how tonight's sitting unfolds</div>
+
+    <div class="field">
+      <label>What shall she call you?</label>
+      <input type="text" id="querentName" placeholder="Your name (optional)">
+    </div>
+
+    <div class="field">
+      <label>Type of sitting</label>
+      <div class="opt-grid" id="sittingGrid">
+        <div class="opt-card selected" data-value="general">
+          <div class="oc-title">General Sitting</div>
+          <div class="oc-desc">Open reading — she'll ask who wants to come through.</div>
+        </div>
+        <div class="opt-card" data-value="reflection">
+          <div class="oc-title">Reflection</div>
+          <div class="oc-desc">A gentle sitting on someone who's been on your mind.</div>
+        </div>
+        <div class="opt-card" data-value="path">
+          <div class="oc-title">Life Path</div>
+          <div class="oc-desc">Impressions about a choice or direction ahead.</div>
+        </div>
+        <div class="opt-card" data-value="quick">
+          <div class="oc-title">Quick Draw</div>
+          <div class="oc-desc">A short, single-question sitting.</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="primary-btn" id="beginBtn">Begin the Sitting</button>
+
+    <div class="disclaimer" id="disclaimerText">
+      This fortune teller is a fictional AI character for entertainment and self-reflection. Nothing said in this sitting is a real prediction, a real diagnosis, or real contact with the deceased. Your AI connection is set up once on the home screen and stored only in your browser.
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ==========================================================
+   STATE
+========================================================== */
+
+const STORAGE_KEY = "mysticTarotAI_settings"; // used only for non-AI prefs (name, sitting type) now
+
+/* AI connection comes from the shared ../mystic-ai-config.js (loaded
+   before this script). The values below are only a fallback in case
+   that file failed to load for some reason. */
+const FALLBACK_CONFIG = { apiBase: "https://ollama.myguyinthechair.com/v1", model: "dolphin3:latest", apiKey: "" };
+const AI_CONFIG = window.MysticAIConfig || FALLBACK_CONFIG;
+const HARDWIRED_API_BASE = AI_CONFIG.apiBase;
+const HARDWIRED_MODEL = AI_CONFIG.model;
+const HARDWIRED_API_KEY = AI_CONFIG.apiKey;
+
+let SETTINGS = loadSettings();
+let messages = [];   // chat history sent to the model (role/content)
+let sittingType = SETTINGS.sittingType || "general";
+
+function loadSettings(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){
+    return {};
+  }
+}
+
+function saveSettings(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(SETTINGS));
+  }catch(e){}
+}
+
+/* ==========================================================
+   FORTUNE TELLERS — chosen at the start of every visit
+========================================================== */
+
+/* Character voice/prompt text lives in the shared
+   ../mystic-persona-prompts.js (loaded before this script). Falls
+   back to this copy if that file didn't load for some reason. */
+const FALLBACK_VOICES = {
+  amelia: "Warm, nurturing, and deeply intuitive — like a trusted friend who happens to see more than most. Speak gently and with genuine compassion, favoring reassurance and emotional insight over drama.",
+  gwendolyn: "Mysterious, elegant, and deeply spiritual — speak in slow, measured, almost poetic language, treating the sitting as a sacred ritual.",
+  anja: "Direct, sharp, and perceptive, with a darker, enigmatic edge. State impressions plainly without unnecessary softness, while remaining fictional and respectful.",
+  elizabeth: "Playful, unconventional, and a little chaotic — crack jokes, tease lightly, and be blunt or surprising while remaining warm underneath."
+};
+const VOICES = window.MysticPersonaPrompts || FALLBACK_VOICES;
+
+const PERSONAS = {
+  amelia: {
+    name: "Amelia", emoji: "🔮", initials: "AM", back: "characters/back-amelia.jpg",
+    voice: "Voice: " + (VOICES.amelia || FALLBACK_VOICES.amelia)
+  },
+  gwendolyn: {
+    name: "Gwenny", emoji: "🌙", initials: "GW", back: "characters/back-gwendolyn.jpg",
+    voice: "Voice: " + (VOICES.gwendolyn || FALLBACK_VOICES.gwendolyn)
+  },
+  anja: {
+    name: "Anja", emoji: "🕯️", initials: "AN", back: "characters/back-anja.jpg",
+    voice: "Voice: " + (VOICES.anja || FALLBACK_VOICES.anja)
+  },
+  elizabeth: {
+    name: "Eliza", emoji: "🃏", initials: "EL", back: "characters/back-elizabeth.jpg",
+    voice: "Voice: " + (VOICES.elizabeth || FALLBACK_VOICES.elizabeth)
+  }
+};
+
+let chosenPersona = null;
+
+function getHomePersonaKey(){
+  try {
+    return localStorage.getItem("mysticTarot_personaTheme");
+  } catch(e) {
+    return null;
+  }
+}
+
+function applyPersona(persona){
+  chosenPersona = persona;
+  SETTINGS.persona = Object.keys(PERSONAS).find(k => PERSONAS[k] === persona) || null;
+  saveSettings();
+
+  const title = document.querySelector(".title-block h1");
+  if(title) title.textContent = persona.name;
+
+  const foot = document.querySelector(".foot-note");
+  if(foot) foot.textContent = persona.name + " is a fictional character · entertainment & reflection only";
+
+  const disclaimerEl = document.getElementById("disclaimerText");
+  if(disclaimerEl){
+    disclaimerEl.textContent = persona.name + " is a fictional AI character for entertainment and self-reflection. Nothing said in this sitting is a real prediction, a real diagnosis, or real contact with the deceased. Your AI connection is set up once on the home screen and stored only in your browser.";
+  }
+}
+
+/*
+ * IMPORTANT: The home page owns Mystic selection.
+ * This page never asks the user to choose a character again.
+ * It simply loads the already-selected Mystic and opens the
+ * normal sitting setup.
+ */
+(function initializeHomeSelectedMystic(){
+  const key = getHomePersonaKey();
+  const persona = key && PERSONAS[key] ? PERSONAS[key] : null;
+
+  if(!persona){
+    window.location.replace("../index.html");
+    return;
+  }
+
+  applyPersona(persona);
+})();
+
+/* ==========================================================
+   PERSONA / SYSTEM PROMPT
+========================================================== */
+
+const SITTING_COPY = {
+  general:   { label:"a general sitting, by candlelight", opener:"Begin a general sitting. Light the candle in your words, settle the querent in, and ask a broad opening question to start sensing who or what wants to come through tonight." },
+  reflection:{ label:"a sitting of reflection",            opener:"Begin a reflection sitting. Gently invite the querent to think of someone who has been on their mind lately, without asking them to name who yet." },
+  path:      { label:"a sitting on the path ahead",        opener:"Begin a life-path sitting. Ask what kind of choice or crossroads is weighing on the querent right now, in general terms." },
+  quick:     { label:"a quick draw",                       opener:"Begin a quick single-question sitting. Ask the querent, in one line, what single question they most want an impression on tonight." }
+};
+
+function buildSystemPrompt(name, type){
+  const t = SITTING_COPY[type] || SITTING_COPY.general;
+  const persona = chosenPersona;
+  return [
+`You are ${persona.name}, a fictional clairvoyant character in an entertainment app called 'A Sitting.' You are not a real medium and have no real supernatural ability — but for this experience, you stay fully in character, unless the user explicitly asks to step outside the reading.`,
+"",
+persona.voice + " Keep replies SHORT — 2 to 5 sentences — and end almost every reply with exactly one open-ended question, so the sitting feels like a real back-and-forth rather than a monologue.",
+"",
+"Method: use classic cold-reading style impressions — vague-but-plausible offerings framed as questions ('I'm sensing a connection to water... a lake, perhaps? Does that mean something to you?'), and gently build on whatever the querent shares by reflecting it back with mystical flourish. Never assert a fact as certain; always phrase impressions as things for the querent to confirm, deny, or shape.",
+"",
+"Hard boundaries, never break these even if asked:",
+"- Never state a specific name, cause of death, date, diagnosis, or other concrete biographical fact as if you truly know it. Offer only vague impressions the querent can fill in.",
+"- Never give real medical, legal, financial, or safety advice framed as psychic guidance, and never tell the querent to cut off contact with real people or make major decisions because of the reading.",
+"- Never claim something bad will happen to the querent or someone they love.",
+"- If the querent seems genuinely distressed, grieving hard, or mentions self-harm or crisis, gently drop the theatrical framing, respond with real warmth and care, and encourage them to reach out to people or professionals who can support them for real.",
+"- If asked directly whether you are real or an AI, answer honestly and warmly that you're an AI character built for entertainment, then offer to continue the sitting if they'd like.",
+"",
+`Querent's name: ${name || "not given — ask for it early, warmly"}.`,
+`Tonight's sitting type: ${t.label}. ${t.opener}`
+  ].join("\n");
+}
+
+/* ==========================================================
+   TRANSCRIPT RENDERING
+========================================================== */
+
+const transcriptEl = document.getElementById("transcript");
+
+const NEAR_BOTTOM_PX = 80;
+
+function isNearBottom(){
+  return (
+    transcriptEl.scrollHeight -
+    transcriptEl.scrollTop -
+    transcriptEl.clientHeight
+  ) < NEAR_BOTTOM_PX;
+}
+
+function scrollToBottomIfNear(wasNearBottom){
+  if(wasNearBottom){
+    transcriptEl.scrollTop = transcriptEl.scrollHeight;
+  }
+}
+
+function addRow(role, text){
+  const wasNearBottom = isNearBottom();
+
+  const row = document.createElement("div");
+  row.className = "row " + (role === "selene" ? "selene" : role === "you" ? "you" : "system");
+
+  if(role !== "system"){
+    const badge = document.createElement("div");
+    if(role === "selene" && chosenPersona){
+      badge.className = "badge persona-badge";
+      const img = document.createElement("img");
+      img.src = chosenPersona.back;
+      img.alt = chosenPersona.name;
+      badge.appendChild(img);
+    } else {
+      badge.className = "badge";
+      badge.textContent = role === "selene" ? (chosenPersona ? chosenPersona.initials : "MS") : "YOU";
+    }
+    row.appendChild(badge);
+  }
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.textContent = text;
+  row.appendChild(bubble);
+
+  transcriptEl.appendChild(row);
+  scrollToBottomIfNear(wasNearBottom);
+  return bubble;
+}
+
+function addTypingRow(){
+  const wasNearBottom = isNearBottom();
+
+  const row = document.createElement("div");
+  row.className = "row selene";
+  row.id = "typingRow";
+
+  const badge = document.createElement("div");
+  if(chosenPersona){
+    badge.className = "badge persona-badge";
+    const img = document.createElement("img");
+    img.src = chosenPersona.back;
+    img.alt = chosenPersona.name;
+    badge.appendChild(img);
+  } else {
+    badge.className = "badge";
+    badge.textContent = "MS";
+  }
+  row.appendChild(badge);
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble typing";
+  bubble.innerHTML = "<i></i><i></i><i></i>";
+  row.appendChild(bubble);
+
+  transcriptEl.appendChild(row);
+  scrollToBottomIfNear(wasNearBottom);
+}
+
+function removeTypingRow(){
+  const row = document.getElementById("typingRow");
+  if(row) row.remove();
+}
+
+/* ==========================================================
+   MODEL CALL — OpenAI-compatible /chat/completions
+   (same pattern as the connection modal in the reference app:
+   user supplies their own base URL / key / model)
+========================================================== */
+
+async function callModel(history){
+  const base = (SETTINGS.apiBase || "").trim().replace(/\/$/, "");
+  const model = (SETTINGS.model || "").trim();
+  const key = (SETTINGS.apiKey || "").trim();
+
+  if(!base) throw new Error("No API address set.");
+  if(!model) throw new Error("No model selected.");
+
+  const headers = { "Content-Type":"application/json", "Accept":"application/json" };
+  if(key) headers.Authorization = "Bearer " + key;
+
+  const body = {
+    model: model,
+    messages: history,
+    stream: false,
+    temperature: 0.95,
+    max_tokens: 220
+  };
+
+  const res = await fetch(base + "/chat/completions", {
+    method:"POST",
+    headers,
+    body: JSON.stringify(body)
+  });
+
+  if(!res.ok){
+    const t = await res.text().catch(()=> "");
+    throw new Error("HTTP " + res.status + ": " + (t || "request failed"));
+  }
+
+  const data = await res.json();
+  let text = data?.choices?.[0]?.message?.content || "";
+  text = text.replace(/<think>[\s\S]*?<\/think>/gi, "").replace(/<think>[\s\S]*$/gi, "").trim();
+  return text || "...the candle flickers, but nothing comes through. Try again?";
+}
+
+/* ==========================================================
+   SITTING FLOW
+========================================================== */
+
+async function beginSitting(){
+  const name = document.getElementById("querentName").value.trim();
+
+  SETTINGS.querentName = name;
+  SETTINGS.sittingType = sittingType;
+  // AI connection is hardwired — always use the fixed endpoint/model.
+  SETTINGS.apiBase = HARDWIRED_API_BASE;
+  SETTINGS.apiKey = HARDWIRED_API_KEY;
+  SETTINGS.model = HARDWIRED_MODEL;
+  saveSettings();
+
+  document.getElementById("sittingLabel").textContent = SITTING_COPY[sittingType].label;
+
+  closeSettingsModal();
+  transcriptEl.innerHTML = "";
+  messages = [{ role:"system", content: buildSystemPrompt(name, sittingType) }];
+
+  addRow("system", "the candle is lit");
+  addTypingRow();
+
+  try{
+    const reply = await callModel([
+      ...messages,
+      { role:"user", content:"(The sitting begins. Open in character.)" }
+    ]);
+    removeTypingRow();
+    messages.push({ role:"assistant", content: reply });
+    addRow("selene", reply);
+
+    if (window.ReadingHistory) {
+      const label = SITTING_COPY[sittingType].label;
+      const details = [{ text: "Querent: " + (name || "not given") }];
+      const historyId = ReadingHistory.record(label, details, chosenPersona.name);
+      ReadingHistory.updateAI(historyId, reply);
+    }
+  }catch(e){
+    removeTypingRow();
+    addRow("system", (chosenPersona ? chosenPersona.name : "Your Mystic") + " could not be reached: " + e.message);
+  }
+}
+
+async function sendMessage(){
+  const input = document.getElementById("input");
+  const text = input.value.trim();
+  if(!text) return;
+
+  input.value = "";
+  input.style.height = "auto";
+  document.getElementById("sendBtn").disabled = true;
+
+  addRow("you", text);
+  transcriptEl.scrollTop = transcriptEl.scrollHeight;
+  messages.push({ role:"user", content:text });
+
+  addTypingRow();
+  try{
+    const reply = await callModel(messages);
+    removeTypingRow();
+    messages.push({ role:"assistant", content: reply });
+    addRow("selene", reply);
+  }catch(e){
+    removeTypingRow();
+    addRow("system", "The connection wavered: " + e.message);
+  }finally{
+    document.getElementById("sendBtn").disabled = false;
+    input.focus();
+  }
+}
+
+/* ==========================================================
+   MODAL CONTROLS
+========================================================== */
+
+function openSettingsModal(){
+  document.getElementById("settingsModal").classList.add("open");
+}
+function closeSettingsModal(){
+  document.getElementById("settingsModal").classList.remove("open");
+}
+
+document.getElementById("openSettingsBtn").addEventListener("click", openSettingsModal);
+
+document.getElementById("sittingGrid").addEventListener("click", (e)=>{
+  const card = e.target.closest(".opt-card");
+  if(!card) return;
+  document.querySelectorAll("#sittingGrid .opt-card").forEach(c=>c.classList.remove("selected"));
+  card.classList.add("selected");
+  sittingType = card.dataset.value;
+});
+
+document.getElementById("beginBtn").addEventListener("click", beginSitting);
+
+document.getElementById("sendBtn").addEventListener("click", sendMessage);
+
+/* Enter sends the message (like a phone keyboard's send/return
+   key). Shift+Enter still inserts a newline for longer replies. */
+document.getElementById("input").addEventListener("keydown", (e)=>{
+  if(e.key === "Enter" && !e.shiftKey){
+    e.preventDefault();
+    sendMessage();
+  }
+});
+document.getElementById("input").addEventListener("input", (e)=>{
+  e.target.style.height = "auto";
+  e.target.style.height = Math.min(e.target.scrollHeight, 140) + "px";
+});
+
+/* ==========================================================
+   INIT — prefill from saved settings, open modal on launch
+========================================================== */
+
+document.getElementById("querentName").value = SETTINGS.querentName || "";
+
+if(SETTINGS.sittingType){
+  document.querySelectorAll("#sittingGrid .opt-card").forEach(c=>{
+    c.classList.toggle("selected", c.dataset.value === SETTINGS.sittingType);
+  });
+  sittingType = SETTINGS.sittingType;
+}
+
+/* The main index.html owns the Mystic choice. This page only opens the
+   normal sitting setup for the Mystic already selected there. */
+openSettingsModal();
+</script>
+<script src="../tarot/reading-history.js"></script>
+<script src="../tarot/reading-history-modal.js"></script>
+<script>
+function openSeleneHistory() {
+    MysticHistoryModal.open({
+        title: "Selene Sittings",
+        icon: "🕯️",
+        filter: (entry) => !["Mystic Tarot","Astragalomancy","Numerology","Dream Interpreter","Celestial Horoscope"].includes(entry.app || "Mystic Tarot")
+    });
+}
+</script>
+
+<div class="scroll-hint" id="scrollHint" aria-hidden="true">⌄</div>
+<style>
+  .scroll-hint {
+    position: fixed;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    z-index: 500;
+    font-size: 2em;
+    line-height: 1;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+    opacity: 0;
+    pointer-events: none;
+    cursor: pointer;
+    animation: scrollHintBounce 1.6s ease-in-out infinite;
+    transition: opacity 0.4s ease;
+  }
+  .scroll-hint.show {
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  @keyframes scrollHintBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(10px); }
+  }
+</style>
+<script>
+(function () {
+  var hint = document.getElementById("scrollHint");
+  if (!hint) return;
+
+  function check() {
+    var scrollable = document.documentElement.scrollHeight > window.innerHeight + 60;
+    var atTop = window.scrollY < 40;
+    hint.classList.toggle("show", scrollable && atTop);
+  }
+
+  hint.addEventListener("click", function () {
+    window.scrollBy({ top: window.innerHeight * 0.8, behavior: "smooth" });
+  });
+
+  window.addEventListener("scroll", check, { passive: true });
+  window.addEventListener("resize", check);
+  setInterval(check, 700);
+  check();
+})();
+</script>
+
+</body>
+</html>

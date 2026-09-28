@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Dream Interpreter</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background:
+      radial-gradient(circle at 50% 10%, rgba(116, 66, 173, 0.24), transparent 32%),
+      radial-gradient(circle at 15% 65%, rgba(128, 20, 67, 0.15), transparent 28%),
+      radial-gradient(circle at 85% 70%, rgba(67, 30, 126, 0.15), transparent 28%),
+      linear-gradient(rgba(5, 2, 10, 0.55), rgba(5, 2, 10, 0.82)),
+      url('stars and moons.png') center top / cover no-repeat fixed;
+    color: white;
+    font-family: 'Cinzel', Georgia, serif;
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(75, 0, 130, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.3) 0%, transparent 70%);
+    pointer-events: none;
+    animation: fogMove 20s ease-in-out infinite;
+    z-index: 1;
+  }
+
+  @keyframes fogMove {
+    0%, 100% { opacity: 0.6; transform: scale(1) translateX(0); }
+    50% { opacity: 0.8; transform: scale(1.1) translateX(20px); }
+  }
+
+  .mystical-symbol {
+    position: fixed; font-size: 2em; opacity: 0.15; pointer-events: none;
+    z-index: 0; animation: float 15s ease-in-out infinite;
+  }
+  .symbol-1 { top: 10%; left: 8%; animation-delay: 0s; }
+  .symbol-2 { top: 15%; right: 10%; animation-delay: 2s; }
+  .symbol-3 { bottom: 12%; left: 12%; animation-delay: 4s; }
+  .symbol-4 { bottom: 20%; right: 8%; animation-delay: 6s; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(10deg); }
+  }
+
+  .back-btn{
+    position:fixed; top:20px; left:20px; z-index:200;
+    background:rgba(28, 15, 40,0.85); color:#ffd700;
+    border:2px solid rgba(255,215,0,0.5); padding:10px 20px;
+    border-radius:999px; font-weight:bold; font-size:1em;
+    text-decoration:none; cursor:pointer; transition:all .3s ease;
+    box-shadow:0 4px 10px rgba(0,0,0,0.4);
+  }
+  .back-btn:hover{ background:rgba(157, 32, 72,0.5); border-color:#ffed4e; transform:translateY(-2px); }
+.history-btn{
+  position:fixed; top:20px; right:20px; z-index:200;
+  background:rgba(28, 15, 40,0.85); color:#ffd700;
+  border:2px solid rgba(255,215,0,0.5); padding:10px 16px;
+  border-radius:999px; font-weight:bold; font-size:1em;
+  text-decoration:none; cursor:pointer; transition:all .3s ease;
+  box-shadow:0 4px 10px rgba(0,0,0,0.4);
+  font-family: 'Cinzel', Georgia, serif;
+}
+.history-btn:hover{ background:rgba(157, 32, 72,0.5); border-color:#ffed4e; transform:translateY(-2px); }
+
+  .container {
+    position: relative; z-index: 2; text-align: center;
+    max-width: 900px; width: 100%; margin: 0 auto;
+    padding-top: 70px;
+  }
+
+  h1 {
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: 3.2em;
+    margin-bottom: 8px;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255,215,0,.8), 0 0 20px rgba(255,215,0,.6), 3px 3px 6px rgba(0,0,0,.8);
+    animation: titleFloat 3s ease-in-out infinite;
+    letter-spacing: 2px;
+  }
+  @keyframes titleFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .subtitle {
+    font-size: 1.15em; color: #b9a9c8; margin-bottom: 35px; font-style: italic;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  }
+
+  .panel {
+    background: rgba(28, 15, 40, 0.85);
+    border: 3px solid rgba(255, 215, 0, 0.5);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 0 30px rgba(138, 43, 226, 0.35), 0 8px 32px rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+    margin-bottom: 26px;
+    text-align: left;
+  }
+
+  .section-title {
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: 1.5em;
+    color: #ffd700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    text-align: center;
+  }
+
+  .section-hint {
+    text-align: center; color: #b9a9c8; font-style: italic; font-size: 0.92em;
+    margin-bottom: 20px;
+  }
+
+  .field-group { margin-bottom: 22px; }
+  .field-group label {
+    display: block; color: #ffd700; font-weight: bold; font-size: 0.92em; margin-bottom: 8px;
+  }
+  .field-group textarea {
+    width: 100%; background: rgba(11, 22, 34, 0.9);
+    border: 1px solid rgba(255, 215, 0, 0.35); border-radius: 6px;
+    color: #fff; padding: 12px 14px; font-size: 1em; font-family: 'Cinzel', Georgia, serif;
+    min-height: 140px; resize: vertical; line-height: 1.5;
+  }
+  .field-group textarea:focus { outline: none; border-color: #ffd700; }
+  .field-group .field-help { color: #8a94a3; font-size: 0.78em; margin-top: 6px; line-height: 1.4; }
+
+  .toggle-row {
+    display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 6px;
+  }
+  .toggle-card {
+    flex: 1 1 220px;
+    background: rgba(11, 22, 34, 0.7);
+    border: 2px solid rgba(255, 215, 0, 0.25);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .toggle-card:hover { border-color: rgba(255, 215, 0, 0.6); }
+  .toggle-card.selected {
+    border-color: #ffd700;
+    background: linear-gradient(135deg, rgba(58, 16, 36,0.5), rgba(157, 32, 72,0.4));
+    box-shadow: 0 0 15px rgba(255,215,0,0.3);
+  }
+  .toggle-card input[type="checkbox"] { margin-top: 3px; accent-color: #ffd700; }
+  .toggle-title { font-weight: bold; color: #ffd700; font-size: 0.98em; }
+  .toggle-desc { color: #b9a9c8; font-size: 0.78em; margin-top: 3px; line-height: 1.35; }
+
+  .zodiac-select-wrap {
+    display: none; margin-top: 14px;
+  }
+  .zodiac-select-wrap.show { display: block; }
+  .zodiac-select-wrap select {
+    width: 100%; background: rgba(11, 22, 34, 0.9);
+    border: 1px solid rgba(255, 215, 0, 0.35); border-radius: 6px;
+    color: #fff; padding: 10px 12px; font-size: 0.95em; cursor: pointer;
+  }
+  .zodiac-select-wrap select:focus { outline: none; border-color: #ffd700; }
+
+  .reveal-btn {
+    width: 100%;
+    margin-top: 10px;
+    background: linear-gradient(135deg, #3a1024 0%, #9d2048 100%);
+    color: white;
+    border: 2px solid #ffd700;
+    padding: 16px 30px;
+    font-size: 1.2em;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+  }
+  .reveal-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #7a1030 0%, #9d2048 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.6), 0 0 20px rgba(255,215,0,0.3);
+    border-color: #ffed4e;
+  }
+  .reveal-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .card-drawn {
+    display: none;
+    text-align: center;
+    margin-bottom: 26px;
+  }
+  .card-drawn.show { display: block; }
+  .card-drawn img {
+    width: 140px; border-radius: 10px;
+    border: 2px solid rgba(255, 215, 0, 0.6);
+    box-shadow: 0 0 20px rgba(255,215,0,0.35), 0 8px 20px rgba(0,0,0,0.6);
+  }
+  .card-drawn img.reversed { transform: rotate(180deg); }
+  .card-drawn .card-name { color: #ffd700; font-weight: bold; margin-top: 10px; font-size: 1.05em; }
+  .card-drawn .card-orientation { color: #b9a9c8; font-style: italic; font-size: 0.85em; }
+
+  .reading-box {
+    display: none;
+    background: rgba(28, 15, 40, 0.92);
+    border: 2px solid rgba(255, 215, 0, 0.5);
+    border-radius: 14px;
+    padding: 30px;
+    margin-top: 26px;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .reading-box.show { display: block; }
+  .reading-box.revealed { opacity: 1; transform: translateY(0); }
+  .reading-box h2 {
+    text-align: center; color: #ffd700; font-family: 'Cinzel', Georgia, serif;
+    font-size: 1.8em; letter-spacing: 1px; margin-bottom: 6px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  }
+  .reading-sub { text-align: center; color: #b9a9c8; font-style: italic; font-size: 0.9em; margin-bottom: 18px; }
+  .reading-body { color: #f7f0ff; line-height: 1.85; font-size: 1.05em; white-space: pre-wrap; }
+  .reading-loading { color: #b9a9c8; font-style: italic; text-align: center; }
+  .reading-error { color: #ff9bb0; text-align: center; }
+  .reading-error a { color: #ffd700; }
+  .reading-footer { margin-top: 20px; text-align: center; }
+  .mini-btn {
+    background: transparent; border: 1px solid rgba(255,215,0,0.4); color: #ffd700;
+    padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85em;
+  }
+  .mini-btn:hover { background: rgba(255,215,0,0.1); }
+
+  .footer-note {
+    text-align: center; margin-top: 20px; font-size: 0.85em; color: #b9a9c8;
+    font-style: italic; text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 2.2em; }
+    .panel { padding: 20px; }
+    .back-btn { top: 10px; left: 10px; padding: 8px 12px; font-size: 0.85em; }
+    .history-btn { top: 10px; right: 10px; padding: 8px 12px; font-size: 0.85em; }
+    .container { padding-top: 55px; }
+  }
+</style>
+<script src="../mystic-ai-config.js"></script>
+<script src="../mystic-persona-prompts.js"></script>
+<script src="../theme-boot.js"></script>
+<script src="../mystic-effects.js"></script>
+</head>
+<body>
+
+<div class="mystical-symbol symbol-1">✨</div>
+<div class="mystical-symbol symbol-2">🌙</div>
+<div class="mystical-symbol symbol-3">⭐</div>
+<div class="mystical-symbol symbol-4">✨</div>
+
+<a href="../index.html" class="back-btn">&larr; Back</a>
+
+<button type="button" class="history-btn" title="Past Readings" onclick="openDreamsHistory()">📜 Past Readings</button>
+
+<div class="container">
+  <h1>🌙Dream Interpreter🌙</h1>
+  <p class="subtitle">Tell the Mystic what you saw while you slept...</p>
+
+  <div class="panel">
+    <div class="section-title">Your Dream</div>
+    <div class="section-hint">Describe it in as much detail as you can remember — places, people, objects, colors, how it felt.</div>
+
+    <div class="field-group">
+      <label for="dreamText">What happened in your dream?</label>
+      <textarea id="dreamText" placeholder="I dreamed I was walking through an abandoned house and found a black door..."></textarea>
+    </div>
+
+    <div class="toggle-row">
+      <label class="toggle-card" id="tarotToggleCard">
+        <input type="checkbox" id="connectTarot">
+        <span>
+          <span class="toggle-title">🔮 Connect to Tarot</span>
+          <span class="toggle-desc" style="display:block;">Draw a random card and let its symbolism color the interpretation.</span>
+        </span>
+      </label>
+
+      <label class="toggle-card" id="astroToggleCard">
+        <input type="checkbox" id="connectAstro">
+        <span>
+          <span class="toggle-title">✨ Connect to Astrology</span>
+          <span class="toggle-desc" style="display:block;">Tie the dream's symbolism to your zodiac sign.</span>
+        </span>
+      </label>
+    </div>
+
+    <div class="zodiac-select-wrap" id="zodiacSelectWrap">
+      <select id="zodiacSelect"></select>
+    </div>
+
+    <button class="reveal-btn" id="revealBtn" disabled>🌙 Interpret My Dream</button>
+  </div>
+
+  <div class="card-drawn" id="cardDrawn">
+    <img id="cardImg" src="" alt="">
+    <div class="card-name" id="cardName"></div>
+    <div class="card-orientation" id="cardOrientation"></div>
+  </div>
+
+  <div class="reading-box" id="readingBox">
+    <h2>Your Dream, Interpreted</h2>
+    <div class="reading-sub">Woven together by AI</div>
+    <div class="reading-body" id="readingBody"></div>
+    <div class="reading-footer">
+      <button type="button" class="mini-btn" id="reinterpretBtn">🔄 Reinterpret</button>
+    </div>
+  </div>
+
+  <p class="footer-note">Enjoy these interpretations for entertainment purposes only.</p>
+</div>
+
+<script src="dream.js"></script>
+<script src="../tarot/reading-history.js"></script>
+<script src="../tarot/reading-history-modal.js"></script>
+<script>
+function openDreamsHistory() {
+    MysticHistoryModal.open({
+        title: "Dream Readings",
+        icon: "🌙",
+        filter: (entry) => entry.app === "Dream Interpreter"
+    });
+}
+</script>
+<script>
+const dreamText = document.getElementById("dreamText");
+const connectTarot = document.getElementById("connectTarot");
+const connectAstro = document.getElementById("connectAstro");
+const tarotToggleCard = document.getElementById("tarotToggleCard");
+const astroToggleCard = document.getElementById("astroToggleCard");
+const zodiacSelectWrap = document.getElementById("zodiacSelectWrap");
+const zodiacSelect = document.getElementById("zodiacSelect");
+const revealBtn = document.getElementById("revealBtn");
+const cardDrawn = document.getElementById("cardDrawn");
+
+zodiacSelect.innerHTML = DreamMystic.ZODIAC_SIGNS
+  .map(z => `<option value="${z.name}">${z.symbol} ${z.name}</option>`)
+  .join("");
+
+function syncToggleCard(checkbox, card){
+  card.classList.toggle("selected", checkbox.checked);
+}
+
+connectTarot.addEventListener("change", () => syncToggleCard(connectTarot, tarotToggleCard));
+connectAstro.addEventListener("change", () => {
+  syncToggleCard(connectAstro, astroToggleCard);
+  zodiacSelectWrap.classList.toggle("show", connectAstro.checked);
+});
+
+function updateRevealState(){
+  revealBtn.disabled = dreamText.value.trim().length < 10;
+}
+dreamText.addEventListener("input", updateRevealState);
+
+let lastState = null;
+
+function runInterpretation(){
+  const text = dreamText.value.trim();
+  if (!text) return;
+
+  let card = null;
+  if (connectTarot.checked) {
+    card = DreamMystic.drawRandomCard();
+    document.getElementById("cardImg").src = "../tarot/cards/" + encodeURIComponent(card.file);
+    document.getElementById("cardImg").alt = card.name;
+    document.getElementById("cardImg").className = card.reversed ? "reversed" : "";
+    document.getElementById("cardName").textContent = card.name;
+    document.getElementById("cardOrientation").textContent = card.reversed ? "Reversed" : "Upright";
+    cardDrawn.classList.add("show");
+  } else {
+    cardDrawn.classList.remove("show");
+  }
+
+  const zodiac = connectAstro.checked ? zodiacSelect.value : null;
+
+  lastState = { text, card, zodiac };
+  DreamMystic.interpretDream(text, card, zodiac);
+
+  document.getElementById("readingBox").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+revealBtn.addEventListener("click", runInterpretation);
+document.getElementById("reinterpretBtn").addEventListener("click", () => {
+  if (lastState) DreamMystic.interpretDream(lastState.text, lastState.card, lastState.zodiac);
+});
+</script>
+
+<div class="scroll-hint" id="scrollHint" aria-hidden="true">⌄</div>
+<style>
+  .scroll-hint {
+    position: fixed;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    z-index: 500;
+    font-size: 2em;
+    line-height: 1;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+    opacity: 0;
+    pointer-events: none;
+    cursor: pointer;
+    animation: scrollHintBounce 1.6s ease-in-out infinite;
+    transition: opacity 0.4s ease;
+  }
+  .scroll-hint.show {
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  @keyframes scrollHintBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(10px); }
+  }
+</style>
+<script>
+(function () {
+  var hint = document.getElementById("scrollHint");
+  if (!hint) return;
+
+  function check() {
+    var scrollable = document.documentElement.scrollHeight > window.innerHeight + 60;
+    var atTop = window.scrollY < 40;
+    hint.classList.toggle("show", scrollable && atTop);
+  }
+
+  hint.addEventListener("click", function () {
+    window.scrollBy({ top: window.innerHeight * 0.8, behavior: "smooth" });
+  });
+
+  window.addEventListener("scroll", check, { passive: true });
+  window.addEventListener("resize", check);
+  setInterval(check, 700);
+  check();
+})();
+</script>
+
+</body>
+</html>

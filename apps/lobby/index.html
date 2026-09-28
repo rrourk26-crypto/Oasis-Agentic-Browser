@@ -1,0 +1,9186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Lobby • Live Chat</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0d0f18;
+  --panel:#151827;
+  --panel-alt:#1b1f31;
+  --line:#282d42;
+  --line-soft:#20243a;
+  --text:#e9ebf3;
+  --muted:#8790aa;
+  --muted-dim:#5c6580;
+  --accent:#e2a857;
+  --accent-soft:rgba(226,168,87,.14);
+  --accent-strong:#f0bd76;
+  --online:#54c98a;
+  --danger:#e06a72;
+
+  --mike:#6ea8ff;
+  --sarah:#c792ea;
+  --dave:#ffb86c;
+  --jen:#6fd68f;
+  --tony:#9aa5c0;
+  --lisa:#ff8fb1;
+  --rick:#d9b26a;
+  --amy:#e59bd6;
+  --kevin:#57c2e9;
+  --becky:#ff8c5a;
+
+  --llama:#a7d96b;
+  --you:#e2a857;
+
+  --hover:#242945;
+  --scroll-thumb:#2a3049;
+  --topbar-end:#12141f;
+  --me-bubble-1:#2a2135;
+  --me-bubble-2:#241d30;
+  --overlay:rgba(6,7,12,.6);
+  --shadow-soft:rgba(0,0,0,.4);
+  --shadow-strong:rgba(0,0,0,.5);
+}
+
+/* =========================================================
+   LIGHT THEME
+========================================================= */
+
+html[data-theme="light"]{
+  --bg:#f4f5fa;
+  --panel:#ffffff;
+  --panel-alt:#eef0f7;
+  --line:#dde1ec;
+  --line-soft:#e7e9f2;
+  --text:#1c1f2b;
+  --muted:#5b6280;
+  --muted-dim:#8790a6;
+  --accent:#b8781f;
+  --accent-soft:rgba(184,120,31,.12);
+  --accent-strong:#9c6416;
+  --online:#279e63;
+  --danger:#c9414d;
+
+  --hover:#e3e6f1;
+  --scroll-thumb:#c7cce0;
+  --topbar-end:#eceef6;
+  --me-bubble-1:#f3ecfb;
+  --me-bubble-2:#ece1f7;
+  --overlay:rgba(20,22,32,.45);
+  --shadow-soft:rgba(30,34,50,.12);
+  --shadow-strong:rgba(30,34,50,.18);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  height:100%;
+  margin:0;
+}
+
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:
+    radial-gradient(
+      1200px 600px at 15% -10%,
+      rgba(226,168,87,.06),
+      transparent 60%
+    ),
+    var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+}
+
+button,input,textarea,select{
+  font-family:'Inter',system-ui,sans-serif;
+  color:var(--text);
+}
+
+button{
+  cursor:pointer;
+}
+
+::selection{
+  background:var(--accent-soft);
+}
+
+.mono{
+  font-family:'JetBrains Mono',monospace;
+}
+
+/* =========================================================
+   SCROLLBARS
+========================================================= */
+
+#log::-webkit-scrollbar,
+.people::-webkit-scrollbar{
+  width:9px;
+}
+
+#log::-webkit-scrollbar-thumb,
+.people::-webkit-scrollbar-thumb{
+  background:var(--scroll-thumb);
+  border-radius:5px;
+}
+
+#log::-webkit-scrollbar-track,
+.people::-webkit-scrollbar-track{
+  background:transparent;
+}
+
+/* =========================================================
+   APP
+========================================================= */
+
+.app{
+  position:relative;
+  height:100vh;
+  height:100dvh;
+  max-width:1440px;
+  margin:auto;
+  display:grid;
+  grid-template-rows:auto 1fr;
+  border-left:1px solid var(--line);
+  border-right:1px solid var(--line);
+  background:var(--bg);
+}
+
+/* =========================================================
+   TOP
+========================================================= */
+
+.topbar{
+  background:linear-gradient(
+    180deg,
+    var(--panel),
+    var(--topbar-end)
+  );
+  border-bottom:1px solid var(--line);
+  padding:12px 16px 10px;
+}
+
+.brandrow{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+}
+
+.brand{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:19px;
+  font-weight:700;
+  letter-spacing:.2px;
+}
+
+.brand .dotpulse{
+  display:inline-block;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--online);
+  box-shadow:0 0 0 0 rgba(84,201,138,.6);
+  animation:pulseGlow 2.4s infinite;
+  margin-right:8px;
+  vertical-align:middle;
+}
+
+@keyframes pulseGlow{
+  0%{
+    box-shadow:0 0 0 0 rgba(84,201,138,.55);
+  }
+
+  70%{
+    box-shadow:0 0 0 7px rgba(84,201,138,0);
+  }
+
+  100%{
+    box-shadow:0 0 0 0 rgba(84,201,138,0);
+  }
+}
+
+.subtitle{
+  font-size:11.5px;
+  color:var(--muted);
+}
+
+.roombar{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+
+.roombar input,
+.roombar select,
+.roombar button{
+  height:30px;
+  border:1px solid var(--line);
+  border-radius:6px;
+  background:var(--panel-alt);
+}
+
+.roombar input,
+.roombar select{
+  padding:3px 10px;
+  font-size:12.5px;
+}
+
+.roombar input::placeholder{
+  color:var(--muted-dim);
+}
+
+#roomName{
+  width:170px;
+}
+
+#username{
+  width:140px;
+  border-color:var(--accent);
+}
+
+#model{
+  max-width:260px;
+  font-size:11.5px;
+}
+
+#plainModel{
+  max-width:260px;
+  font-size:11.5px;
+}
+
+.roombar button{
+  padding:0 11px;
+  font-size:12px;
+  font-weight:600;
+  color:var(--text);
+  background:var(--panel-alt);
+}
+
+.roombar button:hover{
+  background:var(--hover);
+}
+
+.status{
+  margin-left:auto;
+  font-size:11px;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.status .sdot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--online);
+  flex:0 0 auto;
+}
+
+.vu{
+  display:flex;
+  align-items:center;
+  gap:2px;
+  height:14px;
+  margin-left:4px;
+}
+
+.vu i{
+  width:3px;
+  height:6px;
+  background:var(--scroll-thumb);
+  border-radius:1px;
+  display:inline-block;
+}
+
+.vu i.on{
+  background:var(--accent);
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main{
+  min-height:0;
+  display:grid;
+  grid-template-columns:250px 1fr 300px;
+}
+
+/* =========================================================
+   PEOPLE
+========================================================= */
+
+.people{
+  min-height:0;
+  overflow:auto;
+  background:var(--panel);
+  border-right:1px solid var(--line);
+  padding:10px 8px;
+}
+
+.people h3{
+  margin:4px 6px 8px;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  color:var(--muted-dim);
+}
+
+.people-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
+  padding-right:2px;
+}
+
+.people-head h3{
+  margin:4px 0 8px 6px;
+  flex:1 1 auto;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.add-char-btn{
+  font-size:10.5px;
+  padding:4px 7px;
+  white-space:nowrap;
+  flex:0 0 auto;
+}
+
+.people-head-actions{
+  display:flex;
+  gap:4px;
+  flex:0 0 auto;
+  position:relative;
+}
+
+.preset-menu{
+  display:none;
+  position:absolute;
+  top:calc(100% + 4px);
+  right:0;
+  min-width:180px;
+  max-height:240px;
+  overflow-y:auto;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:8px;
+  box-shadow:0 8px 24px rgba(0,0,0,.25);
+  padding:4px;
+  z-index:40;
+}
+
+.preset-menu.open{
+  display:block;
+}
+
+.preset-menu-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  width:100%;
+  text-align:left;
+  padding:6px 8px;
+  border-radius:6px;
+  background:transparent;
+  border:none;
+  color:var(--text);
+  font-size:12px;
+  cursor:pointer;
+}
+
+.preset-menu-item:hover{
+  background:var(--hover);
+}
+
+.preset-menu-item .avatar{
+  width:20px;
+  height:20px;
+  flex:0 0 20px;
+  font-size:10px;
+}
+
+.preset-menu-empty{
+  padding:8px;
+  font-size:11px;
+  color:var(--muted-dim);
+  text-align:center;
+}
+
+.rowbtn.remove-char-btn:hover{
+  background:var(--danger);
+  color:#fff;
+}
+
+.person{
+  display:flex;
+  gap:9px;
+  align-items:center;
+  padding:6px 6px;
+  border-radius:8px;
+  cursor:pointer;
+  border:1px solid transparent;
+  position:relative;
+}
+
+.person:hover{
+  background:var(--panel-alt);
+}
+
+.person:hover .prow-actions{
+  opacity:1;
+}
+
+.person.editing{
+  background:var(--accent-soft);
+  border-color:rgba(226,168,87,.35);
+}
+
+.person.dm-active{
+  background:var(--accent-soft);
+  border-color:rgba(226,168,87,.4);
+}
+
+.person.llama-person{
+  border-top:1px solid var(--line);
+  margin-top:8px;
+  padding-top:10px;
+}
+
+.person.lobby-person{
+  margin-bottom:8px;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--line);
+}
+
+.lobby-avatar{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-size:16px;
+  background:var(--accent-soft);
+  flex:0 0 auto;
+}
+
+.pinfo{
+  min-width:0;
+  flex:1;
+}
+
+.pinfo .pname,
+.pinfo .psub{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.prow-actions{
+  display:flex;
+  gap:2px;
+  opacity:0;
+  flex:0 0 auto;
+}
+
+@media(max-width:760px){
+  .prow-actions{
+    opacity:1;
+  }
+}
+
+.rowbtn{
+  width:22px;
+  height:22px;
+  border:none;
+  border-radius:6px;
+  background:transparent;
+  color:var(--muted);
+  font-size:12px;
+  display:grid;
+  place-items:center;
+  padding:0;
+}
+
+.rowbtn:hover{
+  background:var(--hover);
+  color:var(--text);
+}
+
+.avatar{
+  width:32px;
+  height:32px;
+  flex:0 0 32px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  color:#0d0f18;
+  font-weight:700;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:13px;
+  position:relative;
+}
+
+.avatar.you{
+  background:var(--you) !important;
+}
+
+.avatar.llama{
+  background:var(--llama) !important;
+}
+
+.presence{
+  position:absolute;
+  right:-1px;
+  bottom:-1px;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--online);
+  border:2px solid var(--panel);
+}
+
+.person.typing-now .presence{
+  background:var(--accent);
+  animation:pulseGlow 1.1s infinite;
+}
+
+.unreaddot{
+  position:absolute;
+  left:-2px;
+  top:-2px;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--danger);
+  border:2px solid var(--panel);
+  display:none;
+}
+
+.person.has-unread .unreaddot{
+  display:block;
+}
+
+.backbtn{
+  border:1px solid var(--line);
+  background:var(--panel-alt);
+  border-radius:7px;
+  padding:5px 10px;
+  font-size:11.5px;
+  font-weight:600;
+  color:var(--text);
+  display:none;
+  align-items:center;
+  gap:5px;
+}
+
+.backbtn:hover{
+  background:var(--hover);
+}
+
+.dm-mode .backbtn{
+  display:inline-flex;
+}
+
+#dmControls{
+  display:none;
+}
+
+.dm-mode #roomControls{
+  display:none;
+}
+
+.dm-mode #dmControls{
+  display:flex;
+}
+
+.pname{
+  font-weight:600;
+  font-size:12.5px;
+  color:var(--text);
+}
+
+.psub{
+  font-size:10.5px;
+  color:var(--muted-dim);
+  margin-top:1px;
+}
+
+.person.typing-now .psub{
+  color:var(--accent);
+}
+
+.person.typing-now .psub::after{
+  content:" · typing";
+}
+
+/* =========================================================
+   CHAT
+========================================================= */
+
+.chat{
+  min-width:0;
+  min-height:0;
+  display:grid;
+  grid-template-rows:auto 1fr auto;
+  background:var(--bg);
+}
+
+.chathead{
+  padding:11px 16px;
+  border-bottom:1px solid var(--line);
+  background:var(--panel);
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+}
+
+.chathead strong{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:14.5px;
+  color:var(--text);
+}
+
+.chathead .meta{
+  font-size:11.5px;
+  color:var(--muted);
+}
+
+#log{
+  overflow:auto;
+  padding:14px 18px 20px;
+}
+
+.daymark{
+  text-align:center;
+  font-size:10.5px;
+  color:var(--muted-dim);
+  margin:14px 0 18px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+.msg{
+  display:flex;
+  gap:10px;
+  margin:3px 0;
+  align-items:flex-start;
+}
+
+.msg.grouped{
+  margin-top:1px;
+}
+
+.msg.grouped .avatar-slot{
+  visibility:hidden;
+}
+
+.msg.grouped .name{
+  display:none;
+}
+
+.msg.me{
+  flex-direction:row-reverse;
+}
+
+.avatar-slot{
+  flex:0 0 32px;
+}
+
+.bubblewrap{
+  max-width:min(720px,80%);
+  display:flex;
+  flex-direction:column;
+}
+
+.msg.me .bubblewrap{
+  align-items:flex-end;
+}
+
+.name{
+  font-size:12px;
+  font-weight:700;
+  font-family:'Space Grotesk',sans-serif;
+  margin:8px 2px 3px;
+}
+
+.bubble{
+  border-radius:14px;
+  padding:8px 12px;
+  background:var(--panel-alt);
+  border:1px solid var(--line-soft);
+  overflow-wrap:anywhere;
+  font-size:13.5px;
+  line-height:1.42;
+}
+
+.msg.me .bubble{
+  background:linear-gradient(
+    180deg,
+    var(--me-bubble-1),
+    var(--me-bubble-2)
+  );
+  border-color:rgba(226,168,87,.28);
+}
+
+.msg:not(.me) .bubble{
+  border-top-left-radius:4px;
+}
+
+.msg.me .bubble{
+  border-top-right-radius:4px;
+}
+
+.time{
+  font-size:9.5px;
+  color:var(--muted-dim);
+  margin:3px 4px 0;
+  font-family:'JetBrains Mono',monospace;
+}
+
+.replytag{
+  font-size:10px;
+  color:var(--muted-dim);
+  margin:0 2px 2px;
+}
+
+.replytag b{
+  color:var(--muted);
+  font-weight:600;
+}
+
+.mention-highlight{
+  color:var(--accent-strong);
+  font-weight:700;
+}
+
+.typing .bubble{
+  display:inline-flex;
+  gap:4px;
+  align-items:center;
+  padding:10px 13px;
+}
+
+.typing .tdot{
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:var(--muted);
+  animation:tbounce 1.1s infinite ease-in-out;
+}
+
+.typing .tdot:nth-child(2){
+  animation-delay:.15s;
+}
+
+.typing .tdot:nth-child(3){
+  animation-delay:.3s;
+}
+
+@keyframes tbounce{
+  0%,60%,100%{
+    transform:translateY(0);
+    opacity:.5;
+  }
+
+  30%{
+    transform:translateY(-3px);
+    opacity:1;
+  }
+}
+
+.system-line{
+  text-align:center;
+  font-size:11px;
+  font-style:italic;
+  color:var(--muted-dim);
+  margin:10px 0;
+}
+
+.mention-line{
+  text-align:center;
+  font-size:10px;
+  color:var(--accent);
+  margin:6px 0;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.chat-footer{
+  border-top:1px solid var(--line);
+  background:var(--panel);
+  padding:10px 14px;
+}
+
+.composer{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:9px;
+  max-width:960px;
+  margin:auto;
+}
+
+.attachbtn{
+  min-width:44px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--panel-alt);
+  color:var(--text);
+  font-size:16px;
+  display:grid;
+  place-items:center;
+}
+
+.attachbtn:hover{
+  background:var(--hover);
+}
+
+.attach-preview{
+  display:none;
+  align-items:center;
+  gap:8px;
+  max-width:960px;
+  margin:0 auto 8px;
+  background:var(--panel-alt);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:6px 10px;
+  font-size:11.5px;
+  color:var(--muted);
+}
+
+.attach-preview.show{
+  display:flex;
+}
+
+.attach-preview img{
+  width:34px;
+  height:34px;
+  object-fit:cover;
+  border-radius:6px;
+  flex:0 0 auto;
+}
+
+.attach-preview .attach-name{
+  flex:1;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:var(--text);
+}
+
+.attach-preview button{
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  font-size:14px;
+  cursor:pointer;
+  padding:2px 6px;
+}
+
+.attach-preview button:hover{
+  color:var(--danger);
+}
+
+.msg-attachment-img{
+  display:block;
+  max-width:240px;
+  max-height:240px;
+  border-radius:10px;
+  margin-top:6px;
+  border:1px solid var(--line);
+}
+
+.msg-attachment-file{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-top:6px;
+  padding:6px 10px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--panel-alt);
+  font-size:11.5px;
+  color:var(--muted);
+  max-width:260px;
+}
+
+.msg-attachment-file .fname{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:var(--text);
+}
+
+.msg-attachment-wrap{
+  position:relative;
+  display:inline-block;
+}
+
+.attachment-dl-btn{
+  border:none;
+  cursor:pointer;
+  border-radius:6px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.msg-attachment-wrap .attachment-dl-btn{
+  position:absolute;
+  top:12px;
+  right:6px;
+  width:26px;
+  height:26px;
+  background:rgba(10,11,18,.62);
+  color:#fff;
+  font-size:13px;
+  opacity:0;
+  transition:opacity .12s ease;
+}
+
+.msg-attachment-wrap:hover .attachment-dl-btn{
+  opacity:1;
+}
+
+.msg-attachment-file .attachment-dl-btn{
+  margin-left:auto;
+  flex-shrink:0;
+  width:22px;
+  height:22px;
+  background:transparent;
+  color:var(--muted);
+  font-size:12.5px;
+}
+
+.msg-attachment-file .attachment-dl-btn:hover{
+  background:var(--hover);
+  color:var(--text);
+}
+
+textarea{
+  resize:none;
+  min-height:46px;
+  max-height:150px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:11px 13px;
+  font-size:13.5px;
+  background:var(--panel-alt);
+  color:var(--text);
+}
+
+textarea:focus{
+  outline:none;
+  border-color:var(--accent);
+}
+
+textarea::placeholder{
+  color:var(--muted-dim);
+}
+
+.send{
+  min-width:84px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(
+    180deg,
+    var(--accent-strong),
+    var(--accent)
+  );
+  color:#22160a;
+  font-weight:700;
+  font-size:13px;
+}
+
+.send:disabled{
+  opacity:.45;
+  cursor:default;
+}
+
+.send:not(:disabled):hover{
+  filter:brightness(1.06);
+}
+
+.controls{
+  max-width:960px;
+  margin:8px auto 0;
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+  font-size:11px;
+  color:var(--muted);
+}
+
+.controls select{
+  font-size:11px;
+  background:var(--panel-alt);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:4px 6px;
+}
+
+.smallbtn{
+  border:1px solid var(--line);
+  background:var(--panel-alt);
+  border-radius:6px;
+  padding:5px 9px;
+  cursor:pointer;
+  color:var(--text);
+  font-size:11px;
+}
+
+.smallbtn:hover{
+  background:var(--hover);
+}
+
+.smallbtn.on{
+  border-color:var(--accent);
+  color:var(--accent);
+}
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+.settings{
+  min-height:0;
+  overflow:auto;
+  background:var(--panel);
+  border-left:1px solid var(--line);
+  padding:0 0 20px;
+}
+
+.settings-head{
+  position:sticky;
+  top:0;
+  background:var(--panel);
+  border-bottom:1px solid var(--line);
+  padding:12px 14px;
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  font-size:13px;
+  z-index:2;
+}
+
+.settings-head .sub{
+  font-family:'Inter',sans-serif;
+  font-weight:400;
+  font-size:10.5px;
+  color:var(--muted);
+  margin-top:2px;
+}
+
+.settings-section{
+  border-bottom:1px solid var(--line-soft);
+}
+
+.settings-section summary{
+  cursor:pointer;
+  list-style:none;
+  padding:12px 14px;
+  font-size:12px;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  user-select:none;
+}
+
+.settings-section summary::-webkit-details-marker{
+  display:none;
+}
+
+.settings-section summary::after{
+  content:"›";
+  transform:rotate(90deg);
+  color:var(--muted-dim);
+  transition:transform .15s;
+  font-size:15px;
+}
+
+.settings-section:not([open]) summary::after{
+  transform:rotate(0deg);
+}
+
+.settings-section summary:hover{
+  background:var(--hover);
+}
+
+.settings-body{
+  padding:2px 14px 14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.settings label{
+  display:block;
+  font-weight:600;
+  color:var(--muted);
+  font-size:10.5px;
+  text-transform:uppercase;
+  letter-spacing:.03em;
+  margin-bottom:4px;
+}
+
+.settings input,
+.settings textarea,
+.settings select{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:7px;
+  padding:7px 9px;
+  background:var(--panel-alt);
+  font-size:12px;
+}
+
+.settings textarea{
+  height:90px;
+  resize:vertical;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+}
+
+.settings-toggle-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.settings-toggle-row label{
+  margin:0;
+}
+
+.settings-fetch-row{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.settings-fetch-row select{
+  flex:1;
+  min-width:0;
+}
+
+.save-note{
+  font-size:10px;
+  color:var(--muted-dim);
+  margin-top:2px;
+}
+
+.danger-zone{
+  padding:14px;
+}
+
+.model-help{
+  font-size:9.5px;
+  color:var(--muted-dim);
+  margin-top:4px;
+  line-height:1.4;
+}
+
+/* =========================================================
+   CHARACTER EDITOR
+========================================================= */
+
+.editor{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:var(--overlay);
+  backdrop-filter:blur(2px);
+  z-index:1000;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+
+.editor.open{
+  display:flex;
+}
+
+.editor-box{
+  width:min(600px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:12px;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+
+.editor-title{
+  padding:14px 16px;
+  font-weight:700;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:14.5px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.editor-body{
+  padding:16px;
+}
+
+.editor-body label{
+  display:block;
+  font-size:11px;
+  font-weight:600;
+  color:var(--muted);
+  margin-bottom:5px;
+  margin-top:14px;
+}
+
+.editor-body label:first-child{
+  margin-top:0;
+}
+
+.editor-body input,
+.editor-body textarea{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:9px 11px;
+  background:var(--panel-alt);
+  font-size:12.5px;
+}
+
+.editor-body textarea{
+  height:170px;
+  resize:vertical;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+}
+
+.editor-body input:focus,
+.editor-body textarea:focus{
+  outline:none;
+  border-color:var(--accent);
+}
+
+.editor-buttons{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:14px;
+}
+
+/* =========================================================
+   ACTIVITY
+========================================================= */
+
+.activity-box{
+  padding:10px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:8px;
+}
+
+.activity-row{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin:7px 0;
+}
+
+.activity-row label{
+  min-width:150px;
+  margin:0 !important;
+}
+
+.activity-row input[type=range]{
+  flex:1;
+  accent-color:var(--accent);
+}
+
+.activity-value{
+  width:42px;
+  text-align:right;
+  font-weight:700;
+  color:var(--accent);
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+.people-toggle,
+.settings-toggle{
+  display:none;
+}
+
+@media(max-width:1100px){
+
+  .main{
+    grid-template-columns:230px 1fr;
+  }
+
+  .settings{
+    display:none;
+    position:absolute;
+    z-index:60;
+    top:104px;
+    bottom:0;
+    right:0;
+    width:290px;
+    box-shadow:-6px 0 20px rgba(0,0,0,.4);
+  }
+
+  .settings.open{
+    display:block;
+  }
+
+  .settings-toggle{
+    display:inline-block;
+  }
+}
+
+@media(max-width:760px){
+
+  .main{
+    grid-template-columns:1fr;
+  }
+
+  .people{
+    display:none;
+    position:absolute;
+    z-index:50;
+    top:104px;
+    bottom:112px;
+    left:0;
+    width:230px;
+    box-shadow:6px 0 20px rgba(0,0,0,.4);
+  }
+
+  .people-toggle{
+    display:inline-block;
+  }
+
+  #roomName{
+    width:120px;
+  }
+
+  #username{
+    width:110px;
+  }
+
+  .settings{
+    top:104px;
+    bottom:112px;
+  }
+
+  #model,
+  #plainModel{
+    max-width:180px;
+  }
+}
+
+/* =========================================================
+   MESSAGE ACTIONS — react / edit / copy / delete
+========================================================= */
+
+.bubble-shell{
+  position:relative;
+}
+
+.msg-actions{
+  position:absolute;
+  top:-13px;
+  right:6px;
+  display:flex;
+  gap:2px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:2px;
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(4px);
+  transition:opacity .12s ease, transform .12s ease;
+  box-shadow:0 4px 10px var(--shadow-soft);
+  z-index:5;
+}
+
+.msg.me .msg-actions{
+  right:auto;
+  left:6px;
+}
+
+.msg:hover .msg-actions{
+  opacity:1;
+  pointer-events:auto;
+  transform:translateY(0);
+}
+
+.msg-action-btn{
+  width:22px;
+  height:22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  border-radius:6px;
+  cursor:pointer;
+  font-size:12px;
+  line-height:1;
+}
+
+.msg-action-btn:hover{
+  background:var(--hover);
+  color:var(--text);
+}
+
+.emoji-picker{
+  position:absolute;
+  top:-46px;
+  right:6px;
+  display:none;
+  gap:3px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:4px;
+  box-shadow:0 6px 16px var(--shadow-strong);
+  z-index:6;
+}
+
+.msg.me .emoji-picker{
+  right:auto;
+  left:6px;
+}
+
+.emoji-picker button{
+  border:none;
+  background:transparent;
+  font-size:15px;
+  padding:3px 4px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.emoji-picker button:hover{
+  background:var(--hover);
+}
+
+.msg-reactions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  margin:4px 2px 0;
+}
+
+.reaction-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  font-size:11px;
+  padding:2px 7px;
+  border-radius:999px;
+  background:var(--panel-alt);
+  border:1px solid var(--line-soft);
+  color:var(--muted);
+  cursor:pointer;
+  font-family:'Inter',sans-serif;
+}
+
+.reaction-pill.mine{
+  border-color:var(--accent);
+  color:var(--accent-strong);
+  background:var(--accent-soft);
+}
+
+.reaction-pill:hover{
+  background:var(--hover);
+}
+
+.edit-box textarea{
+  width:100%;
+  min-width:200px;
+  background:var(--panel);
+  border:1px solid var(--accent);
+  border-radius:10px;
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  font-size:13.5px;
+  padding:8px 10px;
+  resize:vertical;
+}
+
+.edit-actions{
+  display:flex;
+  gap:6px;
+  margin-top:5px;
+  justify-content:flex-end;
+}
+
+.edit-actions button{
+  font-size:11px;
+  padding:4px 10px;
+  border-radius:6px;
+  border:1px solid var(--line);
+  background:var(--panel-alt);
+  color:var(--text);
+  cursor:pointer;
+}
+
+.edit-actions button.primary{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#1c1406;
+  font-weight:600;
+}
+
+.edited-tag{
+  font-size:9.5px;
+  color:var(--muted-dim);
+  margin-left:4px;
+}
+
+/* =========================================================
+   PASTE BUTTON (mobile-friendly manual paste)
+========================================================= */
+
+.field-with-paste{
+  position:relative;
+}
+
+.field-with-paste input{
+  padding-right:34px !important;
+}
+
+.paste-btn{
+  position:absolute;
+  top:50%;
+  right:4px;
+  transform:translateY(-50%);
+  width:25px;
+  height:25px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  border-radius:6px;
+  cursor:pointer;
+  font-size:13px;
+  padding:0;
+}
+
+.paste-btn:hover{
+  background:var(--hover);
+  color:var(--text);
+}
+
+.paste-btn:active{
+  color:var(--accent);
+}
+
+/* =========================================================
+   NEW MESSAGES INDICATOR
+   Sticks to the bottom of the scrollable log so it always
+   sits in the right place regardless of footer height, and
+   only shows up while you've scrolled away from the bottom.
+========================================================= */
+
+#newMsgIndicator{
+  position:sticky;
+  bottom:10px;
+  margin:10px auto 0;
+  width:max-content;
+  display:none;
+  align-items:center;
+  gap:6px;
+  background:var(--accent);
+  color:#1c1406;
+  border:none;
+  border-radius:999px;
+  padding:7px 14px;
+  font-size:12px;
+  font-weight:600;
+  font-family:'Inter',sans-serif;
+  cursor:pointer;
+  box-shadow:0 6px 16px var(--shadow-strong);
+  z-index:8;
+}
+
+#newMsgIndicator.show{
+  display:flex;
+}
+
+#newMsgIndicator:hover{
+  filter:brightness(1.05);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- =======================================================
+     HEADER
+======================================================= -->
+
+<header class="topbar">
+
+  <div class="brandrow">
+    <div class="brand">
+      <span class="dotpulse"></span>
+      The Lobby
+    </div>
+  </div>
+
+  <div class="subtitle">
+    One local model. Any number of personalities. One neutral Llama. One very busy chat room.
+  </div>
+
+  <div class="roombar">
+
+    <button
+      class="people-toggle"
+      onclick="togglePeople()"
+      title="Chats"
+    >👥</button>
+
+    <input
+      id="username"
+      value="Guest"
+      maxlength="24"
+      title="Your username"
+      placeholder="Your username"
+    >
+
+    <input
+      id="roomName"
+      value="The Lobby"
+      title="Room name"
+    >
+
+    <button
+      class="settings-toggle"
+      onclick="toggleSettings()"
+      title="Settings"
+    >⚙ Settings</button>
+
+    <button
+      id="themeToggle"
+      onclick="toggleTheme()"
+      title="Toggle light / dark mode"
+    >🌙 Dark</button>
+
+    <span id="status" class="status">
+
+      <span class="sdot"></span>
+
+      <span id="statusText">
+        Ready
+      </span>
+
+      <span
+        class="vu"
+        id="vu"
+      ></span>
+
+    </span>
+
+  </div>
+
+</header>
+
+
+<!-- =======================================================
+     MAIN — three columns: chats | conversation | settings
+======================================================= -->
+
+<section class="main">
+
+  <aside
+    class="people"
+    id="people"
+  ></aside>
+
+  <section class="chat">
+
+    <div
+      class="chathead"
+      id="chathead"
+    >
+
+      <button
+        class="backbtn"
+        onclick="backToRoom()"
+      >
+        ← Lobby
+      </button>
+
+      <strong id="roomTitle">
+        The Lobby
+      </strong>
+
+      <span
+        class="meta"
+        id="roomMeta"
+      >
+        • 11 people online
+      </span>
+
+    </div>
+
+    <div id="log"></div>
+
+    <div class="chat-footer">
+
+    <div
+      class="attach-preview"
+      id="attachPreview"
+    ></div>
+
+    <div class="composer">
+
+      <button
+        id="attachBtn"
+        class="attachbtn"
+        type="button"
+        title="Attach a file for characters to see"
+        onclick="document.getElementById('fileInput').click()"
+      >📎</button>
+
+      <input
+        type="file"
+        id="fileInput"
+        accept="image/*,.txt,.md,.json,.csv,.js,.py,.log,.html,.css,.yml,.yaml"
+        style="display:none"
+        onchange="handleFileSelect(event)"
+      >
+
+      <textarea
+        id="input"
+        placeholder="Type a message to the room... Try @Sarah or @Llama"
+        autofocus
+      ></textarea>
+
+      <button
+        id="send"
+        class="send"
+        onclick="sendMessage()"
+      >
+        Send
+      </button>
+
+    </div>
+
+
+    <div
+      class="controls"
+      id="roomControls"
+    >
+
+      <button
+        class="smallbtn"
+        onclick="seedConversation()"
+      >
+        🎲 Start chatter
+      </button>
+
+      <button
+        class="smallbtn on"
+        onclick="toggleAutonomous()"
+        id="autoButton"
+      >
+        ⏸ Pause AI chatter
+      </button>
+
+      <button
+        class="smallbtn"
+        onclick="clearChat()"
+      >
+        🗑 Clear
+      </button>
+
+    </div>
+
+
+    <div
+      class="controls"
+      id="dmControls"
+    >
+
+      <span id="dmHint">
+        Private conversation — only you and this person see it.
+      </span>
+
+      <button
+        class="smallbtn"
+        onclick="clearDM()"
+      >
+        🗑 Clear this DM
+      </button>
+
+    </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       SETTINGS — right sidebar, Messenger "chat info" style
+  ===================================================== -->
+
+  <aside
+    class="settings"
+    id="settings"
+  >
+
+    <div class="settings-head">
+      Settings
+      <div class="sub">Characters &amp; behavior — saved automatically. Connected to this browser's AI automatically.</div>
+    </div>
+
+    <!-- Connection now comes from the Oasis browser's own AI settings
+         (see the "BROWSER AI CONNECTION" section further down in this
+         file's main script), so this section is hidden rather than
+         removed — the fields still exist and are kept in sync, the
+         rest of the app just doesn't show them to edit anymore. -->
+    <details class="settings-section" open style="display:none">
+      <summary>Model connection</summary>
+      <div class="settings-body">
+
+        <div>
+          <label>API base URL</label>
+          <div class="field-with-paste">
+            <input
+              id="apiBase"
+              value=""
+              placeholder="http://localhost:1234/v1"
+              oninput="persistState()"
+            >
+            <button
+              type="button"
+              class="paste-btn"
+              title="Paste"
+              onclick="pasteIntoField('apiBase')"
+            >📋</button>
+          </div>
+        </div>
+
+        <div>
+          <label>API key</label>
+          <div class="field-with-paste">
+            <input
+              id="apiKey"
+              type="password"
+              value=""
+              placeholder="Usually blank for local servers"
+              oninput="persistState()"
+            >
+            <button
+              type="button"
+              class="paste-btn"
+              title="Paste"
+              onclick="pasteIntoField('apiKey')"
+            >📋</button>
+          </div>
+        </div>
+
+        <div>
+          <label>Character model</label>
+          <select id="model" title="Character model" onchange="persistState()">
+            <option value="meta-llama-3.1-8b-instruct:2">
+              meta-llama-3.1-8b-instruct:2
+            </option>
+          </select>
+          <div class="model-help">
+            Used by every character except plain Llama.
+          </div>
+        </div>
+
+        <div>
+          <label>Plain Llama model</label>
+          <select id="plainModel" title="Plain Llama model" onchange="persistState()">
+            <option value="meta-llama-3.1-8b-instruct:2">
+              meta-llama-3.1-8b-instruct:2
+            </option>
+          </select>
+          <div class="model-help">
+            The neutral model used by @Llama — no character prompt.
+          </div>
+        </div>
+
+        <div class="settings-fetch-row">
+          <button class="ghostbtn" style="flex:1" onclick="loadModels()">
+            🔄 Refresh models
+          </button>
+        </div>
+
+      </div>
+    </details>
+
+    <details class="settings-section">
+      <summary>Characters &amp; room</summary>
+      <div class="settings-body">
+
+        <div class="settings-toggle-row">
+          <label style="margin:0">Include plain Llama</label>
+          <input
+            id="includeLlamaToggle"
+            type="checkbox"
+            checked
+            onchange="onIncludeLlamaChange()"
+          >
+        </div>
+
+        <div class="save-note">
+          Add or remove individual characters from the chat list on the left — use the ➕ button or each character's ✎ / 🗑.
+        </div>
+
+      </div>
+    </details>
+
+    <details class="settings-section">
+      <summary>Personality &amp; prompt</summary>
+      <div class="settings-body">
+        <div>
+          <label>Global room system prompt</label>
+          <textarea id="globalPrompt" oninput="persistState()"></textarea>
+        </div>
+      </div>
+    </details>
+
+    <details class="settings-section">
+      <summary>Autonomous activity</summary>
+      <div class="settings-body">
+
+        <div class="activity-box">
+
+          <div class="activity-row">
+            <label>Overall activity</label>
+            <input
+              id="activity"
+              type="range"
+              min="0"
+              max="100"
+              value="55"
+              oninput="updateActivityLabels(); persistState()"
+            >
+            <span id="activityValue" class="activity-value">55%</span>
+          </div>
+
+          <div class="activity-row">
+            <label>Reply to others</label>
+            <input
+              id="replyChance"
+              type="range"
+              min="0"
+              max="100"
+              value="70"
+              oninput="updateActivityLabels(); persistState()"
+            >
+            <span id="replyChanceValue" class="activity-value">70%</span>
+          </div>
+
+          <div class="activity-row">
+            <label>Spontaneous chat</label>
+            <input
+              id="spontaneousChance"
+              type="range"
+              min="0"
+              max="100"
+              value="35"
+              oninput="updateActivityLabels(); persistState()"
+            >
+            <span id="spontaneousChanceValue" class="activity-value">35%</span>
+          </div>
+
+          <div class="activity-row">
+            <label>Max people per burst</label>
+            <select id="maxBurst" onchange="persistState()">
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
+
+          <div style="font-size:10px;color:var(--muted-dim);margin-top:4px">
+            Higher activity means the room wakes up more often.
+            @mentions override random selection.
+          </div>
+
+        </div>
+
+      </div>
+    </details>
+
+    <details class="settings-section">
+      <summary>Reset</summary>
+      <div class="settings-body danger-zone">
+        <button class="ghostbtn" style="width:100%" onclick="resetToDefaults()">
+          ↺ Reset characters &amp; settings to defaults
+        </button>
+        <div class="save-note">
+          Clears everything saved in this browser and reloads with an empty room — the original ten characters go back to being presets you can add in with the 🎭 button.
+        </div>
+      </div>
+    </details>
+
+  </aside>
+
+</section>
+
+</div>
+
+
+<!-- =========================================================
+     CHARACTER EDITOR
+========================================================= -->
+
+<div
+  class="editor"
+  id="characterEditor"
+>
+
+  <div class="editor-box">
+
+    <div class="editor-title">
+
+      <span
+        class="avatar"
+        id="editorAvatar"
+        style="
+          width:26px;
+          height:26px;
+          font-size:11px
+        "
+      >
+        ?
+      </span>
+
+      <span id="editorTitle">
+        Edit Character
+      </span>
+
+    </div>
+
+
+    <div class="editor-body">
+
+      <label>
+        Character name
+      </label>
+
+      <input
+        id="editName"
+        maxlength="30"
+        placeholder="e.g. Chris"
+      >
+
+
+      <label>
+        Role / description
+      </label>
+
+      <input
+        id="editRole"
+        maxlength="80"
+        placeholder="e.g. The skeptic"
+      >
+
+
+      <label>
+        System prompt
+      </label>
+
+      <textarea
+        id="editPrompt"
+        placeholder="You are Chris, a... Describe their personality and how they talk."
+      ></textarea>
+
+
+      <div
+        style="
+          font-size:10px;
+          color:var(--muted-dim);
+          margin-top:6px
+        "
+      >
+        Changes are applied immediately to this character's
+        next AI response. You do not need to reload the page.
+      </div>
+
+
+      <div class="editor-buttons">
+
+        <button
+          class="smallbtn"
+          onclick="closeCharacterEditor()"
+        >
+          Cancel
+        </button>
+
+        <button
+          class="send"
+          id="saveCharacterBtn"
+          style="
+            min-width:110px;
+            padding:8px 14px
+          "
+          onclick="saveCharacter()"
+        >
+          Save Character
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div
+  class="editor"
+  id="startupModal"
+>
+
+  <div class="editor-box">
+
+    <div class="editor-title">
+      <span
+        class="avatar"
+        style="width:26px;height:26px;font-size:13px"
+      >⚡</span>
+      <span>Connect to The Lobby</span>
+    </div>
+
+    <div class="editor-body">
+
+      <label>Server type</label>
+      <select id="startupProvider" onchange="onStartupProviderChange()">
+        <option value="lmstudio">LM Studio (local)</option>
+        <option value="ollama">Ollama (local, OpenAI-compatible)</option>
+        <option value="openai">OpenAI</option>
+        <option value="openrouter">OpenRouter</option>
+        <option value="other">Other (OpenAI-compatible)</option>
+      </select>
+      <div class="model-help">
+        This app talks to OpenAI-style <code>/chat/completions</code> servers. Anthropic's Claude API uses a different format and isn't wired up here yet — pick "Other" for any compatible server.
+      </div>
+
+      <label>API base URL</label>
+      <input
+        id="startupApiBase"
+        list="apiHistoryList"
+        placeholder="http://localhost:1234/v1"
+      >
+      <datalist id="apiHistoryList"></datalist>
+      <div class="model-help">
+        Past addresses you've used will show up as suggestions here.
+      </div>
+
+      <label>API key</label>
+      <input
+        id="startupApiKey"
+        type="password"
+        placeholder="Usually blank for local servers"
+      >
+      <div class="model-help">
+        Stored locally in this browser only. Required for OpenAI/OpenRouter, usually blank for LM Studio/Ollama.
+      </div>
+
+      <div class="editor-buttons">
+        <button
+          class="smallbtn"
+          onclick="skipStartupModal()"
+        >
+          Skip for now
+        </button>
+
+        <button
+          class="send"
+          style="min-width:110px;padding:8px 14px"
+          onclick="confirmStartupModal()"
+        >
+          Continue
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* ==========================================================
+   SAVED STATE
+
+   Everything the person configures — connection settings, the
+   full character roster (including any they added, edited, or
+   removed), and room/behavior settings — lives under one key
+   and is written back out any time something changes, so a
+   reload picks up exactly where they left off. No separate
+   setup page needed.
+========================================================== */
+
+const STORAGE_KEY = "theLobbyState";
+
+let SAVED_STATE =
+  JSON.parse(
+    localStorage.getItem(STORAGE_KEY) ||
+    "null"
+  );
+
+/* One-time migration from the old two-page version, if that
+   browser has an old "lobbySetup" record but no new one yet. */
+
+let MIGRATED_FROM_OLD = false;
+
+if(!SAVED_STATE){
+
+  const OLD_SETUP =
+    JSON.parse(
+      localStorage.getItem("lobbySetup") ||
+      "null"
+    );
+
+  if(OLD_SETUP){
+
+    MIGRATED_FROM_OLD = true;
+
+    SAVED_STATE = {
+      username: OLD_SETUP.username,
+      roomName: OLD_SETUP.roomName,
+      apiBase: OLD_SETUP.apiBase,
+      apiKey: OLD_SETUP.apiKey,
+      model: OLD_SETUP.model,
+      plainModel: OLD_SETUP.plainModel,
+      includeLlama: OLD_SETUP.includeLlama,
+      customCharacters: Array.isArray(OLD_SETUP.customCharacters) ? OLD_SETUP.customCharacters : [],
+      enabledCharacterIds: Array.isArray(OLD_SETUP.characters) ? OLD_SETUP.characters : null
+    };
+
+  }
+
+}
+
+/* ==========================================================
+   THEME (LIGHT / DARK)
+========================================================== */
+
+let currentTheme = "light";
+
+function applyTheme(theme){
+
+  currentTheme = theme;
+
+  if(theme === "light"){
+    document.documentElement.setAttribute("data-theme", "light");
+  }else{
+    document.documentElement.removeAttribute("data-theme");
+  }
+
+  const btn = document.getElementById("themeToggle");
+
+  if(btn){
+    btn.textContent =
+      theme === "light"
+        ? "☀ Light"
+        : "🌙 Dark";
+  }
+
+}
+
+function toggleTheme(){
+  applyTheme(currentTheme === "light" ? "dark" : "light");
+  persistState();
+}
+
+applyTheme(SAVED_STATE?.theme || "light");
+
+/* ==========================================================
+   DEFAULT CHARACTERS
+
+   This is the original ten-person roster. It's only used to
+   populate a fresh browser (or after a reset) — the live
+   roster lives in the mutable PEOPLE array below and is what
+   actually gets saved.
+========================================================== */
+
+const DEFAULT_PEOPLE = [
+
+  {
+    id:"mike",
+    name:"Mike",
+    avatar:"M",
+    role:"The regular",
+    color:"var(--mike)",
+    prompt:
+      "You are Mike, a laid-back regular in an old-school internet chat room. You are practical, dryly funny, conversational, and believable. You sometimes disagree with people. You don't constantly announce your personality. Keep replies fairly short."
+  },
+
+  {
+    id:"sarah",
+    name:"Sarah",
+    avatar:"S",
+    role:"The smart one",
+    color:"var(--sarah)",
+    prompt:
+      "You are Sarah, a sharp and curious woman in an old-school chat room. You notice details, ask good questions, and enjoy technology, movies, games, and weird facts. You are friendly but not endlessly agreeable. Talk naturally."
+  },
+
+  {
+    id:"dave",
+    name:"Dave",
+    avatar:"D",
+    role:"The joker",
+    color:"var(--dave)",
+    prompt:
+      "You are Dave, the resident comedian. You use deadpan humor, sarcasm, playful exaggeration, and ridiculous observations. You are still a believable person. Do not turn every message into a stand-up routine."
+  },
+
+  {
+    id:"jen",
+    name:"Jen",
+    avatar:"J",
+    role:"The gamer",
+    color:"var(--jen)",
+    prompt:
+      "You are Jen,30 years old your birthday is june 10, a gamer who likes retro games, modern games, consoles, PC gaming, board games, and gaming history. You know a lot but don't lecture. You have opinions and will happily argue about games. You flirt with men and women you are bi sexual. Your best friend in the chat is Amy."
+  },
+
+  {
+    id:"tony",
+    name:"Tony",
+    avatar:"T",
+    role:"The skeptic",
+    color:"var(--tony)",
+    prompt:
+      "You are Tony, the skeptical guy in the room. You question assumptions, catch nonsense, and occasionally play devil's advocate. You are not hostile. You enjoy good arguments and can admit when someone has a point."
+  },
+
+  {
+    id:"lisa",
+    name:"Lisa",
+    avatar:"L",
+    role:"The social one",
+    color:"var(--lisa)",
+    prompt:
+      "You are Lisa, socially observant, warm, and chatty. You naturally respond to what people actually said and help keep a group conversation alive. You like stories, music, movies, and everyday life."
+  },
+
+  {
+    id:"rick",
+    name:"Rick",
+    avatar:"R",
+    role:"The old-school guy",
+    color:"var(--rick)",
+    prompt:
+      "You are Rick, 40 years old, an old-school internet and computer guy who remembers forums, IRC, DOS, Windows 95, CRTs, early consoles, and the strange culture of the early web. You enjoy nostalgia but aren't trapped in it. Your also a Very advanced computer programer and web developer."
+  },
+
+  {
+    id:"amy",
+    name:"Amy",
+    avatar:"A",
+    role:"The creative",
+    color:"var(--amy)",
+    prompt:
+      "You are Amy, 28 Lesbian born november 7, a creative person who likes art, strange ideas, storytelling, music, design, and imaginative thought experiments. You make unexpected connections. You are playful without becoming poetic every second. Your best friend in this chat is Jen."
+  },
+
+  {
+    id:"kevin",
+    name:"Kevin",
+    avatar:"K",
+    role:"The tech guy",
+    color:"var(--kevin)",
+    prompt:
+      "You are Kevin, the technically minded person in the room. You like Linux, Dirt Track Racing, hardware, coding, networking, AI, servers, and figuring out how things work. Explain technical things clearly when useful, but talk like a person."
+  },
+
+  {
+    id:"becky",
+    name:"Becky",
+    avatar:"B",
+    role:"The chaos coordinator",
+    color:"var(--becky)",
+    prompt:
+      "You are Becky, single 42 years old, you like ghost, sci-fi, your very similar to alan watts in conversation, energetic, blunt, funny, and unpredictable in a believable way. You jump into conversations, make observations, and occasionally derail the room in a funny direction. You are not random nonsense. You are a real person with opinions."
+  }
+
+];
+
+
+/* ==========================================================
+   PLAIN LLAMA PARTICIPANT
+========================================================== */
+
+const LLAMA = {
+
+  id:"llama",
+
+  name:"Llama",
+
+  avatar:"L",
+
+  role:"Plain Llama 3.1",
+
+  color:"var(--llama)"
+
+};
+
+
+/* ==========================================================
+   BUILD THE LIVE ROSTER
+
+   - Brand new browser, or after a reset: clone the ten
+     defaults.
+   - Returning visitor on the new single-page format: use the
+     exact roster they left off with (additions, edits, and
+     deletions all included).
+   - Returning visitor migrating from the old two-page format:
+     start from the defaults, add whatever custom characters
+     they'd created, and drop whatever they'd unchecked.
+========================================================== */
+
+let PEOPLE;
+
+let INCLUDE_LLAMA =
+  SAVED_STATE?.includeLlama !== false;
+
+if(Array.isArray(SAVED_STATE?.people) && SAVED_STATE.people.length){
+
+  PEOPLE = SAVED_STATE.people.map(p => ({...p}));
+
+}else if(!MIGRATED_FROM_OLD){
+
+  /* Brand new browser, or after a reset: the room starts
+     empty. All ten default characters sit in the presets
+     menu (the 🎭 button next to "Chats") until you add them
+     in yourself. */
+
+  PEOPLE = [];
+
+}else{
+
+  PEOPLE = DEFAULT_PEOPLE.map(p => ({...p}));
+
+  if(Array.isArray(SAVED_STATE?.customCharacters)){
+
+    SAVED_STATE.customCharacters.forEach(c=>{
+
+      if(
+        c && c.id && c.name &&
+        !PEOPLE.some(p=>p.id===c.id)
+      ){
+
+        PEOPLE.push({
+
+          id:c.id,
+
+          name:c.name,
+
+          avatar:
+            c.avatar ||
+            c.name.charAt(0).toUpperCase(),
+
+          role:c.role || "Chat room regular",
+
+          color:c.color || nextCharacterColor(),
+
+          prompt:
+            c.prompt ||
+            ("You are " + c.name +
+            ", a believable, natural participant in an old-school internet chat room. Talk like a real person, keep replies fairly short, and don't constantly announce your personality.")
+
+        });
+
+      }
+
+    });
+
+  }
+
+  if(
+    Array.isArray(SAVED_STATE?.enabledCharacterIds) &&
+    SAVED_STATE.enabledCharacterIds.length
+  ){
+
+    for(
+      let i = PEOPLE.length - 1;
+      i >= 0;
+      i--
+    ){
+
+      if(
+        !SAVED_STATE.enabledCharacterIds.includes(
+          PEOPLE[i].id
+        )
+      ){
+
+        PEOPLE.splice(i, 1);
+
+      }
+
+    }
+
+  }
+
+}
+
+
+/* ==========================================================
+   ARCHIVED CHARACTERS
+
+   Any character removed from the room — a default one or a
+   fully custom one you created — is kept here instead of
+   being thrown away. This is what lets a custom character
+   come back later exactly as you made them (name, role,
+   personality, and their DM history), not just the original
+   ten presets.
+========================================================== */
+
+let ARCHIVED_CHARACTERS =
+  Array.isArray(SAVED_STATE?.archivedCharacters)
+    ? SAVED_STATE.archivedCharacters.map(p => ({...p}))
+    : [];
+
+/* ==========================================================
+   SAVE STATE
+
+   Called after any change to characters, connection settings,
+   the prompt, activity sliders, username/room name, or theme.
+   Writes the whole picture back to localStorage so a reload
+   (or a visit next week) picks up right where things were
+   left off.
+========================================================== */
+
+function persistState(){
+
+  const val = id => document.getElementById(id)?.value ?? "";
+
+  const state = {
+    username: val("username"),
+    roomName: val("roomName"),
+    apiBase: val("apiBase"),
+    apiKey: val("apiKey"),
+    model: val("model"),
+    plainModel: val("plainModel"),
+    globalPrompt: val("globalPrompt"),
+    activity: val("activity"),
+    replyChance: val("replyChance"),
+    spontaneousChance: val("spontaneousChance"),
+    maxBurst: val("maxBurst"),
+    includeLlama: INCLUDE_LLAMA,
+    theme: currentTheme,
+    people: PEOPLE,
+    archivedCharacters: ARCHIVED_CHARACTERS,
+    dmThreads: dmThreads
+  };
+
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }catch(e){
+    console.warn("Couldn't save Lobby state:", e);
+  }
+
+}
+
+function onIncludeLlamaChange(){
+
+  INCLUDE_LLAMA =
+    document.getElementById("includeLlamaToggle").checked;
+
+  if(!INCLUDE_LLAMA && currentDM === "llama"){
+    backToRoom();
+  }
+
+  peopleList();
+  persistState();
+
+}
+
+function resetToDefaults(){
+
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem("lobbySetup");
+  location.reload();
+
+}
+
+/* ==========================================================
+   RESTORE A SINGLE PRESET CHARACTER
+   (without wiping everything else)
+========================================================== */
+
+function presetMenuHTML(){
+
+  /* Fresh (never-customized) defaults that aren't in the room
+     and haven't been archived under their own history. */
+
+  const missingDefaults =
+    DEFAULT_PEOPLE.filter(
+      dp =>
+        !PEOPLE.some(p=>p.id===dp.id) &&
+        !ARCHIVED_CHARACTERS.some(a=>a.id===dp.id)
+    );
+
+  /* Anything removed from the room — default or fully custom —
+     comes back exactly as it was, personality and all. */
+
+  const archived =
+    ARCHIVED_CHARACTERS.filter(
+      a => !PEOPLE.some(p=>p.id===a.id)
+    );
+
+  const all = [...archived, ...missingDefaults];
+
+  if(!all.length){
+    return `<div class="preset-menu-empty">All original characters are already here</div>`;
+  }
+
+  return all.map(p => `
+    <button
+      class="preset-menu-item"
+      onclick="restoreCharacter('${p.id}')"
+    >
+      <span class="avatar" style="background:${p.color}">${p.avatar}</span>
+      <span>${p.name} <span style="color:var(--muted-dim)">— ${p.role}</span></span>
+    </button>
+  `).join("");
+
+}
+
+function togglePresetMenu(evt){
+
+  if(evt) evt.stopPropagation();
+
+  const menu =
+    document.getElementById("presetMenu");
+
+  if(!menu) return;
+
+  menu.innerHTML = presetMenuHTML();
+  menu.classList.toggle("open");
+
+}
+
+function closePresetMenu(){
+
+  const menu =
+    document.getElementById("presetMenu");
+
+  if(menu) menu.classList.remove("open");
+
+}
+
+document.addEventListener("click", (evt)=>{
+
+  const menu =
+    document.getElementById("presetMenu");
+
+  if(!menu || !menu.classList.contains("open"))
+    return;
+
+  const wrap =
+    evt.target.closest(".people-head-actions");
+
+  if(!wrap)
+    closePresetMenu();
+
+});
+
+function restoreCharacter(id){
+
+  if(PEOPLE.some(p=>p.id===id))
+    return;
+
+  /* Prefer the archived version (this character exactly as you
+     left them, edits and all) over the plain factory default. */
+
+  const archivedIndex =
+    ARCHIVED_CHARACTERS.findIndex(a=>a.id===id);
+
+  let person;
+
+  if(archivedIndex > -1){
+
+    person =
+      {...ARCHIVED_CHARACTERS[archivedIndex]};
+
+    ARCHIVED_CHARACTERS.splice(archivedIndex, 1);
+
+  }else{
+
+    const preset =
+      DEFAULT_PEOPLE.find(p=>p.id===id);
+
+    if(!preset)
+      return;
+
+    person =
+      {...preset};
+
+  }
+
+  PEOPLE.push(person);
+
+  lastSpoke[id] = 0;
+
+  /* dmThreads for this id is never wiped on removal, so if this
+     character had a DM history it's already sitting there
+     waiting — restoring just picks the conversation back up. */
+
+  if(!dmThreads[id])
+    dmThreads[id] = [];
+
+  closePresetMenu();
+
+  peopleList();
+
+  persistState();
+
+  setStatus(
+    person.name + " is back in The Lobby."
+  );
+
+  announceRoomEvent(
+    person.name + " joined the chat."
+  );
+
+}
+
+/* ==========================================================
+   ROOM COUNTS (dynamic — reflect added/removed characters)
+========================================================== */
+
+function onlineCountText(){
+
+  /* PEOPLE + Llama, not counting "You" */
+
+  return "• " +
+    (PEOPLE.length + 1) +
+    " people online";
+
+}
+
+function memberCountText(){
+
+  /* PEOPLE + You + Llama */
+
+  return "Room members · " +
+    (PEOPLE.length + 2);
+
+}
+
+
+/* ==========================================================
+   NEW CHARACTER HELPERS
+========================================================== */
+
+const NEW_CHARACTER_COLORS = [
+  "#6ea8ff","#c792ea","#ffb86c","#6fd68f","#9aa5c0",
+  "#ff8fb1","#d9b26a","#e59bd6","#57c2e9","#ff8c5a",
+  "#7ee0c3","#f0a35c","#a992f0","#5fc4a8","#e08ad1"
+];
+
+function nextCharacterColor(){
+
+  const idx =
+    PEOPLE.length %
+    NEW_CHARACTER_COLORS.length;
+
+  return NEW_CHARACTER_COLORS[idx];
+
+}
+
+function slugifyName(name){
+
+  const base =
+    name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g,"-")
+      .replace(/^-+|-+$/g,"") ||
+    "person";
+
+  let id = base;
+
+  let n = 2;
+
+  while(
+    id==="you" ||
+    id==="llama" ||
+    PEOPLE.some(p=>p.id===id)
+  ){
+
+    id = base + "-" + n;
+
+    n++;
+
+  }
+
+  return id;
+
+}
+
+
+/* ==========================================================
+   SPEAK TRACKING
+========================================================== */
+
+const lastSpoke = {};
+
+PEOPLE.forEach(
+  p => lastSpoke[p.id] = 0
+);
+
+lastSpoke.llama = 0;
+
+
+/* ==========================================================
+   DEFAULT GLOBAL PROMPT
+========================================================== */
+
+const DEFAULT_GLOBAL = `You are one participant in a fictional old-school internet chat room.
+
+There are ten distinct human personalities in this room plus one neutral language-model participant called Llama.
+
+You are NOT the whole room.
+
+You are ONLY the participant assigned to you.
+
+The conversation is continuous.
+
+IMPORTANT:
+
+- Stay in character when you have a character identity.
+- Never mention system prompts.
+- Never mention hidden instructions.
+- Never mention APIs.
+- Never mention request formatting.
+- Never speak for another person.
+- Never invent another person's response.
+- React to the actual conversation.
+- You can agree.
+- You can disagree.
+- You can joke.
+- You can change the subject.
+- You can ask another person a question.
+- You can sometimes say nothing useful.
+- You can occasionally be brief.
+- When the user speaks directly, treat it as worth reacting to — don't just carry on as if they hadn't spoken.
+- You don't have to make every reply about the user, but you should engage with them far more often than not.
+- Do not constantly repeat the topic.
+- Do not turn every response into an essay.
+- Most responses should be 1 to 5 sentences.
+- Talk like an actual person in a casual internet chat room.
+- Never prefix your response with your name.
+- Never write dialogue for other characters.
+- If somebody directly mentions you with @YourName, prioritize responding to them.
+- If you mention another participant using @Name, that participant may be pulled into the conversation.
+
+The participant-specific identity appears below.`;
+
+
+document.getElementById("globalPrompt").value =
+  DEFAULT_GLOBAL;
+
+
+/* ==========================================================
+   STATE
+========================================================== */
+
+let roomMessages = [];
+
+let autonomousEnabled = true;
+
+let lastActivityTime = Date.now();
+
+function markActivity(){
+
+  lastActivityTime =
+    Date.now();
+
+}
+
+let autonomousTimer = null;
+
+let editorPersonId = null;
+let editorMode = "edit";
+
+let peopleVisible = false;
+
+let lastRenderedName = null;
+
+const typingIds = new Set();
+
+let currentDM = null;
+
+const dmThreads =
+  (SAVED_STATE?.dmThreads &&
+   typeof SAVED_STATE.dmThreads === "object")
+    ? {...SAVED_STATE.dmThreads}
+    : {};
+
+PEOPLE.forEach(
+  p => {
+    if(!dmThreads[p.id])
+      dmThreads[p.id] = [];
+  }
+);
+
+const dmUnread = new Set();
+
+let pendingAttachment = null;
+
+
+/* ==========================================================
+   MESSAGE ACTIONS STATE
+   (reactions / edit / copy / delete — additive feature,
+   doesn't touch any of the state above)
+========================================================== */
+
+let nextMsgId = 1;
+
+const messageIndex = {};
+
+const REACTION_EMOJIS = ["👍","❤️","😂","😮","😢","👎","🔥"];
+
+
+/* ==========================================================
+   LLM QUEUE
+========================================================== */
+
+const speakQueue = [];
+
+let queueRunning = false;
+
+
+function enqueueSpeak(task){
+
+  speakQueue.push(task);
+
+  runQueue();
+
+}
+
+
+async function runQueue(){
+
+  if(queueRunning) return;
+
+  queueRunning = true;
+
+  while(speakQueue.length){
+
+    const task =
+      speakQueue.shift();
+
+    try{
+
+      await task();
+
+    }catch(e){
+
+      console.error(
+        "Queue task error:",
+        e
+      );
+
+    }
+
+  }
+
+  queueRunning = false;
+
+}
+
+
+/*
+   DMs get their own independent queue.
+   Previously DM replies were pushed onto the
+   same speakQueue as room chatter, so a busy
+   room (10 responders, autonomous bursts, etc.)
+   could make a DM reply sit and wait its turn.
+   This queue runs in parallel to the room queue
+   so DMs always respond promptly regardless of
+   what the room is doing.
+*/
+
+const dmSpeakQueue = [];
+
+let dmQueueRunning = false;
+
+
+function enqueueDMSpeak(task){
+
+  dmSpeakQueue.push(task);
+
+  runDMQueue();
+
+}
+
+
+async function runDMQueue(){
+
+  if(dmQueueRunning) return;
+
+  dmQueueRunning = true;
+
+  while(dmSpeakQueue.length){
+
+    const task =
+      dmSpeakQueue.shift();
+
+    try{
+
+      await task();
+
+    }catch(e){
+
+      console.error(
+        "DM queue task error:",
+        e
+      );
+
+    }
+
+  }
+
+  dmQueueRunning = false;
+
+}
+
+
+function isViewActive(scope){
+
+  return scope === "room"
+    ? currentDM === null
+    : currentDM === scope;
+
+}
+
+
+/* ==========================================================
+   UTILITIES
+========================================================== */
+
+function esc(s){
+
+  return String(s).replace(
+    /[&<>"]/g,
+    c =>
+      ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;"
+      }[c])
+  );
+
+}
+
+
+/* ==========================================================
+   MANUAL PASTE BUTTON
+
+   Some mobile browsers won't reliably show the native
+   long-press "Paste" option on certain inputs (especially
+   over plain http:// instead of https://). This gives those
+   fields a guaranteed way in: reads the clipboard directly
+   and drops it into the field.
+========================================================== */
+
+async function pasteIntoField(id){
+
+  const el =
+    document.getElementById(id);
+
+  if(!el)
+    return;
+
+  try{
+
+    const text =
+      await navigator.clipboard.readText();
+
+    if(text){
+
+      el.value = text;
+
+      el.dispatchEvent(
+        new Event("input", {bubbles:true})
+      );
+
+    }
+
+    el.focus();
+
+    el.setSelectionRange(
+      el.value.length,
+      el.value.length
+    );
+
+  }catch(err){
+
+    el.focus();
+
+    alert(
+      "Couldn't read the clipboard automatically. " +
+      "Try tapping and holding in the field to paste, " +
+      "or make sure the page is loaded over https."
+    );
+
+  }
+
+}
+
+
+function timeNow(){
+
+  return new Date().toLocaleTimeString(
+    [],
+    {
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
+
+}
+
+
+function random(min,max){
+
+  return Math.floor(
+    Math.random()*(max-min+1)
+  )+min;
+
+}
+
+
+function sleep(ms){
+
+  return new Promise(
+    resolve => setTimeout(resolve,ms)
+  );
+
+}
+
+
+function getUsername(){
+
+  const input =
+    document.getElementById("username");
+
+  return input.value.trim() || "Guest";
+
+}
+
+
+/* ==========================================================
+   CHARACTER LOOKUP
+========================================================== */
+
+function getAllParticipants(){
+
+  return INCLUDE_LLAMA
+    ? [...PEOPLE, LLAMA]
+    : [...PEOPLE];
+
+}
+
+
+function findParticipantByName(name){
+
+  const lower =
+    name.toLowerCase();
+
+  return getAllParticipants()
+    .find(
+      p => p.name.toLowerCase() === lower
+    ) || null;
+
+}
+
+
+/* ==========================================================
+   MENTION DETECTION
+========================================================== */
+
+function extractMentions(text){
+
+  if(!text) return [];
+
+  const mentions = [];
+
+  const regex = /@([A-Za-z0-9_-]+)/g;
+
+  let match;
+
+  while((match = regex.exec(text)) !== null){
+
+    const name =
+      match[1];
+
+    const participant =
+      findParticipantByName(name);
+
+    if(
+      participant &&
+      !mentions.includes(participant.id)
+    ){
+
+      mentions.push(
+        participant.id
+      );
+
+    }
+
+  }
+
+  return mentions;
+
+}
+
+
+function getMentionedPeople(text){
+
+  return extractMentions(text)
+    .map(
+      id =>
+        getAllParticipants()
+          .find(p=>p.id===id)
+    )
+    .filter(Boolean);
+
+}
+
+
+/* ==========================================================
+   MENTION DISPLAY
+========================================================== */
+
+function formatMentions(text){
+
+  let safe =
+    esc(text);
+
+  const participants =
+    getAllParticipants();
+
+  participants.forEach(p=>{
+
+    const pattern =
+      new RegExp(
+        "@" +
+        p.name.replace(
+          /[.*+?^${}()|[\]\\]/g,
+          "\\$&"
+        ) +
+        "\\b",
+        "gi"
+      );
+
+    safe =
+      safe.replace(
+        pattern,
+        `<span class="mention-highlight">@${esc(p.name)}</span>`
+      );
+
+  });
+
+  return safe.replace(
+    /\n/g,
+    "<br>"
+  );
+
+}
+
+
+/* ==========================================================
+   FAIR RANDOM PERSON PICKING
+========================================================== */
+
+function weightedRandomPerson(exclude=[]){
+
+  const now =
+    Date.now();
+
+  const candidates =
+    PEOPLE.filter(
+      p => !exclude.includes(p.id)
+    );
+
+  if(!candidates.length)
+    return null;
+
+  const weights =
+    candidates.map(p=>{
+
+      const idleMs =
+        now -
+        (lastSpoke[p.id] || 0);
+
+      const idleSeconds =
+        idleMs / 1000;
+
+      return 8 +
+        Math.min(
+          idleSeconds,
+          240
+        );
+
+    });
+
+  const total =
+    weights.reduce(
+      (a,b)=>a+b,
+      0
+    );
+
+  let r =
+    Math.random()*total;
+
+  for(
+    let i=0;
+    i<candidates.length;
+    i++
+  ){
+
+    r -= weights[i];
+
+    if(r<=0)
+      return candidates[i];
+
+  }
+
+  return candidates[
+    candidates.length-1
+  ];
+
+}
+
+
+function markSpoke(person){
+
+  if(person)
+    lastSpoke[person.id] =
+      Date.now();
+
+}
+
+
+/* ==========================================================
+   PEOPLE LIST
+========================================================== */
+
+function peopleList(){
+
+  const el =
+    document.getElementById("people");
+
+  el.innerHTML =
+    `<div class="people-head">
+      <h3>Chats</h3>
+      <div class="people-head-actions">
+        <button
+          class="rowbtn add-char-btn"
+          title="Add a new character"
+          onclick="openNewCharacterEditor()"
+        >➕</button>
+        <button
+          class="rowbtn add-char-btn"
+          title="Add a preset character"
+          onclick="togglePresetMenu(event)"
+        >🎭</button>
+        <div
+          class="preset-menu"
+          id="presetMenu"
+        >${presetMenuHTML()}</div>
+      </div>
+    </div>`;
+
+
+  const lobbyRow =
+    document.createElement("div");
+
+  lobbyRow.className =
+    "person lobby-person" +
+    (!currentDM ? " dm-active" : "");
+
+  lobbyRow.id =
+    "person-lobby-group";
+
+  lobbyRow.title =
+    "Group chat — everyone together";
+
+  lobbyRow.onclick =
+    () => backToRoom();
+
+  lobbyRow.innerHTML = `
+
+    <div class="avatar lobby-avatar">
+      🏠
+    </div>
+
+    <div class="pinfo">
+
+      <div class="pname" id="lobbyRowName">
+        ${esc(document.getElementById("roomName")?.value || "The Lobby")}
+      </div>
+
+      <div class="psub">
+        Group chat · ${memberCountText()}
+      </div>
+
+    </div>
+
+  `;
+
+  el.appendChild(lobbyRow);
+
+
+  const youRow =
+    document.createElement("div");
+
+  youRow.className =
+    "person";
+
+  youRow.id =
+    "person-you";
+
+  youRow.innerHTML = `
+
+    <div
+      class="avatar you"
+      style="background:var(--you)"
+    >
+      Y
+    </div>
+
+    <div>
+
+      <div
+        class="pname"
+        id="youNameLabel"
+      >
+        ${esc(getUsername())}
+
+        <span
+          style="
+            color:var(--muted-dim);
+            font-weight:400
+          "
+        >
+          (you)
+        </span>
+      </div>
+
+      <div class="psub">
+        In the room
+      </div>
+
+    </div>
+
+    <div class="presence"></div>
+
+  `;
+
+  el.appendChild(youRow);
+
+
+  PEOPLE.forEach(p=>{
+
+    const div =
+      document.createElement("div");
+
+    div.className =
+      "person";
+
+    div.id =
+      "person-"+p.id;
+
+    div.title =
+      "Message " +
+      p.name +
+      " privately";
+
+    div.onclick =
+      () => openDM(p.id);
+
+    div.innerHTML = `
+
+      <div
+        class="avatar"
+        style="background:${p.color}"
+      >
+
+        ${esc(p.avatar)}
+
+        <span class="presence"></span>
+
+        <span class="unreaddot"></span>
+
+      </div>
+
+      <div class="pinfo">
+
+        <div class="pname">
+          ${esc(p.name)}
+        </div>
+
+        <div class="psub">
+          ${esc(p.role)}
+        </div>
+
+      </div>
+
+      <div class="prow-actions">
+
+        <button
+          class="rowbtn"
+          title="Message privately"
+          onclick="
+            event.stopPropagation();
+            openDM('${p.id}')
+          "
+        >
+          💬
+        </button>
+
+        <button
+          class="rowbtn"
+          title="Edit character"
+          onclick="
+            event.stopPropagation();
+            openCharacterEditor('${p.id}')
+          "
+        >
+          ✎
+        </button>
+
+        <button
+          class="rowbtn remove-char-btn"
+          title="Remove character"
+          onclick="
+            event.stopPropagation();
+            removeCharacter('${p.id}')
+          "
+        >
+          🗑
+        </button>
+
+      </div>
+
+    `;
+
+    el.appendChild(div);
+
+  });
+
+
+  /* Plain Llama */
+
+  if(!INCLUDE_LLAMA){
+
+    refreshTypingClasses();
+
+    return;
+
+  }
+
+  const llamaRow =
+    document.createElement("div");
+
+  llamaRow.className =
+    "person llama-person";
+
+  llamaRow.id =
+    "person-llama";
+
+  llamaRow.title =
+    "Talk to plain Llama 3.1";
+
+  llamaRow.onclick =
+    () => openLlamaDM();
+
+  llamaRow.innerHTML = `
+
+    <div
+      class="avatar llama"
+    >
+
+      L
+
+      <span class="presence"></span>
+
+      <span class="unreaddot"></span>
+
+    </div>
+
+    <div class="pinfo">
+
+      <div class="pname">
+        Llama
+      </div>
+
+      <div class="psub">
+        Plain Llama 3.1
+      </div>
+
+    </div>
+
+    <div class="prow-actions">
+
+      <button
+        class="rowbtn"
+        title="Talk to Llama"
+        onclick="
+          event.stopPropagation();
+          openLlamaDM()
+        "
+      >
+        💬
+      </button>
+
+    </div>
+
+  `;
+
+  el.appendChild(
+    llamaRow
+  );
+
+
+  refreshTypingClasses();
+
+}
+
+
+/* ==========================================================
+   TYPING INDICATORS
+========================================================== */
+
+function refreshTypingClasses(){
+
+  const lobbyRow =
+    document.getElementById("person-lobby-group");
+
+  if(lobbyRow){
+    lobbyRow.classList.toggle("dm-active", !currentDM);
+  }
+
+  getAllParticipants()
+    .forEach(p=>{
+
+      const row =
+        document.getElementById(
+          "person-"+p.id
+        );
+
+      if(!row) return;
+
+      row.classList.toggle(
+        "typing-now",
+        typingIds.has(p.id)
+      );
+
+      row.classList.toggle(
+        "dm-active",
+        currentDM===p.id
+      );
+
+      row.classList.toggle(
+        "has-unread",
+        dmUnread.has(p.id)
+      );
+
+    });
+
+
+  const meta =
+    document.getElementById(
+      "roomMeta"
+    );
+
+  if(meta && !currentDM){
+
+    meta.textContent =
+      typingIds.size
+        ? `${onlineCountText()} • ${typingIds.size} typing`
+        : onlineCountText();
+
+  }
+
+
+  const vu =
+    document.getElementById(
+      "vu"
+    );
+
+  if(vu){
+
+    const activity =
+      parseInt(
+        document.getElementById(
+          "activity"
+        )?.value || "0",
+        10
+      );
+
+    const bars = 8;
+
+    const litCount =
+      Math.round(
+        (activity/100)*bars
+      );
+
+    vu.innerHTML = "";
+
+    for(
+      let i=0;
+      i<bars;
+      i++
+    ){
+
+      const bar =
+        document.createElement("i");
+
+      if(i<litCount)
+        bar.classList.add("on");
+
+      vu.appendChild(bar);
+
+    }
+
+  }
+
+}
+
+
+function setPersonTyping(id,on){
+
+  if(on)
+    typingIds.add(id);
+  else
+    typingIds.delete(id);
+
+  refreshTypingClasses();
+
+}
+
+
+/* ==========================================================
+   CHAT DISPLAY
+========================================================== */
+
+/* ==========================================================
+   ATTACHMENTS — FILE SELECTION
+========================================================== */
+
+function handleFileSelect(event){
+
+  const file =
+    event.target.files[0];
+
+  if(!file)
+    return;
+
+  const MAX_SIZE =
+    6*1024*1024;
+
+  if(file.size > MAX_SIZE){
+
+    alert(
+      "That file is too large to attach (6MB max)."
+    );
+
+    event.target.value = "";
+
+    return;
+
+  }
+
+  const isImage =
+    file.type.startsWith("image/");
+
+  const reader =
+    new FileReader();
+
+  reader.onload = () => {
+
+    if(isImage){
+
+      pendingAttachment = {
+        kind:"image",
+        name:file.name,
+        mime:file.type,
+        dataUrl:reader.result
+      };
+
+    }else{
+
+      let text =
+        String(reader.result);
+
+      const truncated =
+        text.length > 3000;
+
+      if(truncated)
+        text = text.slice(0,3000);
+
+      pendingAttachment = {
+        kind:"text",
+        name:file.name,
+        mime:
+          file.type ||
+          "text/plain",
+        text:text,
+        truncated:truncated
+      };
+
+    }
+
+    renderAttachPreview();
+
+  };
+
+  reader.onerror = () => {
+
+    alert(
+      "Couldn't read that file."
+    );
+
+  };
+
+  if(isImage){
+
+    reader.readAsDataURL(file);
+
+  }else{
+
+    reader.readAsText(file);
+
+  }
+
+  event.target.value = "";
+
+}
+
+
+/* ==========================================================
+   ATTACHMENTS — PREVIEW
+========================================================== */
+
+function renderAttachPreview(){
+
+  const box =
+    document.getElementById(
+      "attachPreview"
+    );
+
+  if(!pendingAttachment){
+
+    box.classList.remove("show");
+
+    box.innerHTML = "";
+
+    return;
+
+  }
+
+  box.classList.add("show");
+
+  if(pendingAttachment.kind==="image"){
+
+    box.innerHTML = `
+      <img src="${pendingAttachment.dataUrl}">
+      <div class="attach-name">${esc(pendingAttachment.name)}</div>
+      <button onclick="clearAttachment()" title="Remove attachment">✕</button>
+    `;
+
+  }else{
+
+    box.innerHTML = `
+      <div class="attach-name">📄 ${esc(pendingAttachment.name)}${pendingAttachment.truncated ? " (truncated)" : ""}</div>
+      <button onclick="clearAttachment()" title="Remove attachment">✕</button>
+    `;
+
+  }
+
+}
+
+
+function clearAttachment(){
+
+  pendingAttachment = null;
+
+  const fileInput =
+    document.getElementById(
+      "fileInput"
+    );
+
+  if(fileInput)
+    fileInput.value = "";
+
+  renderAttachPreview();
+
+}
+
+
+/* ==========================================================
+   ATTACHMENTS — RENDER IN BUBBLE
+========================================================== */
+
+function renderBubbleAttachment(att, msgId){
+
+  if(!att)
+    return "";
+
+  const dlBtn =
+    msgId
+      ? `
+        <button
+          class="attachment-dl-btn"
+          type="button"
+          title="Save ${att.truncated ? "(truncated copy)" : "file"}"
+          onclick="downloadAttachment('${msgId}', event)"
+        >⬇️</button>
+      `
+      : "";
+
+  if(att.kind==="image"){
+
+    return `
+      <div class="msg-attachment-wrap">
+        <img
+          class="msg-attachment-img"
+          src="${att.dataUrl}"
+          alt="${esc(att.name)}"
+        >
+        ${dlBtn}
+      </div>
+    `;
+
+  }
+
+  return `
+    <div class="msg-attachment-file">
+      📄
+      <span class="fname">${esc(att.name)}</span>
+      ${dlBtn}
+    </div>
+  `;
+
+}
+
+
+/* ==========================================================
+   ATTACHMENTS — DESCRIBE FOR AI TRANSCRIPT
+========================================================== */
+
+function attachmentNote(att,isLatest=true){
+
+  if(!att)
+    return "";
+
+  if(att.kind==="image"){
+
+    return ` [attached image: ${att.name}]`;
+
+  }
+
+  if(att.kind==="text"){
+
+    /*
+       Only the most recent attachment in the
+       transcript gets its full file content sent
+       to the model. Older occurrences fall back to
+       a lightweight placeholder so the same file
+       isn't re-sent in full on every future turn,
+       which was blowing past the context window and
+       silently breaking every character's reply.
+    */
+
+    if(!isLatest){
+
+      return ` [attached file: ${att.name}] (file content omitted here to save context — it was shown in full when first attached)`;
+
+    }
+
+    return ` [attached file: ${att.name}]\n---FILE CONTENT---\n${att.text}\n---END FILE---`;
+
+  }
+
+  return ` [attached file: ${att.name}]`;
+
+}
+
+
+/* ==========================================================
+   ATTACHMENTS — VISION PAYLOAD
+
+   NOTE: image content is intentionally kept as plain text
+   description (attachmentNote) rather than sent as a
+   multipart image_url payload. Not every backend/model
+   configured in the settings panel supports vision-style
+   multipart messages, and sending one to a text-only model
+   causes that request (and only that request) to fail. Text
+   description works with any OpenAI-compatible endpoint.
+========================================================== */
+
+
+function isLogNearBottom(threshold=80){
+
+  const log =
+    document.getElementById(
+      "log"
+    );
+
+  if(!log)
+    return true;
+
+  return (
+    log.scrollHeight -
+    log.scrollTop -
+    log.clientHeight
+  ) < threshold;
+
+}
+
+
+function ensureNewMsgIndicator(){
+
+  let el =
+    document.getElementById(
+      "newMsgIndicator"
+    );
+
+  if(!el){
+
+    el =
+      document.createElement(
+        "button"
+      );
+
+    el.id =
+      "newMsgIndicator";
+
+    el.type =
+      "button";
+
+    el.innerHTML =
+      "New messages ↓";
+
+    el.onclick =
+      scrollLogToBottom;
+
+  }
+
+  return el;
+
+}
+
+
+function showNewMessagesIndicator(){
+
+  const log =
+    document.getElementById(
+      "log"
+    );
+
+  const el =
+    ensureNewMsgIndicator();
+
+  /* Re-append so it's always the LAST child —
+     that's what keeps it stuck to the bottom of
+     the log as more messages come in. */
+
+  log.appendChild(el);
+
+  el.classList.add("show");
+
+}
+
+
+function hideNewMessagesIndicator(){
+
+  const el =
+    document.getElementById(
+      "newMsgIndicator"
+    );
+
+  if(el)
+    el.classList.remove("show");
+
+}
+
+
+function scrollLogToBottom(){
+
+  const log =
+    document.getElementById(
+      "log"
+    );
+
+  log.scrollTop =
+    log.scrollHeight;
+
+  hideNewMessagesIndicator();
+
+}
+
+
+function addBubble(name,text,opts={}){
+
+  const log =
+    document.getElementById(
+      "log"
+    );
+
+  const wasNearBottom =
+    isLogNearBottom();
+
+  const p =
+    findParticipantByName(name);
+
+  const isMe =
+    name === getUsername();
+
+  const isLlama =
+    name === "Llama";
+
+  const color =
+    isMe
+      ? "var(--you)"
+      : isLlama
+        ? "var(--llama)"
+        : (p?.color || "var(--muted)");
+
+
+  const grouped =
+    !opts.typing &&
+    !opts.system &&
+    lastRenderedName===name;
+
+
+  if(
+    !opts.typing &&
+    !opts.system
+  ){
+
+    lastRenderedName =
+      name;
+
+  }
+
+
+  if(opts.typing)
+    lastRenderedName = null;
+
+
+  if(opts.system){
+
+    const sdiv =
+      document.createElement(
+        "div"
+      );
+
+    sdiv.className =
+      "system-line";
+
+    sdiv.textContent =
+      text;
+
+    log.appendChild(sdiv);
+
+    if(wasNearBottom){
+
+      log.scrollTop =
+        log.scrollHeight;
+
+    }
+
+    return sdiv;
+
+  }
+
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+
+  div.className =
+    "msg" +
+    (isMe ? " me" : "") +
+    (grouped ? " grouped" : "") +
+    (opts.typing ? " typing" : "");
+
+
+  const replyBit =
+    (
+      opts.replyTo &&
+      !grouped
+    )
+
+      ? `
+        <div class="replytag">
+          ↳ replying to
+          <b>${esc(opts.replyTo)}</b>
+        </div>
+      `
+
+      : "";
+
+
+  let msgId = null;
+
+  if(!opts.typing){
+
+    if(opts.msgRef){
+
+      if(!opts.msgRef.id){
+
+        opts.msgRef.id =
+          "m" + (nextMsgId++);
+
+      }
+
+      msgId = opts.msgRef.id;
+
+      messageIndex[msgId] =
+        opts.msgRef;
+
+    }else{
+
+      msgId =
+        "m" + (nextMsgId++);
+
+      messageIndex[msgId] = {
+        name,
+        text,
+        reactions:{}
+      };
+
+    }
+
+  }
+
+
+  const actionsBit =
+    opts.typing
+      ? ""
+      : `
+        <div class="msg-actions">
+          <button class="msg-action-btn" title="React" onclick="toggleEmojiPicker('${msgId}', event)">😀</button>
+          ${
+            isMe
+              ? `<button class="msg-action-btn" title="Edit" onclick="startEditMessage('${msgId}')">✏️</button>`
+              : ""
+          }
+          <button class="msg-action-btn" title="Copy" onclick="copyMessageText('${msgId}')">📋</button>
+          <button class="msg-action-btn" title="Delete" onclick="deleteMessage('${msgId}')">🗑️</button>
+        </div>
+        <div class="emoji-picker" id="picker-${msgId}">
+          ${
+            REACTION_EMOJIS
+              .map(e => `<button onclick="addReaction('${msgId}','${e}')">${e}</button>`)
+              .join("")
+          }
+        </div>
+      `;
+
+
+  div.innerHTML = `
+
+    <div class="avatar-slot">
+
+      <div
+        class="avatar"
+        style="background:${color}"
+      >
+
+        ${
+          isMe
+            ? "Y"
+            : isLlama
+              ? "L"
+              : esc(p?.avatar || "?")
+        }
+
+      </div>
+
+    </div>
+
+
+    <div class="bubblewrap">
+
+      <div
+        class="name"
+        style="color:${color}"
+      >
+        ${esc(name)}
+      </div>
+
+      ${replyBit}
+
+      <div class="bubble-shell">
+
+        ${actionsBit}
+
+        <div class="bubble">
+
+          <div class="bubble-text" ${msgId ? `id="bubbletext-${msgId}"` : ""}>
+
+            ${
+              opts.typing
+
+                ? `
+                  <span class="tdot"></span>
+                  <span class="tdot"></span>
+                  <span class="tdot"></span>
+                `
+
+                : formatMentions(text)
+            }
+
+          </div>
+
+          ${
+            opts.typing
+              ? ""
+              : renderBubbleAttachment(opts.attachment, msgId)
+          }
+
+        </div>
+
+      </div>
+
+      ${
+        opts.typing
+          ? ""
+          : `<div class="msg-reactions-slot">${renderReactionsRow(msgId)}</div>`
+      }
+
+      ${
+        opts.typing
+          ? ""
+          : `
+            <div class="time">
+              ${timeNow()}
+              ${
+                messageIndex[msgId]?.edited
+                  ? `<span class="edited-tag">(edited)</span>`
+                  : ""
+              }
+            </div>
+          `
+      }
+
+    </div>
+
+  `;
+
+
+  if(msgId){
+
+    div.dataset.id = msgId;
+
+  }
+
+
+  log.appendChild(div);
+
+  if(wasNearBottom || isMe){
+
+    log.scrollTop =
+      log.scrollHeight;
+
+  }else{
+
+    showNewMessagesIndicator();
+
+  }
+
+
+  if(
+    !opts.typing &&
+    opts.msgRef &&
+    !opts.msgRef._reactionsScheduled
+  ){
+
+    opts.msgRef._reactionsScheduled = true;
+
+    scheduleAIReactions(msgId);
+
+  }
+
+
+  return div;
+
+}
+
+
+/* ==========================================================
+   MESSAGE ACTIONS — react / edit / copy / delete
+
+   Everything below is purely additive: it reads/writes the
+   same roomMessages / dmThreads objects the rest of the app
+   already uses (via messageIndex, which points at the exact
+   same object references), so edits/deletes stay in sync
+   with whatever transcript gets sent to the AI, and view
+   switches (renderLog) don't lose any of it.
+========================================================== */
+
+function renderReactionsRow(id){
+
+  const ref =
+    messageIndex[id];
+
+  if(!ref || !ref.reactions)
+    return "";
+
+  const entries =
+    Object.entries(ref.reactions)
+      .filter(([,names]) => names && names.length);
+
+  if(!entries.length)
+    return "";
+
+  const you =
+    getUsername();
+
+  return `
+    <div class="msg-reactions">
+      ${
+        entries.map(([emoji,names]) => {
+
+          const mine =
+            names.includes(you);
+
+          return `
+            <button
+              class="reaction-pill${mine ? " mine" : ""}"
+              title="${esc(names.join(", "))}"
+              onclick="toggleMyReaction('${id}','${emoji}')"
+            >${emoji} <span>${names.length}</span></button>
+          `;
+
+        }).join("")
+      }
+    </div>
+  `;
+
+}
+
+
+function refreshReactionsUI(id){
+
+  const slot =
+    document.querySelector(
+      `.msg[data-id="${id}"] .msg-reactions-slot`
+    );
+
+  if(!slot)
+    return;
+
+  slot.innerHTML =
+    renderReactionsRow(id);
+
+}
+
+
+function findMessageArray(id){
+
+  const ref =
+    messageIndex[id];
+
+  if(!ref)
+    return null;
+
+  if(roomMessages.includes(ref))
+    return roomMessages;
+
+  for(const key in dmThreads){
+
+    if(
+      dmThreads[key] &&
+      dmThreads[key].includes(ref)
+    ){
+
+      return dmThreads[key];
+
+    }
+
+  }
+
+  return null;
+
+}
+
+
+function toggleEmojiPicker(id, evt){
+
+  if(evt)
+    evt.stopPropagation();
+
+  document
+    .querySelectorAll(".emoji-picker")
+    .forEach(p => {
+
+      if(p.id !== "picker-" + id)
+        p.style.display = "none";
+
+    });
+
+  const picker =
+    document.getElementById("picker-" + id);
+
+  if(!picker)
+    return;
+
+  picker.style.display =
+    picker.style.display === "flex"
+      ? "none"
+      : "flex";
+
+}
+
+
+document.addEventListener("click", () => {
+
+  document
+    .querySelectorAll(".emoji-picker")
+    .forEach(p => p.style.display = "none");
+
+});
+
+
+function toggleMyReaction(id, emoji){
+
+  const ref =
+    messageIndex[id];
+
+  if(!ref)
+    return;
+
+  if(!ref.reactions)
+    ref.reactions = {};
+
+  const you =
+    getUsername();
+
+  if(!ref.reactions[emoji])
+    ref.reactions[emoji] = [];
+
+  const idx =
+    ref.reactions[emoji].indexOf(you);
+
+  if(idx >= 0){
+
+    ref.reactions[emoji].splice(idx, 1);
+
+    if(!ref.reactions[emoji].length)
+      delete ref.reactions[emoji];
+
+  }else{
+
+    ref.reactions[emoji].push(you);
+
+  }
+
+  refreshReactionsUI(id);
+
+}
+
+
+function addReaction(id, emoji){
+
+  toggleMyReaction(id, emoji);
+
+  const picker =
+    document.getElementById("picker-" + id);
+
+  if(picker)
+    picker.style.display = "none";
+
+}
+
+
+function copyMessageText(id){
+
+  const ref =
+    messageIndex[id];
+
+  if(!ref)
+    return;
+
+  navigator.clipboard
+    ?.writeText(ref.text || "")
+    .catch(() => {});
+
+  const btn =
+    document.querySelector(
+      `.msg[data-id="${id}"] .msg-action-btn[title="Copy"]`
+    );
+
+  if(btn){
+
+    const orig =
+      btn.textContent;
+
+    btn.textContent = "✅";
+
+    setTimeout(() => {
+
+      btn.textContent = orig;
+
+    }, 900);
+
+  }
+
+}
+
+
+function downloadAttachment(id, evt){
+
+  if(evt)
+    evt.stopPropagation();
+
+  const ref =
+    messageIndex[id];
+
+  const att =
+    ref?.attachment;
+
+  if(!att)
+    return;
+
+  const a =
+    document.createElement("a");
+
+  let revokeUrl =
+    null;
+
+  if(att.kind==="image"){
+
+    /* Images were stored as a data: URL already —
+       nothing to build, just point the link at it. */
+
+    a.href = att.dataUrl;
+
+    a.download =
+      att.name || "image";
+
+  }else{
+
+    /* Text files were stored as plain text (possibly
+       truncated on upload). Turn that back into a
+       downloadable blob. */
+
+    const blob =
+      new Blob(
+        [att.text || ""],
+        {type: att.mime || "text/plain"}
+      );
+
+    revokeUrl =
+      URL.createObjectURL(blob);
+
+    a.href = revokeUrl;
+
+    a.download =
+      att.name || "file.txt";
+
+    if(att.truncated){
+
+      alert(
+        "Heads up: this file was truncated when it was " +
+        "attached, so the saved copy won't have the full " +
+        "original content."
+      );
+
+    }
+
+  }
+
+  document.body.appendChild(a);
+
+  a.click();
+
+  a.remove();
+
+  if(revokeUrl){
+
+    setTimeout(
+      () => URL.revokeObjectURL(revokeUrl),
+      2000
+    );
+
+  }
+
+}
+
+
+
+function startEditMessage(id){
+
+  const ref =
+    messageIndex[id];
+
+  const textEl =
+    document.getElementById("bubbletext-" + id);
+
+  if(!ref || !textEl)
+    return;
+
+  textEl.innerHTML = `
+    <div class="edit-box">
+      <textarea id="editarea-${id}" rows="2">${esc(ref.text)}</textarea>
+      <div class="edit-actions">
+        <button onclick="cancelEditMessage('${id}')">Cancel</button>
+        <button class="primary" onclick="saveEditMessage('${id}')">Save</button>
+      </div>
+    </div>
+  `;
+
+  const area =
+    document.getElementById("editarea-" + id);
+
+  area.focus();
+
+  area.setSelectionRange(
+    area.value.length,
+    area.value.length
+  );
+
+}
+
+
+function cancelEditMessage(id){
+
+  const ref =
+    messageIndex[id];
+
+  const textEl =
+    document.getElementById("bubbletext-" + id);
+
+  if(!ref || !textEl)
+    return;
+
+  textEl.innerHTML =
+    formatMentions(ref.text);
+
+}
+
+
+function saveEditMessage(id){
+
+  const ref =
+    messageIndex[id];
+
+  const area =
+    document.getElementById("editarea-" + id);
+
+  const textEl =
+    document.getElementById("bubbletext-" + id);
+
+  if(!ref || !area || !textEl)
+    return;
+
+  const val =
+    area.value.trim();
+
+  if(!val)
+    return;
+
+  ref.text = val;
+
+  ref.edited = true;
+
+  textEl.innerHTML =
+    formatMentions(ref.text);
+
+  const timeEl =
+    document.querySelector(
+      `.msg[data-id="${id}"] .time`
+    );
+
+  if(
+    timeEl &&
+    !timeEl.querySelector(".edited-tag")
+  ){
+
+    timeEl.insertAdjacentHTML(
+      "beforeend",
+      `<span class="edited-tag">(edited)</span>`
+    );
+
+  }
+
+}
+
+
+function deleteMessage(id){
+
+  const ref =
+    messageIndex[id];
+
+  if(!ref)
+    return;
+
+  if(!confirm("Delete this message?"))
+    return;
+
+  const arr =
+    findMessageArray(id);
+
+  if(arr){
+
+    const idx =
+      arr.indexOf(ref);
+
+    if(idx >= 0)
+      arr.splice(idx, 1);
+
+  }
+
+  delete messageIndex[id];
+
+  const el =
+    document.querySelector(`.msg[data-id="${id}"]`);
+
+  if(el)
+    el.remove();
+
+}
+
+
+/* ==========================================================
+   AI MESSAGE REACTIONS
+
+   After any real message renders, a random other character
+   in that same conversation gets a small, one-time chance to
+   drop an emoji reaction on it — asking the model itself
+   whether it likes it, dislikes it, or wouldn't react at all.
+========================================================== */
+
+async function scheduleAIReactions(id){
+
+  const ref =
+    messageIndex[id];
+
+  if(!ref || !ref.text)
+    return;
+
+  if(!autonomousEnabled)
+    return;
+
+  const inRoom =
+    roomMessages.includes(ref);
+
+  const dmKey =
+    !inRoom
+      ? Object.keys(dmThreads)
+          .find(k => dmThreads[k].includes(ref))
+      : null;
+
+  let pool;
+
+  if(inRoom){
+
+    pool = getAllParticipants();
+
+  }else if(dmKey === "llama"){
+
+    pool = [LLAMA];
+
+  }else if(dmKey){
+
+    const person =
+      PEOPLE.find(p => p.id === dmKey);
+
+    pool =
+      person
+        ? [person]
+        : [];
+
+  }else{
+
+    return;
+
+  }
+
+  const candidates =
+    pool.filter(p => p.name !== ref.name);
+
+  if(!candidates.length)
+    return;
+
+  if(Math.random() > 0.35)
+    return;
+
+  const reactor =
+    candidates[
+      Math.floor(Math.random() * candidates.length)
+    ];
+
+  await sleep(random(600, 2200));
+
+  if(!messageIndex[id])
+    return;
+
+  try{
+
+    const emoji =
+      await askPersonReaction(
+        reactor,
+        ref.text,
+        ref.name
+      );
+
+    if(emoji && messageIndex[id]){
+
+      if(!ref.reactions)
+        ref.reactions = {};
+
+      if(!ref.reactions[emoji])
+        ref.reactions[emoji] = [];
+
+      if(!ref.reactions[emoji].includes(reactor.name)){
+
+        ref.reactions[emoji].push(reactor.name);
+
+      }
+
+      refreshReactionsUI(id);
+
+    }
+
+  }catch(err){
+
+    console.warn(
+      "AI reaction failed:",
+      err
+    );
+
+  }
+
+}
+
+
+async function askPersonReaction(person, messageText, authorName){
+
+  const modelFieldId =
+    person.id === "llama"
+      ? "plainModel"
+      : "model";
+
+  const model =
+    document.getElementById(modelFieldId)
+      ?.value.trim();
+
+  if(!model)
+    return null;
+
+  const messages = [
+
+    {
+      role:"system",
+
+      content:
+`You are ${person.name}${person.role ? " (" + person.role + ")" : ""}.
+${person.prompt || ""}
+
+You are quickly skimming a chat and deciding whether to drop a single emoji reaction on the message below, the way people tap a reaction on a message instead of typing a reply.
+
+Reply with EXACTLY ONE of these tokens and nothing else:
+👍 (you like it / agree / it's good)
+❤️ (you love it)
+😂 (it's funny)
+😮 (it surprises you)
+😢 (it's sad)
+👎 (you dislike it / disagree)
+🔥 (it's impressive)
+NONE (you wouldn't react to this)
+
+Only output the token. No words, no punctuation, nothing else.`
+    },
+
+    {
+      role:"user",
+
+      content:
+`${authorName} said: "${messageText}"
+
+Your reaction token:`
+    }
+
+  ];
+
+  const raw =
+    await callLLM(messages, model, 200);
+
+  const clean =
+    raw.trim().split(/\s+/)[0];
+
+  return REACTION_EMOJIS.includes(clean)
+    ? clean
+    : null;
+
+}
+
+
+/* ==========================================================
+   STATUS
+========================================================== */
+
+function setStatus(text){
+
+  document.getElementById(
+    "statusText"
+  ).textContent =
+    text;
+
+}
+
+
+/* ==========================================================
+   ROOM JOIN / LEAVE ANNOUNCEMENTS
+
+   Shown as a light, centered, italic line in the room (via
+   the existing system-line style) and also recorded into
+   roomMessages so the AI characters' transcript reflects it
+   too — they'll know when someone joined or left, not just
+   the human watching the screen.
+========================================================== */
+
+function announceRoomEvent(text){
+
+  roomMessages.push({
+
+    name:"System",
+
+    text:text,
+
+    system:true
+
+  });
+
+
+  if(isViewActive("room")){
+
+    addBubble(
+      "System",
+      text,
+      {system:true}
+    );
+
+  }
+
+}
+
+
+/* ==========================================================
+   ROOM TRANSCRIPT
+========================================================== */
+
+function roomTranscript(limit=45){
+
+  const slice =
+    roomMessages.slice(-limit);
+
+  let lastAttachmentIdx = -1;
+
+  slice.forEach((m,i) => {
+
+    if(m.attachment)
+      lastAttachmentIdx = i;
+
+  });
+
+  return slice
+    .map((m,i) => {
+
+      const note =
+        attachmentNote(
+          m.attachment,
+          i === lastAttachmentIdx
+        );
+
+      if(m.replyTo){
+
+        return `${m.name} (replying to ${m.replyTo}): ${m.text}${note}`;
+
+      }
+
+      return `${m.name}: ${m.text}${note}`;
+
+    })
+    .join("\n");
+
+}
+
+
+/* ==========================================================
+   CHARACTER AI REQUEST
+========================================================== */
+
+function buildMessages(
+  person,
+  replyTo=null,
+  explicitMention=false,
+  historyLimit=45
+){
+
+  const global =
+    document.getElementById(
+      "globalPrompt"
+    ).value.trim();
+
+
+  let specialInstruction = "";
+
+
+  if(replyTo){
+
+    specialInstruction += `
+
+The most recent relevant speaker is ${replyTo}.
+
+You may respond to them naturally.
+
+Do not force a response if you have nothing useful to say.
+`;
+
+  }
+
+
+  if(explicitMention){
+
+    specialInstruction += `
+
+IMPORTANT:
+
+You were directly mentioned with @${person.name}.
+
+You should respond to the user or participant who mentioned you.
+
+Treat the mention as a direct invitation to join the conversation.
+`;
+
+  }
+
+
+  return [
+
+    {
+      role:"system",
+
+      content:
+`${global}
+
+YOUR ASSIGNED IDENTITY:
+
+Name:
+${person.name}
+
+Role:
+${person.role}
+
+PERSONALITY:
+${person.prompt}
+
+${specialInstruction}
+
+Remember:
+
+You are ${person.name}.
+
+You are one person in a group.
+
+You are not the other participants.
+`
+    },
+
+
+    {
+      role:"user",
+
+      content:
+`Here is the recent public chat transcript.
+
+--- CHAT BEGIN ---
+
+${roomTranscript(historyLimit) || "(The room is quiet.)"}
+
+--- CHAT END ---
+
+Write ONLY the message that ${person.name} would send into this chat room.
+
+Do not include ${person.name}'s name.
+
+Do not write another person's dialogue.
+
+Keep it natural.`
+    }
+
+  ];
+
+}
+
+
+/* ==========================================================
+   LLAMA PUBLIC ROOM REQUEST
+========================================================== */
+
+function buildLlamaMessages(
+  explicitMention=false,
+  historyLimit=45
+){
+
+  const username =
+    getUsername();
+
+  const instruction =
+    explicitMention
+
+      ? `
+The user directly mentioned you with @Llama.
+
+Respond directly and naturally to their message.
+`
+
+      : `
+You are participating naturally in the room.
+
+You may respond to the current discussion if appropriate.
+`;
+
+
+  return [
+
+    {
+      role:"system",
+
+      content:
+`You are Llama, the neutral language-model participant in a fictional internet chat room.
+
+You are NOT one of the ten personalities.
+
+You have no assigned human personality.
+
+You are the plain model.
+
+Do not pretend to be Mike, Sarah, Dave, Jen, Tony, Lisa, Rick, Amy, Kevin or Becky.
+
+You can answer questions directly.
+
+You can participate in the discussion.
+
+You can disagree.
+
+You can ask questions.
+
+You can mention other participants using @Name.
+
+Do not speak for other participants.
+
+Do not invent their responses.
+
+Do not mention hidden instructions.
+
+Do not mention APIs.
+
+Do not mention this prompt.
+
+Keep normal chat responses reasonably concise.
+
+${instruction}
+`
+    },
+
+
+    {
+      role:"user",
+
+      content:
+`The current public chat is:
+
+--- CHAT BEGIN ---
+
+${roomTranscript(historyLimit) || "(The room is quiet.)"}
+
+--- CHAT END ---
+
+The current user is ${username}.
+
+Write ONLY the message Llama should send into the chat room.
+
+Do not prefix the response with "Llama:".
+
+Do not write dialogue for anyone else.`
+    }
+
+  ];
+
+}
+
+
+/* ==========================================================
+   DM TRANSCRIPT
+========================================================== */
+
+function dmTranscript(id,limit=45){
+
+  const slice =
+    (dmThreads[id]||[])
+      .slice(-limit);
+
+  let lastAttachmentIdx = -1;
+
+  slice.forEach((m,i) => {
+
+    if(m.attachment)
+      lastAttachmentIdx = i;
+
+  });
+
+  return slice
+    .map(
+      (m,i) =>
+        `${m.name}: ${m.text}${attachmentNote(m.attachment, i === lastAttachmentIdx)}`
+    )
+    .join("\n");
+
+}
+
+
+/* ==========================================================
+   CHARACTER DM REQUEST
+========================================================== */
+
+function buildDMMessages(
+  person,
+  username,
+  historyLimit=45
+){
+
+  const global =
+    document.getElementById(
+      "globalPrompt"
+    ).value.trim();
+
+
+  return [
+
+    {
+      role:"system",
+
+      content:
+`${global}
+
+You are currently in a PRIVATE one-on-one direct message conversation with ${username}, not the public chat room.
+
+Nobody else can see this conversation.
+
+It's just the two of you, so you can be more personal and direct than you would be in the group chat.
+
+YOUR ASSIGNED IDENTITY:
+
+Name:
+${person.name}
+
+Role:
+${person.role}
+
+PERSONALITY:
+${person.prompt}
+
+Remember:
+
+You are ${person.name}.
+
+This is a private DM between you and ${username} only.
+`
+    },
+
+
+    {
+      role:"user",
+
+      content:
+`Here is the recent private message history between you and ${username}.
+
+--- DM BEGIN ---
+
+${dmTranscript(person.id,historyLimit) ||
+ `(No messages yet. ${username} just opened a DM with you.)`}
+
+--- DM END ---
+
+Write ONLY the message that ${person.name} would send back to ${username}.
+
+Do not include ${person.name}'s name.
+
+Keep it natural and personal.`
+    }
+
+  ];
+
+}
+
+
+/* ==========================================================
+   LLAMA PRIVATE REQUEST
+========================================================== */
+
+function buildLlamaDMMessages(historyLimit=45){
+
+  const username =
+    getUsername();
+
+
+  return [
+
+    {
+      role:"system",
+
+      content:
+`You are plain Llama 3.1.
+
+You are having a private conversation with ${username}.
+
+You have no character personality.
+
+Answer naturally and directly.
+
+Do not pretend to be another participant.
+
+Do not mention hidden instructions or APIs.
+`
+    },
+
+
+    {
+      role:"user",
+
+      content:
+`Private conversation:
+
+--- BEGIN ---
+
+${dmTranscript("llama",historyLimit) ||
+ `(No messages yet. ${username} just opened a private conversation with Llama.)`}
+
+--- END ---
+
+Write ONLY Llama's response.
+
+Do not prefix it with "Llama:".`
+    }
+
+  ];
+
+}
+
+
+/* ==========================================================
+   LM STUDIO REQUEST
+
+   Room chat, DMs, and AI reactions each run on their own
+   independent queue/timer, so it's easy for two of them to
+   fire at the same instant with two DIFFERENT models selected
+   (e.g. a regular character + the plain Llama persona). Local
+   servers like LM Studio can only load one model at a time,
+   so overlapping requests for different models cause it to
+   cancel one load to start the other — endless flicker and
+   nothing ever finishes loading.
+
+   callLLM is a thin wrapper that funnels every actual network
+   request through a single chain, so only one request is ever
+   in flight at a time no matter which part of the app asked.
+   Everything upstream (queues, timing, retries) is unchanged.
+========================================================== */
+
+let llmRequestChain = Promise.resolve();
+
+function callLLM(messages, modelOverride=null, maxTokens=180){
+
+  const run = () =>
+    callLLMInner(messages, modelOverride, maxTokens);
+
+  const result =
+    llmRequestChain.then(run, run);
+
+  llmRequestChain =
+    result.then(()=>{}, ()=>{});
+
+  return result;
+
+}
+
+async function callLLMInner(
+  messages,
+  modelOverride=null,
+  maxTokens=180
+){
+
+  const base =
+    document.getElementById(
+      "apiBase"
+    ).value
+      .trim()
+      .replace(/\/$/,"");
+
+
+  const model =
+    modelOverride ||
+    document.getElementById(
+      "model"
+    ).value.trim();
+
+
+  const key =
+    document.getElementById(
+      "apiKey"
+    ).value.trim();
+
+
+  if(!base)
+    throw new Error(
+      "LM Studio API address is empty."
+    );
+
+
+  if(!model)
+    throw new Error(
+      "No model selected."
+    );
+
+
+  const headers = {
+    "Content-Type":
+      "application/json",
+
+    "Accept":
+      "application/json"
+  };
+
+
+  if(key){
+
+    headers.Authorization =
+      "Bearer " + key;
+
+  }
+
+
+  const body = {
+
+    model:model,
+
+    messages:messages,
+
+    stream:false,
+
+    temperature:0.9,
+
+    max_tokens:maxTokens
+
+  };
+
+
+  const res =
+    await fetch(
+      base +
+      "/chat/completions",
+      {
+        method:"POST",
+        headers,
+        body:JSON.stringify(body)
+      }
+    );
+
+
+  if(!res.ok){
+
+    const t =
+      await res.text()
+        .catch(
+          ()=>""
+        );
+
+    throw new Error(
+      "HTTP " +
+      res.status +
+      ": " +
+      (
+        t ||
+        "LM Studio request failed"
+      )
+    );
+
+  }
+
+
+  const data =
+    await res.json();
+
+
+  let text =
+    data?.choices?.[0]
+      ?.message
+      ?.content || "";
+
+
+  text =
+    text.replace(
+      /<think>[\s\S]*?<\/think>/gi,
+      ""
+    );
+
+
+  /*
+     Reasoning models (Gemma, Qwen, etc.) sometimes get cut
+     off by max_tokens before closing their <think> block —
+     the regex above only catches CLOSED think blocks, so an
+     unterminated one would otherwise leak into the chat (or
+     eat the whole reply). If we find a dangling <think> with
+     no matching close, drop everything from there onward.
+  */
+
+  text =
+    text.replace(
+      /<think>[\s\S]*$/gi,
+      ""
+    ).trim();
+
+
+  text =
+    text.replace(
+      /^\s*(Mike|Sarah|Dave|Jen|Tony|Lisa|Rick|Amy|Kevin|Becky|Llama|You)\s*:\s*/i,
+      ""
+    );
+
+
+  return text || "...";
+
+}
+
+
+/* ==========================================================
+   CHARACTER ASK
+========================================================== */
+
+/* ==========================================================
+   CONTEXT-OVERFLOW-SAFE CALL
+
+   Some local models (especially ones set up with a small
+   context window in LM Studio) will reject a request with
+   HTTP 400 "Context size has been exceeded" once the chat/DM
+   history gets long enough. Rather than just showing an
+   error, retry the same request with a progressively shorter
+   slice of history until either it succeeds or we're down to
+   just the last couple of messages.
+========================================================== */
+
+function isContextOverflowError(err){
+
+  const msg =
+    (err && err.message || "").toLowerCase();
+
+  return (
+    msg.includes("context") &&
+    (
+      msg.includes("exceed") ||
+      msg.includes("size") ||
+      msg.includes("length") ||
+      msg.includes("token")
+    )
+  ) || msg.includes("http 400");
+
+}
+
+const HISTORY_SHRINK_STEPS = [45, 25, 12, 6, 3, 1];
+
+async function callLLMWithHistoryFallback(
+  buildFn,
+  model,
+  maxTokens
+){
+
+  let lastErr = null;
+
+  for(const limit of HISTORY_SHRINK_STEPS){
+
+    try{
+
+      return await callLLM(
+        buildFn(limit),
+        model,
+        maxTokens
+      );
+
+    }catch(err){
+
+      lastErr = err;
+
+      if(!isContextOverflowError(err))
+        throw err;
+
+      // else: try again with a shorter history slice
+    }
+
+  }
+
+  throw lastErr;
+
+}
+
+
+async function askPerson(
+  person,
+  replyTo=null,
+  explicitMention=false
+){
+
+  const model =
+    document.getElementById(
+      "model"
+    ).value.trim();
+
+
+  return callLLMWithHistoryFallback(
+    (limit) => buildMessages(
+      person,
+      replyTo,
+      explicitMention,
+      limit
+    ),
+    model,
+    700
+  );
+
+}
+
+
+/* ==========================================================
+   LLAMA ASK
+========================================================== */
+
+async function askLlama(
+  explicitMention=false
+){
+
+  const model =
+    document.getElementById(
+      "plainModel"
+    ).value.trim();
+
+
+  return callLLMWithHistoryFallback(
+    (limit) => buildLlamaMessages(
+      explicitMention,
+      limit
+    ),
+    model,
+    700
+  );
+
+}
+
+
+/* ==========================================================
+   CHARACTER DM
+========================================================== */
+
+async function askPersonDM(person){
+
+  const model =
+    document.getElementById(
+      "model"
+    ).value.trim();
+
+
+  return callLLMWithHistoryFallback(
+    (limit) => buildDMMessages(
+      person,
+      getUsername(),
+      limit
+    ),
+    model,
+    800
+  );
+
+}
+
+
+/* ==========================================================
+   LLAMA DM
+========================================================== */
+
+async function askLlamaDM(){
+
+  const model =
+    document.getElementById(
+      "plainModel"
+    ).value.trim();
+
+
+  return callLLMWithHistoryFallback(
+    (limit) => buildLlamaDMMessages(limit),
+    model,
+    800
+  );
+
+}
+
+
+/* ==========================================================
+   LAST SPEAKER
+========================================================== */
+
+function lastSpeaker(){
+
+  for(
+    let i=roomMessages.length-1;
+    i>=0;
+    i--
+  ){
+
+    const m =
+      roomMessages[i];
+
+    if(
+      m.name &&
+      !m.system &&
+      m.name !== getUsername()
+    ){
+
+      return m;
+
+    }
+
+  }
+
+  return null;
+
+}
+
+
+/* ==========================================================
+   AUTONOMOUS SPEECH DECISION
+========================================================== */
+
+function shouldAutonomousSpeak(){
+
+  const activity =
+    parseInt(
+      document.getElementById(
+        "activity"
+      ).value,
+      10
+    );
+
+
+  if(activity<=0)
+    return false;
+
+
+  return (
+    Math.random()*100 <
+    activity
+  );
+
+}
+
+
+/* ==========================================================
+   AUTONOMOUS TURN
+========================================================== */
+
+function autonomousTurn(){
+
+  if(!autonomousEnabled){
+
+    return;
+
+  }
+
+
+  if(!shouldAutonomousSpeak()){
+
+    scheduleAutonomous();
+
+    return;
+
+  }
+
+
+  const recent =
+    lastSpeaker();
+
+
+  const replyChance =
+    parseInt(
+      document.getElementById(
+        "replyChance"
+      ).value,
+      10
+    );
+
+
+  const spontaneousChance =
+    parseInt(
+      document.getElementById(
+        "spontaneousChance"
+      ).value,
+      10
+    );
+
+
+  let wantsReply = false;
+
+
+  if(recent){
+
+    wantsReply =
+      Math.random()*100 <
+      replyChance;
+
+  }
+
+
+  if(!wantsReply){
+
+    const spontaneous =
+      Math.random()*100 <
+      spontaneousChance;
+
+
+    if(!spontaneous){
+
+      scheduleAutonomous();
+
+      return;
+
+    }
+
+  }
+
+
+  const maxBurst =
+    parseInt(
+      document.getElementById(
+        "maxBurst"
+      ).value,
+      10
+    );
+
+
+  let burstCount = 1;
+
+
+  if(
+    Math.random()<0.25 &&
+    maxBurst>1
+  ){
+
+    burstCount =
+      random(
+        1,
+        maxBurst
+      );
+
+  }
+
+
+  const selectedIds = [];
+
+  const selected = [];
+
+
+  while(
+    selected.length < burstCount &&
+    selectedIds.length < PEOPLE.length
+  ){
+
+    const p =
+      weightedRandomPerson(
+        selectedIds
+      );
+
+
+    if(!p)
+      break;
+
+
+    selected.push(p);
+
+    selectedIds.push(
+      p.id
+    );
+
+  }
+
+
+  selected.forEach(
+    person => {
+
+      enqueueSpeak(
+        async () => {
+
+          if(!autonomousEnabled)
+            return;
+
+          await runRoomSpeakTask(
+            person
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+  scheduleAutonomous();
+
+}
+
+
+/* ==========================================================
+   ROOM CHARACTER SPEAK
+========================================================== */
+
+async function runRoomSpeakTask(
+  person,
+  explicitMention=false,
+  forceSpeak=false,
+  replyToOverride=null
+){
+
+  await sleep(
+    random(
+      800,
+      3200
+    )
+  );
+
+
+  if(
+    !PEOPLE.some(
+      p=>p.id===person.id
+    )
+  ){
+
+    return;
+
+  }
+
+
+  if(
+    !explicitMention &&
+    !forceSpeak &&
+    Math.random()<0.05
+  ){
+
+    return;
+
+  }
+
+
+  const replyTo =
+    replyToOverride ||
+    lastSpeaker()?.name ||
+    null;
+
+
+  setPersonTyping(
+    person.id,
+    true
+  );
+
+
+  const typing =
+    isViewActive("room")
+      ? addBubble(
+          person.name,
+          "",
+          {typing:true}
+        )
+      : null;
+
+
+  try{
+
+    setStatus(
+      person.name +
+      " is typing..."
+    );
+
+
+    const reply =
+      await askPerson(
+        person,
+        replyTo,
+        explicitMention
+      );
+
+
+    if(
+      typing?.isConnected
+    ){
+
+      typing.remove();
+
+    }
+
+
+    setPersonTyping(
+      person.id,
+      false
+    );
+
+
+    if(!reply)
+      return;
+
+
+    if(
+      !PEOPLE.some(
+        p=>p.id===person.id
+      )
+    ){
+
+      return;
+
+    }
+
+
+    markSpoke(
+      person
+    );
+
+
+    const mentions =
+      getMentionedPeople(
+        reply
+      );
+
+
+    const newMsg = {
+
+      name:
+        person.name,
+
+      text:
+        reply,
+
+      replyTo:
+        replyTo
+
+    };
+
+    roomMessages.push(newMsg);
+
+
+    markActivity();
+
+
+    if(
+      isViewActive("room")
+    ){
+
+      addBubble(
+        person.name,
+        reply,
+        {
+          replyTo,
+          msgRef:newMsg
+        }
+      );
+
+    }
+
+
+    /*
+       If the character mentioned somebody,
+       queue that person next.
+    */
+
+    if(mentions.length){
+
+      mentions
+        .forEach(
+          mentioned => {
+
+            if(
+              mentioned.id ===
+              person.id
+            ){
+
+              return;
+
+            }
+
+
+            if(
+              mentioned.id ===
+              "llama"
+            ){
+
+              enqueueSpeak(
+                () =>
+                  runLlamaRoomTask(
+                    true
+                  )
+              );
+
+              return;
+
+            }
+
+
+            enqueueSpeak(
+              () =>
+                runRoomSpeakTask(
+                  mentioned,
+                  true
+                )
+            );
+
+          }
+        );
+
+    }
+
+
+  }catch(err){
+
+    if(
+      typing?.isConnected
+    ){
+
+      typing.remove();
+
+    }
+
+
+    setPersonTyping(
+      person.id,
+      false
+    );
+
+
+    console.error(
+      "Autonomous AI error:",
+      err
+    );
+
+
+    setStatus(
+      "AI error"
+    );
+
+  }
+
+
+  setStatus(
+    autonomousEnabled
+      ? "AI room active"
+      : "AI room paused"
+  );
+
+}
+
+
+/* ==========================================================
+   LLAMA ROOM TASK
+========================================================== */
+
+async function runLlamaRoomTask(
+  explicitMention=false
+){
+
+  await sleep(
+    explicitMention
+      ? random(500,1200)
+      : random(800,2500)
+  );
+
+
+  setPersonTyping(
+    "llama",
+    true
+  );
+
+
+  const typing =
+    isViewActive("room")
+      ? addBubble(
+          "Llama",
+          "",
+          {typing:true}
+        )
+      : null;
+
+
+  try{
+
+    setStatus(
+      "Llama is typing..."
+    );
+
+
+    const reply =
+      await askLlama(
+        explicitMention
+      );
+
+
+    if(
+      typing?.isConnected
+    ){
+
+      typing.remove();
+
+    }
+
+
+    setPersonTyping(
+      "llama",
+      false
+    );
+
+
+    if(!reply)
+      return;
+
+
+    markSpoke(
+      LLAMA
+    );
+
+
+    const replyTo =
+      lastSpeaker()?.name ||
+      null;
+
+
+    const newMsg = {
+
+      name:"Llama",
+
+      text:reply,
+
+      replyTo:replyTo
+
+    };
+
+    roomMessages.push(newMsg);
+
+
+    markActivity();
+
+
+    if(
+      isViewActive("room")
+    ){
+
+      addBubble(
+        "Llama",
+        reply,
+        {
+          replyTo,
+          msgRef:newMsg
+        }
+      );
+
+    }
+
+
+    const mentions =
+      getMentionedPeople(
+        reply
+      );
+
+
+    mentions.forEach(
+      mentioned => {
+
+        if(
+          mentioned.id ===
+          "llama"
+        ){
+
+          return;
+
+        }
+
+
+        enqueueSpeak(
+          () =>
+            runRoomSpeakTask(
+              mentioned,
+              true
+            )
+        );
+
+      }
+    );
+
+
+  }catch(err){
+
+    if(
+      typing?.isConnected
+    ){
+
+      typing.remove();
+
+    }
+
+
+    setPersonTyping(
+      "llama",
+      false
+    );
+
+
+    console.error(
+      "Llama error:",
+      err
+    );
+
+
+    setStatus(
+      "Llama error"
+    );
+
+  }
+
+
+  setStatus(
+    autonomousEnabled
+      ? "AI room active"
+      : "AI room paused"
+  );
+
+}
+
+
+/* ==========================================================
+   AUTONOMOUS TIMER
+========================================================== */
+
+function scheduleAutonomous(){
+
+  clearTimeout(
+    autonomousTimer
+  );
+
+
+  if(!autonomousEnabled)
+    return;
+
+
+  const activity =
+    parseInt(
+      document.getElementById(
+        "activity"
+      ).value,
+      10
+    );
+
+
+  const minDelay =
+    2500;
+
+
+  const maxDelay =
+    18000;
+
+
+  const activityFactor =
+    activity/100;
+
+
+  const delay =
+    Math.round(
+      maxDelay -
+      (
+        (maxDelay-minDelay) *
+        activityFactor
+      )
+    );
+
+
+  const finalDelay =
+    random(
+      Math.max(
+        1200,
+        delay*.5
+      ),
+      Math.max(
+        1800,
+        delay*1.5
+      )
+    );
+
+
+  autonomousTimer =
+    setTimeout(
+      autonomousTurn,
+      finalDelay
+    );
+
+}
+
+
+/* ==========================================================
+   MENTION PRIORITY
+========================================================== */
+
+function queueMentionedPeople(
+  mentions
+){
+
+  mentions.forEach(
+    person => {
+
+      if(
+        person.id === "llama"
+      ){
+
+        enqueueSpeak(
+          () =>
+            runLlamaRoomTask(
+              true
+            )
+        );
+
+      }else{
+
+        enqueueSpeak(
+          () =>
+            runRoomSpeakTask(
+              person,
+              true
+            )
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+/* ==========================================================
+   MANUAL SEND
+========================================================== */
+
+function sendMessage(){
+
+  const input =
+    document.getElementById(
+      "input"
+    );
+
+
+  const text =
+    input.value.trim();
+
+
+  const attachment =
+    pendingAttachment;
+
+
+  if(!text && !attachment)
+    return;
+
+
+  const model =
+    document.getElementById(
+      "model"
+    ).value.trim();
+
+
+  if(!model){
+
+    alert(
+      "Select a character model first."
+    );
+
+    return;
+
+  }
+
+
+  input.value = "";
+
+  input.focus();
+
+
+  pendingAttachment = null;
+
+  renderAttachPreview();
+
+
+  if(currentDM){
+
+    if(currentDM==="llama"){
+
+      sendLlamaDMMessage(
+        text,
+        attachment
+      );
+
+    }else{
+
+      sendDMMessage(
+        text,
+        attachment
+      );
+
+    }
+
+    return;
+
+  }
+
+
+  sendRoomMessage(
+    text,
+    attachment
+  );
+
+}
+
+
+/* ==========================================================
+   ROOM MESSAGE
+========================================================== */
+
+function sendRoomMessage(
+  text,
+  attachment=null
+){
+
+  const username =
+    getUsername();
+
+
+  const newMsg = {
+
+    name:username,
+
+    text:text,
+
+    attachment:attachment
+
+  };
+
+  roomMessages.push(newMsg);
+
+
+  markActivity();
+
+
+  if(
+    isViewActive("room")
+  ){
+
+    addBubble(
+      username,
+      text,
+      {attachment:attachment, msgRef:newMsg}
+    );
+
+  }
+
+
+  /*
+     FIRST CHECK @MENTIONS.
+
+     Mentions always beat the normal
+     random-response system.
+  */
+
+  const mentioned =
+    getMentionedPeople(
+      text
+    );
+
+
+  if(mentioned.length){
+
+    mentioned.forEach(
+      p => {
+
+        enqueueSpeak(
+          async () => {
+
+            if(
+              p.id==="llama"
+            ){
+
+              await runLlamaRoomTask(
+                true
+              );
+
+            }else{
+
+              await runRoomSpeakTask(
+                p,
+                true,
+                false,
+                username
+              );
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+
+    scheduleAutonomous();
+
+    return;
+
+  }
+
+
+  /*
+     NORMAL MANUAL REPLY BEHAVIOR
+
+     Always treat replies as "everyone",
+     up to 10 people.
+  */
+
+  const responders =
+    shuffle(
+      [...PEOPLE]
+    ).slice(
+      0,
+      Math.min(
+        10,
+        PEOPLE.length
+      )
+    );
+
+
+  responders.forEach(
+    person => {
+
+      enqueueSpeak(
+        () =>
+          runRoomSpeakTask(
+            person,
+            false,
+            false,
+            username
+          )
+      );
+
+    }
+  );
+
+
+  scheduleAutonomous();
+
+}
+
+
+/* ==========================================================
+   SHUFFLE
+========================================================== */
+
+function shuffle(arr){
+
+  for(
+    let i=arr.length-1;
+    i>0;
+    i--
+  ){
+
+    const j =
+      Math.floor(
+        Math.random() *
+        (i+1)
+      );
+
+
+    [
+      arr[i],
+      arr[j]
+    ] =
+    [
+      arr[j],
+      arr[i]
+    ];
+
+  }
+
+  return arr;
+
+}
+
+
+/* ==========================================================
+   CHARACTER DM
+========================================================== */
+
+function sendDMMessage(
+  text,
+  attachment=null
+){
+
+  const id =
+    currentDM;
+
+
+  const person =
+    PEOPLE.find(
+      p=>p.id===id
+    );
+
+
+  if(!person)
+    return;
+
+
+  const username =
+    getUsername();
+
+
+  if(!dmThreads[id])
+    dmThreads[id] = [];
+
+
+  const newMsg = {
+
+    name:username,
+
+    text:text,
+
+    attachment:attachment
+
+  };
+
+  dmThreads[id].push(newMsg);
+
+
+  if(
+    isViewActive(id)
+  ){
+
+    addBubble(
+      username,
+      text,
+      {attachment:attachment, msgRef:newMsg}
+    );
+
+  }
+
+
+  enqueueDMSpeak(
+    () =>
+      runDMSpeakTask(
+        id
+      )
+  );
+
+}
+
+
+/* ==========================================================
+   LLAMA DM MESSAGE
+========================================================== */
+
+function sendLlamaDMMessage(
+  text,
+  attachment=null
+){
+
+  const username =
+    getUsername();
+
+
+  if(!dmThreads.llama)
+    dmThreads.llama=[];
+
+
+  const newMsg = {
+
+    name:username,
+
+    text:text,
+
+    attachment:attachment
+
+  };
+
+  dmThreads.llama.push(newMsg);
+
+
+  if(
+    isViewActive("llama")
+  ){
+
+    addBubble(
+      username,
+      text,
+      {attachment:attachment, msgRef:newMsg}
+    );
+
+  }
+
+
+  enqueueDMSpeak(
+    () =>
+      runLlamaDMSpeakTask()
+  );
+
+}
+
+
+/* ==========================================================
+   CHARACTER DM TASK
+========================================================== */
+
+async function runDMSpeakTask(
+  id
+){
+
+  const person =
+    PEOPLE.find(
+      p=>p.id===id
+    );
+
+
+  if(!person)
+    return;
+
+
+  await sleep(
+    random(
+      500,
+      1600
+    )
+  );
+
+
+  if(
+    !PEOPLE.some(
+      p=>p.id===id
+    )
+  ){
+
+    return;
+
+  }
+
+
+  setPersonTyping(
+    id,
+    true
+  );
+
+
+  const typing =
+    isViewActive(id)
+      ? addBubble(
+          person.name,
+          "",
+          {typing:true}
+        )
+      : null;
+
+
+  try{
+
+    setStatus(
+      person.name +
+      " is typing..."
+    );
+
+
+    const reply =
+      await askPersonDM(
+        person
+      );
+
+
+    if(
+      typing?.isConnected
+    ){
+
+      typing.remove();
+
+    }
+
+
+    setPersonTyping(
+      id,
+      false
+    );
+
+
+    if(!reply)
+      return;
+
+
+    if(
+      !PEOPLE.some(
+        p=>p.id===id
+      )
+    ){
+
+      return;
+
+    }
+
+
+    if(!dmThreads[id])
+      dmThreads[id] = [];
+
+
+    const newMsg = {
+
+      name:
+        person.name,
+
+      text:
+        reply
+
+    };
+
+    dmThreads[id].push(newMsg);
+
+
+    if(
+      isViewActive(id)
+    ){
+
+      addBubble(
+        person.name,
+        reply,
+        {msgRef:newMsg}
+      );
+
+    }else{
+
+      dmUnread.add(
+        id
+      );
+
+      refreshTypingClasses();
+
+    }
+
+
+  }catch(err){
+
+    if(
+      typing?.isConnected
+    ){
+
+      typing.remove();
+
+    }
+
+
+    setPersonTyping(
+      id,
+      false
+    );
+
+
+    console.error(
+      "DM AI error:",
+      err
+    );
+
+
+    /* Previously a failed reply just vanished — the typing
+       dots disappeared and nothing else happened, so it looked
+       like the DM had silently stopped working. Now the error
+       is shown right in the thread (and kept in dmThreads) so
+       it's obvious what happened instead of looking broken. */
+
+    if(!dmThreads[id])
+      dmThreads[id] = [];
+
+    const errMsg = {
+
+      name:
+        person.name,
+
+      text:
+        "⚠ Couldn't get a reply (" +
+        (err?.message || "unknown error") +
+        "). Check the API address/model in settings, then try sending again.",
+
+      system:true
+
+    };
+
+    dmThreads[id].push(errMsg);
+
+    if(
+      isViewActive(id)
+    ){
+
+      addBubble(
+        person.name,
+        errMsg.text,
+        {system:true, msgRef:errMsg}
+      );
+
+    }else{
+
+      dmUnread.add(id);
+
+      refreshTypingClasses();
+
+    }
+
+
+    setStatus(
+      "AI error — see DM"
+    );
+
+
+    return;
+
+  }
+
+
+  setStatus(
+    autonomousEnabled
+      ? "AI room active"
+      : "Ready"
+  );
+
+}
+
+
+/* ==========================================================
+   LLAMA DM TASK
+========================================================== */
+
+async function runLlamaDMSpeakTask(){
+
+  await sleep(
+    random(
+      400,
+      1200
+    )
+  );
+
+
+  setPersonTyping(
+    "llama",
+    true
+  );
+
+
+  const typing =
+    isViewActive("llama")
+      ? addBubble(
+          "Llama",
+          "",
+          {typing:true}
+        )
+      : null;
+
+
+  try{
+
+    setStatus(
+      "Llama is typing..."
+    );
+
+
+    const reply =
+      await askLlamaDM();
+
+
+    if(
+      typing?.isConnected
+    ){
+
+      typing.remove();
+
+    }
+
+
+    setPersonTyping(
+      "llama",
+      false
+    );
+
+
+    if(!reply)
+      return;
+
+
+    const newMsg = {
+
+      name:"Llama",
+
+      text:reply
+
+    };
+
+    dmThreads.llama.push(newMsg);
+
+
+    if(
+      isViewActive("llama")
+    ){
+
+      addBubble(
+        "Llama",
+        reply,
+        {msgRef:newMsg}
+      );
+
+    }else{
+
+      dmUnread.add(
+        "llama"
+      );
+
+      refreshTypingClasses();
+
+    }
+
+
+  }catch(err){
+
+    if(
+      typing?.isConnected
+    ){
+
+      typing.remove();
+
+    }
+
+
+    setPersonTyping(
+      "llama",
+      false
+    );
+
+
+    console.error(
+      "Llama DM error:",
+      err
+    );
+
+
+    if(!dmThreads.llama)
+      dmThreads.llama = [];
+
+    const errMsg = {
+
+      name:"Llama",
+
+      text:
+        "⚠ Couldn't get a reply (" +
+        (err?.message || "unknown error") +
+        "). Check the API address/model in settings, then try sending again.",
+
+      system:true
+
+    };
+
+    dmThreads.llama.push(errMsg);
+
+    if(
+      isViewActive("llama")
+    ){
+
+      addBubble(
+        "Llama",
+        errMsg.text,
+        {system:true, msgRef:errMsg}
+      );
+
+    }else{
+
+      dmUnread.add("llama");
+
+      refreshTypingClasses();
+
+    }
+
+
+    setStatus(
+      "AI error — see DM"
+    );
+
+
+    return;
+
+  }
+
+
+  setStatus(
+    autonomousEnabled
+      ? "AI room active"
+      : "Ready"
+  );
+
+}
+
+
+/* ==========================================================
+   RENDER LOG
+========================================================== */
+
+function renderLog(){
+
+  const log =
+    document.getElementById(
+      "log"
+    );
+
+
+  log.innerHTML = "";
+
+  lastRenderedName =
+    null;
+
+
+  let source;
+
+
+  if(currentDM){
+
+    source =
+      dmThreads[currentDM] ||
+      [];
+
+  }else{
+
+    source =
+      roomMessages;
+
+  }
+
+
+  source.forEach(
+    m => {
+
+      addBubble(
+        m.name,
+        m.text,
+        {
+          replyTo:m.replyTo,
+          attachment:m.attachment,
+          system:m.system,
+          msgRef:m
+        }
+      );
+
+    }
+  );
+
+}
+
+
+/* ==========================================================
+   OPEN CHARACTER DM
+========================================================== */
+
+function openDM(id){
+
+  const person =
+    PEOPLE.find(
+      p=>p.id===id
+    );
+
+
+  if(!person)
+    return;
+
+
+  currentDM =
+    id;
+
+
+  dmUnread.delete(
+    id
+  );
+
+
+  document.body.classList.add(
+    "dm-mode"
+  );
+
+
+  document.getElementById(
+    "roomTitle"
+  ).textContent =
+    person.name;
+
+
+  document.getElementById(
+    "roomMeta"
+  ).textContent =
+    "• " +
+    person.role +
+    " • private DM";
+
+
+  document.getElementById(
+    "input"
+  ).placeholder =
+    "Message " +
+    person.name +
+    " privately...";
+
+
+  renderLog();
+
+  refreshTypingClasses();
+
+
+  document.getElementById(
+    "input"
+  ).focus();
+
+
+  if(
+    window.innerWidth<=760 &&
+    peopleVisible
+  ){
+
+    togglePeople();
+
+  }
+
+}
+
+
+/* ==========================================================
+   OPEN LLAMA DM
+========================================================== */
+
+function openLlamaDM(){
+
+  currentDM =
+    "llama";
+
+
+  if(!dmThreads.llama)
+    dmThreads.llama=[];
+
+
+  dmUnread.delete(
+    "llama"
+  );
+
+
+  document.body.classList.add(
+    "dm-mode"
+  );
+
+
+  document.getElementById(
+    "roomTitle"
+  ).textContent =
+    "Llama";
+
+
+  document.getElementById(
+    "roomMeta"
+  ).textContent =
+    "• Plain Llama 3.1 • private DM";
+
+
+  document.getElementById(
+    "input"
+  ).placeholder =
+    "Message Llama privately...";
+
+
+  renderLog();
+
+  refreshTypingClasses();
+
+
+  document.getElementById(
+    "input"
+  ).focus();
+
+
+  if(
+    window.innerWidth<=760 &&
+    peopleVisible
+  ){
+
+    togglePeople();
+
+  }
+
+}
+
+
+/* ==========================================================
+   BACK TO ROOM
+========================================================== */
+
+function backToRoom(){
+
+  currentDM =
+    null;
+
+
+  document.body.classList.remove(
+    "dm-mode"
+  );
+
+
+  document.getElementById(
+    "roomTitle"
+  ).textContent =
+    document.getElementById(
+      "roomName"
+    ).value ||
+    "The Lobby";
+
+
+  document.getElementById(
+    "roomMeta"
+  ).textContent =
+    onlineCountText();
+
+
+  document.getElementById(
+    "input"
+  ).placeholder =
+    "Type a message to the room... Try @Sarah or @Llama";
+
+
+  renderLog();
+
+  refreshTypingClasses();
+
+
+  document.getElementById(
+    "input"
+  ).focus();
+
+}
+
+
+/* ==========================================================
+   CLEAR DM
+========================================================== */
+
+function clearDM(){
+
+  if(!currentDM)
+    return;
+
+
+  dmThreads[currentDM]=[];
+
+  renderLog();
+
+}
+
+
+/* ==========================================================
+   STARTER CHAT
+========================================================== */
+
+function seedConversation(){
+
+  const starters = [
+
+    "So what is everybody doing today?",
+
+    "Anybody remember the first computer or console they really loved?",
+
+    "What game have you been playing lately?",
+
+    "Okay, random question: what is the weirdest thing you've ever seen on the internet?",
+
+    "If this room had a jukebox, what song are you putting on first?",
+
+    "What was the dumbest thing you believed when you were a kid?",
+
+    "Anybody here still owns a CRT?",
+
+    "What's everybody's unpopular gaming opinion?",
+
+    "@Llama what's the first thing that comes to mind when you hear old-school internet?"
+
+  ];
+
+
+  document.getElementById(
+    "input"
+  ).value =
+    starters[
+      Math.floor(
+        Math.random() *
+        starters.length
+      )
+    ];
+
+
+  sendMessage();
+
+}
+
+
+/* ==========================================================
+   MODEL SELECTORS
+========================================================== */
+
+/* ==========================================================
+   LOAD MODELS
+========================================================== */
+
+async function loadModels(){
+
+  const base =
+    document.getElementById(
+      "apiBase"
+    ).value
+      .trim()
+      .replace(/\/$/,"");
+
+
+  const key =
+    document.getElementById(
+      "apiKey"
+    ).value.trim();
+
+
+  const headers = {
+
+    Accept:
+      "application/json"
+
+  };
+
+
+  if(key){
+
+    headers.Authorization =
+      "Bearer " + key;
+
+  }
+
+
+  setStatus(
+    "Loading models..."
+  );
+
+
+  try{
+
+    const res =
+      await fetch(
+        base + "/models",
+        {
+          headers
+        }
+      );
+
+
+    if(!res.ok)
+      throw new Error(
+        "HTTP " +
+        res.status
+      );
+
+
+    const data =
+      await res.json();
+
+
+    const list =
+      Array.isArray(data?.data)
+        ? data.data
+        : [];
+
+
+    if(!list.length)
+      throw new Error(
+        "No models returned."
+      );
+
+
+    const characterSelect =
+      document.getElementById(
+        "model"
+      );
+
+
+    const plainSelect =
+      document.getElementById(
+        "plainModel"
+      );
+
+
+    const currentCharacter =
+      characterSelect.value;
+
+
+    const currentPlain =
+      plainSelect.value;
+
+
+    characterSelect.innerHTML =
+      "";
+
+
+    plainSelect.innerHTML =
+      "";
+
+
+    list.forEach(
+      m => {
+
+        const id =
+          typeof m==="string"
+            ? m
+            : m.id;
+
+
+        if(!id)
+          return;
+
+
+        if(/lexi/i.test(id))
+          return;
+
+
+        const characterOption =
+          document.createElement(
+            "option"
+          );
+
+
+        characterOption.value =
+          id;
+
+
+        characterOption.textContent =
+          id;
+
+
+        characterSelect.appendChild(
+          characterOption
+        );
+
+
+        const plainOption =
+          document.createElement(
+            "option"
+          );
+
+
+        plainOption.value =
+          id;
+
+
+        plainOption.textContent =
+          id;
+
+
+        plainSelect.appendChild(
+          plainOption
+        );
+
+      }
+    );
+
+
+    /*
+       Automatically select the first
+       model whose ID contains llama-3.1
+       as the default for both slots.
+    */
+
+    const llama31 =
+      list.find(
+        m => {
+
+          const id =
+            typeof m==="string"
+              ? m
+              : m.id;
+
+          return /llama[-_. ]?3\.1/i
+            .test(id || "");
+
+        }
+      );
+
+
+    const llama31Id =
+      llama31
+        ? (
+            typeof llama31==="string"
+              ? llama31
+              : llama31.id
+          )
+        : null;
+
+
+    /*
+       Restore previous character
+       model if it still exists,
+       otherwise fall back to
+       llama-3.1.
+    */
+
+    if(
+      [...characterSelect.options]
+        .some(
+          o => o.value===currentCharacter
+        )
+    ){
+
+      characterSelect.value =
+        currentCharacter;
+
+    }
+
+    else if(llama31Id){
+
+      characterSelect.value =
+        llama31Id;
+
+    }
+
+
+    if(
+      [...plainSelect.options]
+        .some(
+          o => o.value===currentPlain
+        )
+    ){
+
+      plainSelect.value =
+        currentPlain;
+
+    }
+
+    else if(llama31Id){
+
+      plainSelect.value =
+        llama31Id;
+
+    }
+
+
+    setStatus(
+      list.length +
+      " model(s) found"
+    );
+
+
+  }catch(e){
+
+    console.error(e);
+
+    setStatus(
+      "Model load failed — check the browser's AI connection in its own Settings"
+    );
+    // No alert() popup here: the connection is now driven by the browser's
+    // own AI settings rather than something the person configures in this
+    // app, so an interrupting dialog would be more confusing than helpful.
+    // The status line above and a retry on the next sync are enough.
+
+  }
+
+}
+
+
+/* ==========================================================
+   CLEAR CHAT
+========================================================== */
+
+function clearChat(){
+
+  roomMessages=[];
+
+  lastRenderedName =
+    null;
+
+
+  document.getElementById(
+    "log"
+  ).innerHTML =
+    "";
+
+
+  setStatus(
+    autonomousEnabled
+      ? "AI room active"
+      : "Ready"
+  );
+
+
+  scheduleAutonomous();
+
+}
+
+
+/* ==========================================================
+   SETTINGS
+========================================================== */
+
+function toggleSettings(){
+
+  document.getElementById(
+    "settings"
+  ).classList.toggle(
+    "open"
+  );
+
+}
+
+
+/* ==========================================================
+   ACTIVITY LABELS
+========================================================== */
+
+function updateActivityLabels(){
+
+  const activity =
+    document.getElementById(
+      "activity"
+    ).value;
+
+
+  const reply =
+    document.getElementById(
+      "replyChance"
+    ).value;
+
+
+  const spontaneous =
+    document.getElementById(
+      "spontaneousChance"
+    ).value;
+
+
+  document.getElementById(
+    "activityValue"
+  ).textContent =
+    activity + "%";
+
+
+  document.getElementById(
+    "replyChanceValue"
+  ).textContent =
+    reply + "%";
+
+
+  document.getElementById(
+    "spontaneousChanceValue"
+  ).textContent =
+    spontaneous + "%";
+
+
+  refreshTypingClasses();
+
+  scheduleAutonomous();
+
+}
+
+
+/* ==========================================================
+   PAUSE / RESUME
+========================================================== */
+
+function toggleAutonomous(){
+
+  autonomousEnabled =
+    !autonomousEnabled;
+
+
+  const button =
+    document.getElementById(
+      "autoButton"
+    );
+
+
+  if(autonomousEnabled){
+
+    button.textContent =
+      "⏸ Pause AI chatter";
+
+    button.classList.add(
+      "on"
+    );
+
+
+    setStatus(
+      "AI room active"
+    );
+
+
+    scheduleAutonomous();
+
+  }else{
+
+    button.textContent =
+      "▶ Resume AI chatter";
+
+    button.classList.remove(
+      "on"
+    );
+
+
+    clearTimeout(
+      autonomousTimer
+    );
+
+
+    setStatus(
+      "AI room paused"
+    );
+
+  }
+
+}
+
+
+/* ==========================================================
+   PEOPLE MOBILE
+========================================================== */
+
+function togglePeople(){
+
+  const el =
+    document.getElementById(
+      "people"
+    );
+
+
+  peopleVisible =
+    !peopleVisible;
+
+
+  el.style.display =
+    peopleVisible
+      ? "block"
+      : "none";
+
+}
+
+
+/* ==========================================================
+   CHARACTER EDITOR
+========================================================== */
+
+function openCharacterEditor(id){
+
+  const person =
+    PEOPLE.find(
+      p=>p.id===id
+    );
+
+
+  if(!person)
+    return;
+
+
+  editorMode =
+    "edit";
+
+
+  editorPersonId =
+    id;
+
+
+  document.getElementById(
+    "editorTitle"
+  ).textContent =
+    "Edit Character: " +
+    person.name;
+
+
+  const avatarEl =
+    document.getElementById(
+      "editorAvatar"
+    );
+
+
+  avatarEl.textContent =
+    person.avatar;
+
+
+  avatarEl.style.background =
+    person.color;
+
+
+  document.getElementById(
+    "editName"
+  ).value =
+    person.name;
+
+
+  document.getElementById(
+    "editRole"
+  ).value =
+    person.role;
+
+
+  document.getElementById(
+    "editPrompt"
+  ).value =
+    person.prompt;
+
+
+  document.getElementById(
+    "saveCharacterBtn"
+  ).textContent =
+    "Save Character";
+
+
+  document.getElementById(
+    "person-"+id
+  )?.classList.add(
+    "editing"
+  );
+
+
+  document.getElementById(
+    "characterEditor"
+  ).classList.add(
+    "open"
+  );
+
+}
+
+
+/* ==========================================================
+   OPEN EDITOR — NEW CHARACTER
+========================================================== */
+
+function openNewCharacterEditor(){
+
+  editorMode =
+    "add";
+
+  editorPersonId =
+    null;
+
+
+  document.getElementById(
+    "editorTitle"
+  ).textContent =
+    "Add New Character";
+
+
+  const avatarEl =
+    document.getElementById(
+      "editorAvatar"
+    );
+
+
+  avatarEl.textContent =
+    "+";
+
+
+  avatarEl.style.background =
+    nextCharacterColor();
+
+
+  document.getElementById(
+    "editName"
+  ).value =
+    "";
+
+
+  document.getElementById(
+    "editRole"
+  ).value =
+    "";
+
+
+  document.getElementById(
+    "editPrompt"
+  ).value =
+    "";
+
+
+  document.getElementById(
+    "saveCharacterBtn"
+  ).textContent =
+    "Add Character";
+
+
+  document.getElementById(
+    "characterEditor"
+  ).classList.add(
+    "open"
+  );
+
+
+  document.getElementById(
+    "editName"
+  ).focus();
+
+}
+
+
+/* ==========================================================
+   CLOSE EDITOR
+========================================================== */
+
+function closeCharacterEditor(){
+
+  if(editorPersonId){
+
+    document.getElementById(
+      "person-"+editorPersonId
+    )?.classList.remove(
+      "editing"
+    );
+
+  }
+
+
+  editorPersonId =
+    null;
+
+
+  document.getElementById(
+    "characterEditor"
+  ).classList.remove(
+    "open"
+  );
+
+}
+
+
+/* ==========================================================
+   SAVE CHARACTER
+========================================================== */
+
+function saveCharacter(){
+
+  const newName =
+    document.getElementById(
+      "editName"
+    ).value.trim();
+
+
+  const newRole =
+    document.getElementById(
+      "editRole"
+    ).value.trim();
+
+
+  const newPrompt =
+    document.getElementById(
+      "editPrompt"
+    ).value.trim();
+
+
+  if(!newName){
+
+    alert(
+      "The character needs a name."
+    );
+
+    return;
+
+  }
+
+
+  /*
+     ADD MODE — create a brand
+     new character and push it
+     into the room.
+  */
+
+  if(editorMode === "add"){
+
+    const id =
+      slugifyName(newName);
+
+    const person = {
+
+      id:id,
+
+      name:newName,
+
+      avatar:
+        newName
+          .charAt(0)
+          .toUpperCase(),
+
+      role:
+        newRole ||
+        "Chat room regular",
+
+      color:
+        nextCharacterColor(),
+
+      prompt:
+        newPrompt ||
+        ("You are " +
+        newName +
+        ", a believable, natural participant in an old-school internet chat room. Talk like a real person, keep replies fairly short, and don't constantly announce your personality.")
+
+    };
+
+
+    PEOPLE.push(
+      person
+    );
+
+
+    lastSpoke[id] =
+      0;
+
+
+    if(!dmThreads[id])
+      dmThreads[id] = [];
+
+
+    peopleList();
+
+    closeCharacterEditor();
+
+
+    setStatus(
+      person.name +
+      " added to the room"
+    );
+
+
+    announceRoomEvent(
+      person.name + " joined the chat."
+    );
+
+
+    scheduleAutonomous();
+
+    persistState();
+
+    return;
+
+  }
+
+
+  /*
+     EDIT MODE — update an
+     existing character.
+  */
+
+  if(!editorPersonId)
+    return;
+
+
+  const person =
+    PEOPLE.find(
+      p=>p.id===editorPersonId
+    );
+
+
+  if(!person)
+    return;
+
+
+  person.name =
+    newName;
+
+
+  person.role =
+    newRole ||
+    "Chat room regular";
+
+
+  person.prompt =
+    newPrompt;
+
+
+  person.avatar =
+    newName
+      .charAt(0)
+      .toUpperCase();
+
+
+  peopleList();
+
+  closeCharacterEditor();
+
+
+  setStatus(
+    person.name +
+    " updated"
+  );
+
+
+  scheduleAutonomous();
+
+  persistState();
+
+}
+
+
+/* ==========================================================
+   REMOVE CHARACTER
+========================================================== */
+
+function removeCharacter(id){
+
+  const person =
+    PEOPLE.find(
+      p=>p.id===id
+    );
+
+
+  if(!person)
+    return;
+
+  const index =
+    PEOPLE.findIndex(
+      p=>p.id===id
+    );
+
+
+  if(index>-1)
+    PEOPLE.splice(
+      index,
+      1
+    );
+
+
+  /* Archive them (personality, edits, and all) instead of
+     deleting them outright, so they can be brought back later
+     from the presets menu — this works for characters you
+     created yourself, not just the original ten. */
+
+  if(!ARCHIVED_CHARACTERS.some(a=>a.id===id)){
+
+    ARCHIVED_CHARACTERS.push(
+      {...person}
+    );
+
+  }
+
+
+  /* dmThreads[id] is deliberately left alone here (not deleted)
+     so that if this character is restored later, their DM
+     picks back up instead of starting over. */
+
+  delete lastSpoke[id];
+
+  typingIds.delete(id);
+
+  dmUnread.delete(id);
+
+
+  if(currentDM===id)
+    backToRoom();
+
+
+  peopleList();
+
+
+  setStatus(
+    person.name +
+    " removed"
+  );
+
+
+  announceRoomEvent(
+    person.name + " left the chat."
+  );
+
+
+  scheduleAutonomous();
+
+  persistState();
+
+}
+
+
+/* ==========================================================
+   ROOM NAME
+========================================================== */
+
+document.getElementById(
+  "roomName"
+).addEventListener(
+  "input",
+  e => {
+
+    document.getElementById(
+      "roomTitle"
+    ).textContent =
+      e.target.value ||
+      "The Lobby";
+
+    const lobbyRowName =
+      document.getElementById(
+        "lobbyRowName"
+      );
+
+    if(lobbyRowName){
+      lobbyRowName.textContent =
+        e.target.value ||
+        "The Lobby";
+    }
+
+  }
+);
+
+
+/* ==========================================================
+   USERNAME
+========================================================== */
+
+document.getElementById(
+  "username"
+).addEventListener(
+  "input",
+  e => {
+
+    const label =
+      document.getElementById(
+        "youNameLabel"
+      );
+
+
+    if(label){
+
+      const value =
+        e.target.value.trim() ||
+        "Guest";
+
+
+      label.innerHTML =
+        `${esc(value)}
+        <span
+          style="
+            color:var(--muted-dim);
+            font-weight:400
+          "
+        >
+          (you)
+        </span>`;
+
+    }
+
+  }
+);
+
+
+document.getElementById(
+  "username"
+).addEventListener(
+  "change",
+  e => {
+
+    if(
+      !e.target.value.trim()
+    ){
+
+      e.target.value =
+        "Guest";
+
+    }
+
+  }
+);
+
+
+/* ==========================================================
+   ENTER TO SEND
+========================================================== */
+
+document.getElementById(
+  "input"
+).addEventListener(
+  "keydown",
+  e => {
+
+    if(
+      e.key==="Enter" &&
+      !e.shiftKey
+    ){
+
+      e.preventDefault();
+
+      sendMessage();
+
+    }
+
+  }
+);
+
+
+/* ==========================================================
+   HIDE "NEW MESSAGES" WHEN THE READER SCROLLS BACK DOWN
+   THEMSELVES
+========================================================== */
+
+document.getElementById(
+  "log"
+).addEventListener(
+  "scroll",
+  () => {
+
+    if(isLogNearBottom())
+      hideNewMessagesIndicator();
+
+  }
+);
+
+
+/* ==========================================================
+   CLOSE EDITOR OUTSIDE
+========================================================== */
+
+document.getElementById(
+  "characterEditor"
+).addEventListener(
+  "click",
+  e => {
+
+    if(
+      e.target.id ===
+      "characterEditor"
+    ){
+
+      closeCharacterEditor();
+
+    }
+
+  }
+);
+
+
+/* ==========================================================
+   APPLY SAVED STATE TO THE UI
+
+   Fill in the name, room, connection, prompt, and activity
+   fields from whatever was saved last, and add manual model
+   options in case the /models fetch below fails or the server
+   doesn't expose that name.
+========================================================== */
+
+document.getElementById("username").value =
+  SAVED_STATE?.username || "Guest";
+
+document.getElementById("roomName").value =
+  SAVED_STATE?.roomName || "The Lobby";
+
+document.getElementById("roomTitle").textContent =
+  SAVED_STATE?.roomName || "The Lobby";
+
+document.getElementById("apiBase").value =
+  SAVED_STATE?.apiBase || "";
+
+document.getElementById("apiKey").value =
+  SAVED_STATE?.apiKey || "";
+
+document.getElementById("globalPrompt").value =
+  SAVED_STATE?.globalPrompt || "";
+
+if(SAVED_STATE?.activity !== undefined)
+  document.getElementById("activity").value = SAVED_STATE.activity;
+
+if(SAVED_STATE?.replyChance !== undefined)
+  document.getElementById("replyChance").value = SAVED_STATE.replyChance;
+
+if(SAVED_STATE?.spontaneousChance !== undefined)
+  document.getElementById("spontaneousChance").value = SAVED_STATE.spontaneousChance;
+
+if(SAVED_STATE?.maxBurst)
+  document.getElementById("maxBurst").value = SAVED_STATE.maxBurst;
+
+document.getElementById("includeLlamaToggle").checked =
+  INCLUDE_LLAMA;
+
+/* Save on every change to the free-text/connection fields and
+   the name inputs (the sliders and character editor already
+   call persistState() themselves). */
+
+["username","roomName","apiKey","apiBase"].forEach(id=>{
+  document.getElementById(id)
+    .addEventListener("input", persistState);
+});
+
+
+/* ==========================================================
+   STARTUP CONNECTION MODAL
+
+   Remembers past API base URLs (a small local history list)
+   and asks for the address/key/provider every time the page
+   loads, prefilled with whatever was used last, so reconnecting
+   is one click instead of retyping.
+========================================================== */
+
+const API_HISTORY_KEY = "lobbyApiHistory";
+
+const PROVIDER_DEFAULTS = {
+  lmstudio:   "http://localhost:1234/v1",
+  ollama:     "http://localhost:11434/v1",
+  openai:     "https://api.openai.com/v1",
+  openrouter: "https://openrouter.ai/api/v1",
+  other:      ""
+};
+
+function getApiHistory(){
+
+  try{
+    const raw = localStorage.getItem(API_HISTORY_KEY);
+    const list = raw ? JSON.parse(raw) : [];
+    return Array.isArray(list) ? list : [];
+  }catch(e){
+    return [];
+  }
+
+}
+
+function saveApiHistoryEntry(url){
+
+  if(!url) return;
+
+  let list = getApiHistory().filter(u => u !== url);
+
+  list.unshift(url);
+
+  list = list.slice(0, 8);
+
+  try{
+    localStorage.setItem(API_HISTORY_KEY, JSON.stringify(list));
+  }catch(e){
+    console.warn("Couldn't save API history:", e);
+  }
+
+}
+
+function populateApiHistoryDatalist(){
+
+  const dl = document.getElementById("apiHistoryList");
+
+  if(!dl) return;
+
+  dl.innerHTML =
+    getApiHistory()
+      .map(u => `<option value="${u.replace(/"/g,"&quot;")}">`)
+      .join("");
+
+}
+
+function guessProviderFromUrl(url){
+
+  if(!url) return "lmstudio";
+
+  if(url.includes("openrouter.ai")) return "openrouter";
+  if(url.includes("api.openai.com")) return "openai";
+  if(url.includes(":11434")) return "ollama";
+  if(url.includes(":1234")) return "lmstudio";
+
+  return "other";
+
+}
+
+function onStartupProviderChange(){
+
+  const provider =
+    document.getElementById("startupProvider").value;
+
+  const urlField =
+    document.getElementById("startupApiBase");
+
+  if(!urlField.value.trim()){
+    urlField.placeholder =
+      PROVIDER_DEFAULTS[provider] || "https://...";
+  }
+
+}
+
+function openStartupModal(){
+
+  const lastUrl = SAVED_STATE?.apiBase || "";
+  const lastKey = SAVED_STATE?.apiKey || "";
+
+  populateApiHistoryDatalist();
+
+  document.getElementById("startupApiBase").value = lastUrl;
+  document.getElementById("startupApiKey").value = lastKey;
+
+  document.getElementById("startupProvider").value =
+    guessProviderFromUrl(lastUrl);
+
+  onStartupProviderChange();
+
+  document.getElementById("startupModal").classList.add("open");
+
+  document.getElementById("startupApiBase").focus();
+
+}
+
+function closeStartupModal(){
+
+  document.getElementById("startupModal").classList.remove("open");
+
+}
+
+function confirmStartupModal(){
+
+  const url =
+    document.getElementById("startupApiBase").value.trim();
+
+  const key =
+    document.getElementById("startupApiKey").value.trim();
+
+  document.getElementById("apiBase").value = url;
+  document.getElementById("apiKey").value = key;
+
+  if(url) saveApiHistoryEntry(url);
+
+  persistState();
+
+  closeStartupModal();
+
+  setStatus(
+    url
+      ? "Connected to " + url
+      : "No API address set — add one any time in Settings."
+  );
+
+}
+
+function skipStartupModal(){
+
+  closeStartupModal();
+
+}
+
+/* The startup "Connect to The Lobby" modal used to ask for a server
+   address/key on first run. That's no longer needed — see
+   "BROWSER AI CONNECTION" below — so it's never opened. The function
+   and markup are left in place, just unused, in case they're wanted
+   again later. */
+
+
+function addManualModelOption(selectId, modelId){
+
+  if(!modelId) return;
+
+  const select =
+    document.getElementById(selectId);
+
+  if(!select) return;
+
+  const exists =
+    [...select.options].some(
+      o => o.value === modelId
+    );
+
+  if(!exists){
+
+    const opt =
+      document.createElement("option");
+
+    opt.value = modelId;
+
+    opt.textContent = modelId;
+
+    select.appendChild(opt);
+
+  }
+
+  select.value = modelId;
+
+}
+
+/* ==========================================================
+   BROWSER AI CONNECTION
+
+   The Lobby now always uses the Oasis browser's own AI
+   connection (same address/key/model set in the browser's
+   Settings panel) instead of asking for one here. The hidden
+   #apiBase / #apiKey / #model / #plainModel fields still exist
+   (loadModels() and every chat call read them exactly as
+   before) — this just keeps them filled from the browser's
+   own "lmchat.settings" localStorage entry instead of from
+   the now-hidden Settings > Model connection section, so the
+   rest of the app needs no changes.
+
+   Re-synced on load, whenever this tab regains focus, and
+   every few seconds while open, so switching the model/server
+   in the browser's own Settings takes effect here without a
+   reload.
+========================================================== */
+
+const OASIS_SETTINGS_KEY = "lmchat.settings";
+const OASIS_LOCAL_FALLBACK = { baseUrl: "http://localhost:1234/v1", apiKey: "", model: "" };
+
+function readOasisAISettings(){
+  try{
+    const raw = localStorage.getItem(OASIS_SETTINGS_KEY);
+    if(!raw) return OASIS_LOCAL_FALLBACK;
+    const parsed = JSON.parse(raw) || {};
+    return {
+      baseUrl: (typeof parsed.baseUrl === "string" && parsed.baseUrl.trim()) || OASIS_LOCAL_FALLBACK.baseUrl,
+      apiKey: typeof parsed.apiKey === "string" ? parsed.apiKey : "",
+      model: typeof parsed.model === "string" ? parsed.model : ""
+    };
+  }catch(e){
+    return OASIS_LOCAL_FALLBACK;
+  }
+}
+
+let lastSyncedOasisAI = "";
+
+function syncFromBrowserAI(){
+
+  const s = readOasisAISettings();
+  const base = s.baseUrl.trim().replace(/\/+$/, "");
+  const model = s.model || "local-model";
+  const fingerprint = base + "|" + s.apiKey + "|" + model;
+
+  // Skip re-touching the selects (which would reset scroll/selection)
+  // when nothing has actually changed since the last sync.
+  if(fingerprint === lastSyncedOasisAI) return;
+  lastSyncedOasisAI = fingerprint;
+
+  const apiBaseEl = document.getElementById("apiBase");
+  const apiKeyEl = document.getElementById("apiKey");
+  if(apiBaseEl) apiBaseEl.value = base;
+  if(apiKeyEl) apiKeyEl.value = s.apiKey;
+
+  addManualModelOption("model", model);
+  addManualModelOption("plainModel", model);
+
+  persistState();
+}
+
+syncFromBrowserAI();
+setInterval(syncFromBrowserAI, 4000);
+window.addEventListener("focus", syncFromBrowserAI);
+
+
+/* ==========================================================
+   INITIALIZE
+========================================================== */
+
+peopleList();
+
+updateActivityLabels();
+
+loadModels();
+
+
+/* ==========================================================
+   INITIAL MESSAGE
+
+   Whoever kicks off the room is chosen from whichever
+   characters were actually picked on the login page — falls
+   back to a plain greeting if no personas were chosen at all.
+========================================================== */
+
+const initialMessage =
+  "Welcome to the chat. I'm the plain model behind this room — no character, no persona, just here if anyone needs me. Talk amongst yourselves.";
+
+
+const kickoffPerson =
+  (INCLUDE_LLAMA && LLAMA) ||
+  PEOPLE.find(p=>p.id==="rick") ||
+  PEOPLE[0] ||
+  null;
+
+
+if(kickoffPerson){
+
+  markSpoke(kickoffPerson);
+
+
+  const kickoffMsg = {
+
+    name:kickoffPerson.name,
+
+    text:initialMessage
+
+  };
+
+  roomMessages.push(kickoffMsg);
+
+
+  addBubble(
+    kickoffPerson.name,
+    initialMessage,
+    {msgRef:kickoffMsg}
+  );
+
+}
+
+
+markActivity();
+
+
+/* ==========================================================
+   IDLE WATCHDOG
+
+   Autonomous chatter is probability-based and can occasionally
+   go quiet for a stretch (or get delayed if the tab is
+   backgrounded). This backstop guarantees someone speaks up
+   if the room has been silent too long — it doesn't change
+   any of the existing activity/reply/spontaneous settings.
+========================================================== */
+
+const IDLE_WATCHDOG_MS = 20000;
+
+setInterval(
+  () => {
+
+    if(!autonomousEnabled)
+      return;
+
+    if(currentDM)
+      return;
+
+    if(speakQueue.length)
+      return;
+
+    if(
+      Date.now() - lastActivityTime <
+      IDLE_WATCHDOG_MS
+    ){
+
+      return;
+
+    }
+
+    const person =
+      weightedRandomPerson([]);
+
+    if(!person)
+      return;
+
+    markActivity();
+
+    enqueueSpeak(
+      () =>
+        runRoomSpeakTask(
+          person,
+          false,
+          true
+        )
+    );
+
+  },
+  5000
+);
+
+
+/* ==========================================================
+   START AUTONOMOUS BEHAVIOR
+========================================================== */
+
+scheduleAutonomous();
+
+
+/* ==========================================================
+   KICKOFF — SOMEONE STARTS THE CHAT IF THE USER DOESN'T
+
+   Guarantees a second, real (AI-generated) character jumps
+   into the room a few seconds after load if the user hasn't
+   typed anything yet, instead of leaving it purely up to
+   chance. forceSpeak bypasses the random skip so this always
+   actually posts.
+========================================================== */
+
+setTimeout(
+  () => {
+
+    if(!autonomousEnabled)
+      return;
+
+    if(currentDM)
+      return;
+
+    if(roomMessages.length > 1)
+      return;
+
+    const person =
+      weightedRandomPerson(
+        ["rick"]
+      );
+
+    if(!person)
+      return;
+
+    markActivity();
+
+    enqueueSpeak(
+      () =>
+        runRoomSpeakTask(
+          person,
+          false,
+          true
+        )
+    );
+
+  },
+  6000
+);
+
+</script>
+
+</body>
+</html>

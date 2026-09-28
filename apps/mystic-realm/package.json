@@ -1,0 +1,71 @@
+{
+  "name": "mystic-realm",
+  "version": "2.9.0",
+  "description": "Mystic Realm",
+  "main": "main.js",
+  "author": "Mystic Realm",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win nsis portable"
+  },
+  "devDependencies": {
+    "electron": "latest",
+    "electron-builder": "latest"
+  },
+  "build": {
+    "appId": "com.mysticrealm.app",
+    "productName": "Mystic Realm",
+    "asar": true,
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "index.html",
+      "main.js",
+      "icon.png",
+      "icon.ico",
+      "loader.png",
+      "eightball.png",
+      "stars and moons.png",
+      "theme-boot.js",
+      "mystic-ai-config.js",
+      "mystic-effects.js",
+      "mystic-persona-prompts.js",
+      "astragalomancy/**/*",
+      "dreams/**/*",
+      "eightball/**/*",
+      "horoscope/**/*",
+      "iching/**/*",
+      "numerology/**/*",
+      "oasis/**/*",
+      "selene/**/*",
+      "sounds/**/*",
+      "tarot/**/*",
+      "package.json"
+    ],
+    "win": {
+      "icon": "icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Mystic Realm"
+    },
+    "portable": {
+      "artifactName": "Mystic-Realm-Portable-2.9.0.exe"
+    }
+  }
+}

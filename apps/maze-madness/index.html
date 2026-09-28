@@ -1,0 +1,784 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Fullscreen Maze — Settings Menu</title>
+<style>
+  html,body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: #111;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    user-select: none;
+  }
+
+  canvas#game {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(180deg,#0a0a0a 0%, #0e0e0e 100%);
+  }
+
+  #timer {
+    position: fixed;
+    top: 12px;
+    right: 70px;
+    z-index: 40;
+    background: rgba(0,0,0,0.45);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.6px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    pointer-events: none;
+  }
+
+  #settingsBtn {
+    position: fixed;
+    top: 12px;
+    right: 16px;
+    z-index: 40;
+    background: rgba(0,0,0,0.45);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    display: none;
+  }
+  #settingsBtn:hover {
+    background: rgba(0,0,0,0.65);
+  }
+
+  #hint {
+    position: fixed;
+    left: 12px;
+    bottom: 12px;
+    z-index: 30;
+    color: #ddd;
+    background: rgba(0,0,0,0.35);
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(6,6,6,0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  .modal {
+    min-width: 300px;
+    max-width: 520px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.2));
+    border-radius: 12px;
+    padding: 22px;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.6);
+    color: #fff;
+    text-align: center;
+    border: 2px solid rgba(255,255,255,0.04);
+  }
+  .modal h2 {
+    margin: 4px 0 12px;
+    font-size: 28px;
+  }
+  .modal p {
+    margin: 8px 0 18px;
+    font-size: 18px;
+    color: #dfeafe;
+  }
+  .modal .buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 8px;
+  }
+  .btn {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 15px;
+  }
+  .btn-primary {
+    background: linear-gradient(180deg,#37b6ff,#0b83d8);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(11,131,216,0.25);
+  }
+  .btn-neutral {
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+  }
+
+  .settings-content {
+    text-align: left;
+    margin: 20px 0;
+  }
+  .setting-row {
+    margin: 16px 0;
+    padding: 12px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+  }
+  .setting-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .setting-label {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .setting-desc {
+    font-size: 13px;
+    color: #aaa;
+    margin-top: 4px;
+  }
+  .toggle {
+    position: relative;
+    width: 50px;
+    height: 26px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 13px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .toggle.active {
+    background: linear-gradient(180deg,#37b6ff,#0b83d8);
+  }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    transition: left 0.3s;
+  }
+  .toggle.active::after {
+    left: 27px;
+  }
+
+  .slider-container {
+    margin-top: 12px;
+  }
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .slider {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.1);
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(180deg,#37b6ff,#0b83d8);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(11,131,216,0.4);
+  }
+  .slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(180deg,#37b6ff,#0b83d8);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 8px rgba(11,131,216,0.4);
+  }
+  .slider-value {
+    min-width: 35px;
+    text-align: center;
+    font-weight: 700;
+    color: #37b6ff;
+  }
+
+  canvas { image-rendering: optimizeSpeed; image-rendering: -moz-crisp-edges; image-rendering: -webkit-optimize-contrast; }
+</style>
+</head>
+<body>
+
+<canvas id="game"></canvas>
+<div id="timer">00:00</div>
+<button id="settingsBtn">⚙️</button>
+<div id="hint">WASD / Arrows to move</div>
+
+<div id="startBackdrop" class="modal-backdrop" style="display: flex;" role="dialog" aria-modal="true">
+  <div class="modal" role="document">
+    <h2>🎮 Maze Game Settings</h2>
+    <div class="settings-content">
+      <div class="setting-row">
+        <div class="setting-header">
+          <div>
+            <div class="setting-label">NPCs (Enemies)</div>
+            <div class="setting-desc">Wandering enemies that block paths</div>
+          </div>
+          <div class="toggle" id="npcToggle"></div>
+        </div>
+        <div class="slider-container" id="npcSliderContainer" style="display: none;">
+          <div class="slider-row">
+            <span style="font-size: 13px; color: #aaa;">Count:</span>
+            <input type="range" min="1" max="20" value="5" class="slider" id="npcSlider">
+            <span class="slider-value" id="npcValue">5</span>
+          </div>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-header">
+          <div>
+            <div class="setting-label">Fog of War</div>
+            <div class="setting-desc">Limited circular visibility</div>
+          </div>
+          <div class="toggle" id="fogToggle"></div>
+        </div>
+        <div class="slider-container" id="fogSliderContainer" style="display: none;">
+          <div class="slider-row">
+            <span style="font-size: 13px; color: #aaa;">Radius:</span>
+            <input type="range" min="3" max="12" value="5" class="slider" id="fogSlider">
+            <span class="slider-value" id="fogValue">5</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="buttons">
+      <button id="startGameBtn" class="btn btn-primary">Start Game</button>
+    </div>
+  </div>
+</div>
+
+<div id="winBackdrop" class="modal-backdrop" role="dialog" aria-modal="true">
+  <div class="modal" role="document">
+    <h2>🎉 YOU WIN! 🎉</h2>
+    <p id="finalTime">Time: 00:00</p>
+    <div class="buttons">
+      <button id="playAgainBtn" class="btn btn-primary">Play Again</button>
+      <button id="quitBtn" class="btn btn-neutral">Main Menu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d', { alpha: false });
+  const timerEl = document.getElementById('timer');
+  const winBackdrop = document.getElementById('winBackdrop');
+  const finalTimeEl = document.getElementById('finalTime');
+  const playAgainBtn = document.getElementById('playAgainBtn');
+  const quitBtn = document.getElementById('quitBtn');
+  
+  const startBackdrop = document.getElementById('startBackdrop');
+  const startGameBtn = document.getElementById('startGameBtn');
+  const settingsBtn = document.getElementById('settingsBtn');
+  const npcToggle = document.getElementById('npcToggle');
+  const fogToggle = document.getElementById('fogToggle');
+  const npcSlider = document.getElementById('npcSlider');
+  const npcValue = document.getElementById('npcValue');
+  const npcSliderContainer = document.getElementById('npcSliderContainer');
+  const fogSlider = document.getElementById('fogSlider');
+  const fogValue = document.getElementById('fogValue');
+  const fogSliderContainer = document.getElementById('fogSliderContainer');
+
+  // Game settings
+  let settings = {
+    npcsEnabled: false,
+    npcCount: 5,
+    fogEnabled: false,
+    fogRadius: 5
+  };
+
+  const TARGET_CELL_PX = 24;
+  const WALL = 1, PATH = 0;
+  let cols = 31, rows = 27, cell = TARGET_CELL_PX;
+  let maze = [];
+  let player = { x: 1, y: 1, px: 0, py: 0 };
+  let exit = { x: 0, y: 0 };
+  let npcs = [];
+  let running = false;
+  let gameStarted = false;
+
+  let startTs = 0;
+  let timerInterval = null;
+  let npcMoveInterval = null;
+
+  let colors = { border:'#ff8c00', floor:'#0b0b0b', start:'#19d119', finish:'#1e90ff' };
+
+  // Audio context for Atari-style sounds
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+  function playWallHitSound() {
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    oscillator.frequency.value = 100;
+    oscillator.type = 'square';
+    
+    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    
+    oscillator.start(audioCtx.currentTime);
+    oscillator.stop(audioCtx.currentTime + 0.1);
+  }
+
+  function playNPCHitSound() {
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.15);
+    oscillator.type = 'sawtooth';
+    
+    gainNode.gain.setValueAtTime(0.25, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+    
+    oscillator.start(audioCtx.currentTime);
+    oscillator.stop(audioCtx.currentTime + 0.15);
+  }
+
+  function playWinSound() {
+    const notes = [261.63, 329.63, 392.00, 523.25]; // C, E, G, C (major chord)
+    
+    notes.forEach((freq, index) => {
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      oscillator.frequency.value = freq;
+      oscillator.type = 'square';
+      
+      const startTime = audioCtx.currentTime + (index * 0.1);
+      gainNode.gain.setValueAtTime(0.2, startTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.3);
+      
+      oscillator.start(startTime);
+      oscillator.stop(startTime + 0.3);
+    });
+  }
+
+  function rand(min=0,max=1){ return Math.random()*(max-min)+min; }
+  function randomHue() { return Math.floor(rand(0,360)); }
+  function hsl(h,s,l) { return `hsl(${h} ${s}% ${l}%)`; }
+
+  function randomizeColors() {
+    const hue = randomHue();
+    colors.border = hsl(hue, 85, 50);
+    colors.floor = hsl((hue+180)%360, 10, 6);
+    colors.start = hsl((hue+120)%360, 75, 42);
+    colors.finish = hsl((hue+200)%360, 85, 45);
+  }
+
+  // Settings UI
+  npcToggle.addEventListener('click', () => {
+    settings.npcsEnabled = !settings.npcsEnabled;
+    updateToggleUI();
+  });
+
+  fogToggle.addEventListener('click', () => {
+    settings.fogEnabled = !settings.fogEnabled;
+    updateToggleUI();
+  });
+
+  npcSlider.addEventListener('input', () => {
+    settings.npcCount = parseInt(npcSlider.value);
+    npcValue.textContent = settings.npcCount;
+  });
+
+  fogSlider.addEventListener('input', () => {
+    settings.fogRadius = parseInt(fogSlider.value);
+    fogValue.textContent = settings.fogRadius;
+  });
+
+  function updateToggleUI() {
+    npcToggle.classList.toggle('active', settings.npcsEnabled);
+    fogToggle.classList.toggle('active', settings.fogEnabled);
+    npcSliderContainer.style.display = settings.npcsEnabled ? 'block' : 'none';
+    fogSliderContainer.style.display = settings.fogEnabled ? 'block' : 'none';
+  }
+
+  startGameBtn.addEventListener('click', () => {
+    startBackdrop.style.display = 'none';
+    settingsBtn.style.display = 'block';
+    gameStarted = true;
+    resizeAndSetup();
+  });
+
+  settingsBtn.addEventListener('click', () => {
+    running = false;
+    stopTimer();
+    stopNPCMovement();
+    startBackdrop.style.display = 'flex';
+    settingsBtn.style.display = 'none';
+  });
+
+  playAgainBtn.addEventListener('click', () => {
+    hideWinModal();
+    resizeAndSetup();
+  });
+
+  quitBtn.addEventListener('click', () => {
+    hideWinModal();
+    gameStarted = false;
+    stopNPCMovement();
+    settingsBtn.style.display = 'none';
+    startBackdrop.style.display = 'flex';
+  });
+
+  function resizeAndSetup() {
+    const w = Math.max(300, Math.floor(window.innerWidth));
+    const h = Math.max(200, Math.floor(window.innerHeight));
+    canvas.width = w; canvas.height = h;
+
+    let tentativeCols = Math.floor(w / TARGET_CELL_PX);
+    let tentativeRows = Math.floor(h / TARGET_CELL_PX);
+    if (tentativeCols % 2 === 0) tentativeCols--;
+    if (tentativeRows % 2 === 0) tentativeRows--;
+    tentativeCols = Math.max(15, tentativeCols);
+    tentativeRows = Math.max(11, tentativeRows);
+    cols = tentativeCols; rows = tentativeRows;
+
+    const cellW = Math.floor(w / cols);
+    const cellH = Math.floor(h / rows);
+    cell = Math.max(10, Math.min(cellW, cellH));
+
+    setupMazeAndStart();
+  }
+
+  function resetMaze() {
+    maze = new Array(rows);
+    for (let y = 0; y < rows; y++) maze[y] = new Array(cols).fill(WALL);
+  }
+
+  function generateMaze(sx=1, sy=1) {
+    const stack = [[sx, sy]];
+    maze[sy][sx] = PATH;
+    while (stack.length) {
+      const [x, y] = stack[stack.length-1];
+      const dirs=[[2,0],[-2,0],[0,2],[0,-2]].sort(()=>Math.random()-0.5);
+      let carved=false;
+      for(const [dx,dy] of dirs){
+        const nx=x+dx, ny=y+dy;
+        if(ny>0&&ny<rows-1&&nx>0&&nx<cols-1&&maze[ny][nx]===WALL){
+          maze[y+dy/2][x+dx/2]=PATH;
+          maze[ny][nx]=PATH;
+          stack.push([nx,ny]);
+          carved=true; break;
+        }
+      }
+      if(!carved) stack.pop();
+    }
+  }
+
+  function applyBorderAndExit() {
+    for(let x=0;x<cols;x++){ maze[0][x]=WALL; maze[rows-1][x]=WALL; }
+    for(let y=0;y<rows;y++){ maze[y][0]=WALL; maze[y][cols-1]=WALL; }
+
+    let ex = cols-2;
+    let ey = rows-2;
+    for(let cx=cols-2;cx>=1;cx--){
+      if(maze[ey][cx]===PATH){ ex=cx; break; }
+    }
+    maze[ey][ex]=PATH;
+    exit.x = ex;
+    exit.y = ey;
+  }
+
+  function spawnNPCs() {
+    npcs = [];
+    if (!settings.npcsEnabled) return;
+
+    let attempts = 0;
+    while (npcs.length < settings.npcCount && attempts < 200) {
+      const x = Math.floor(rand(2, cols - 2));
+      const y = Math.floor(rand(2, rows - 2));
+      if (maze[y][x] === PATH && 
+          (x !== 1 || y !== 1) && 
+          (x !== exit.x || y !== exit.y) &&
+          !npcs.some(n => n.x === x && n.y === y)) {
+        npcs.push({ x, y, px: x * cell, py: y * cell });
+      }
+      attempts++;
+    }
+  }
+
+  function moveNPCs() {
+    if (!settings.npcsEnabled || !running) return;
+
+    for (const npc of npcs) {
+      const directions = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+      const shuffled = directions.sort(() => Math.random() - 0.5);
+      
+      for (const [dx, dy] of shuffled) {
+        const nx = npc.x + dx;
+        const ny = npc.y + dy;
+        
+        if (ny > 0 && ny < rows - 1 && nx > 0 && nx < cols - 1 && 
+            maze[ny][nx] === PATH &&
+            (nx !== exit.x || ny !== exit.y) &&
+            !npcs.some(n => n !== npc && n.x === nx && n.y === ny)) {
+          npc.x = nx;
+          npc.y = ny;
+          break;
+        }
+      }
+    }
+  }
+
+  function startNPCMovement() {
+    stopNPCMovement();
+    if (settings.npcsEnabled) {
+      npcMoveInterval = setInterval(moveNPCs, 800);
+    }
+  }
+
+  function stopNPCMovement() {
+    if (npcMoveInterval) {
+      clearInterval(npcMoveInterval);
+      npcMoveInterval = null;
+    }
+  }
+
+  function setupMazeAndStart() {
+    stopTimer();
+    stopNPCMovement();
+    randomizeColors();
+    resetMaze();
+    generateMaze(1,1);
+    applyBorderAndExit();
+    spawnNPCs();
+
+    player.x=1; player.y=1;
+    if(maze[player.y][player.x]!==PATH){
+      outer:
+      for(let ry=1;ry<rows-1;ry++){
+        for(let rx=1;rx<cols-1;rx++){
+          if(maze[ry][rx]===PATH){ player.x=rx; player.y=ry; break outer; }
+        }
+      }
+    }
+    player.px=player.x*cell; player.py=player.y*cell;
+    running=true;
+    startTimer();
+    startNPCMovement();
+    timerEl.textContent=formatMS(0);
+    hideWinModal();
+  }
+
+  function startTimer(){
+    startTs = performance.now();
+    if(timerInterval) clearInterval(timerInterval);
+    timerInterval=setInterval(()=>{
+      const diff=Math.max(0,performance.now()-startTs);
+      timerEl.textContent=formatMS(diff);
+    },250);
+  }
+  function stopTimer(){ if(timerInterval){ clearInterval(timerInterval); timerInterval=null; } }
+  function formatMS(ms){
+    const totalSec=Math.floor(ms/1000);
+    const mm=Math.floor(totalSec/60).toString().padStart(2,'0');
+    const ss=(totalSec%60).toString().padStart(2,'0');
+    return `${mm}:${ss}`;
+  }
+
+  function drawFog(originX, originY, gridW, gridH) {
+    if (!settings.fogEnabled) return;
+
+    const centerX = player.px + cell / 2;
+    const centerY = player.py + cell / 2;
+    const radius = settings.fogRadius * cell;
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = colors.floor;
+    ctx.fillRect(originX - 6, originY - 6, gridW + 12, gridH + 12);
+
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.clip();
+  }
+
+  function draw(){
+    const W=canvas.width,H=canvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    if (!gameStarted || maze.length === 0) return;
+
+    const gridW=cols*cell, gridH=rows*cell;
+    const originX=Math.floor((W-gridW)/2), originY=Math.floor((H-gridH)/2);
+
+    ctx.fillStyle=colors.floor;
+    ctx.fillRect(originX-6,originY-6,gridW+12,gridH+12);
+
+    if (settings.fogEnabled) {
+      drawFog(originX, originY, gridW, gridH);
+    }
+
+    for(let y=0;y<rows;y++){
+      for(let x=0;x<cols;x++){
+        const sx=originX+x*cell, sy=originY+y*cell;
+        ctx.fillStyle=(maze[y][x]===WALL)?colors.border:colors.floor;
+        ctx.fillRect(sx,sy,cell,cell);
+        if(maze[y][x]!==WALL){
+          ctx.strokeStyle='rgba(255,255,255,0.02)';
+          ctx.lineWidth=1;
+          ctx.strokeRect(sx+0.5,sy+0.5,cell-1,cell-1);
+        }
+      }
+    }
+
+    ctx.strokeStyle=colors.border;
+    ctx.lineWidth=Math.max(4,Math.floor(cell*0.18));
+    ctx.strokeRect(originX-2,originY-2,gridW+4,gridH+4);
+
+    const sX=originX+1*cell,sY=originY+1*cell;
+    ctx.fillStyle=colors.start;
+    ctx.fillRect(sX+Math.floor(cell*0.08),sY+Math.floor(cell*0.08),Math.floor(cell*0.84),Math.floor(cell*0.84));
+    ctx.fillStyle='rgba(0,0,0,0.7)';
+    ctx.font=`${Math.floor(cell/3)}px sans-serif`;
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText('START',sX+cell/2,sY+cell/2);
+
+    const finishX=originX+exit.x*cell, finishY=originY+exit.y*cell;
+    ctx.fillStyle=colors.finish;
+    ctx.fillRect(finishX+Math.floor(cell*0.08),finishY+Math.floor(cell*0.08),Math.floor(cell*0.84),Math.floor(cell*0.84));
+    ctx.fillStyle='rgba(0,0,0,0.7)';
+    ctx.font=`${Math.floor(cell/3.5)}px sans-serif`;
+    ctx.fillText('FINISH',finishX+cell/2,finishY+cell/2);
+
+    // Draw NPCs
+    for (const npc of npcs) {
+      const npcX = originX + npc.x * cell;
+      const npcY = originY + npc.y * cell;
+      npc.px += (npcX - npc.px) * 0.2;
+      npc.py += (npcY - npc.py) * 0.2;
+
+      const pad = Math.max(2, Math.floor(cell * 0.12));
+      ctx.fillStyle = '#ff4444';
+      ctx.fillRect(Math.round(npc.px + pad), Math.round(npc.py + pad), Math.round(cell - pad * 2), Math.round(cell - pad * 2));
+      ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(Math.round(npc.px + pad) + 0.5, Math.round(npc.py + pad) + 0.5, Math.round(cell - pad * 2) - 1, Math.round(cell - pad * 2) - 1);
+    }
+
+    const targetPx=originX+player.x*cell, targetPy=originY+player.y*cell;
+    player.px+=(targetPx-player.px)*0.35;
+    player.py+=(targetPy-player.py)*0.35;
+
+    const pad=Math.max(2,Math.floor(cell*0.12));
+    ctx.fillStyle='#ffea00';
+    ctx.fillRect(Math.round(player.px+pad),Math.round(player.py+pad),Math.round(cell-pad*2),Math.round(cell-pad*2));
+    ctx.strokeStyle='rgba(0,0,0,0.25)';
+    ctx.lineWidth=2;
+    ctx.strokeRect(Math.round(player.px+pad)+0.5,Math.round(player.py+pad)+0.5,Math.round(cell-pad*2)-1,Math.round(cell-pad*2)-1);
+
+    if (settings.fogEnabled) {
+      ctx.restore();
+    }
+  }
+
+  function canMoveTo(nx,ny){ 
+    if (ny < 0 || ny >= rows || nx < 0 || nx >= cols || maze[ny][nx] !== PATH) return false;
+    if (settings.npcsEnabled && npcs.some(n => n.x === nx && n.y === ny)) return false;
+    return true;
+  }
+  
+  function tryMove(dx,dy){ 
+    if(!running) return; 
+    const nx=player.x+dx, ny=player.y+dy; 
+    
+    // Check if hitting a wall
+    if (ny < 0 || ny >= rows || nx < 0 || nx >= cols || maze[ny][nx] !== PATH) {
+      playWallHitSound();
+      return;
+    }
+    
+    // Check if hitting an NPC
+    if (settings.npcsEnabled && npcs.some(n => n.x === nx && n.y === ny)) {
+      playNPCHitSound();
+      return;
+    }
+    
+    // Valid move
+    player.x=nx; 
+    player.y=ny; 
+    if(nx===exit.x&&ny===exit.y) onWin(); 
+  }
+
+  function onWin(){ 
+    if(!running) return; 
+    running=false; 
+    stopTimer(); 
+    stopNPCMovement();
+    playWinSound();
+    finalTimeEl.textContent=`Time: ${formatMS(Math.max(0,performance.now()-startTs))}`; 
+    showWinModal(); 
+  }
+  function showWinModal(){ winBackdrop.style.display='flex'; }
+  function hideWinModal(){ winBackdrop.style.display='none'; }
+
+  window.addEventListener('keydown',(ev)=>{
+    if (!gameStarted) return;
+    const k=ev.key.toLowerCase();
+    if(k==='arrowup'||k==='w') tryMove(0,-1);
+    if(k==='arrowdown'||k==='s') tryMove(0,1);
+    if(k==='arrowleft'||k==='a') tryMove(-1,0);
+    if(k==='arrowright'||k==='d') tryMove(1,0);
+  });
+
+  function loop(){ draw(); requestAnimationFrame(loop); }
+
+  let resizeTimeout=null;
+  window.addEventListener('resize',()=>{ 
+    if(resizeTimeout) clearTimeout(resizeTimeout); 
+    resizeTimeout=setTimeout(()=>{ 
+      if (gameStarted) {
+        resizeAndSetup(); 
+      }
+      resizeTimeout=null; 
+    },150); 
+  });
+
+  function init(){ 
+    updateToggleUI(); 
+    loop(); 
+  }
+
+  init();
+
+})();
+</script>
+
+</body>
+</html>

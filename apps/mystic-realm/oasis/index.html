@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+  * { -webkit-tap-highlight-color: transparent !important; }
+  *:focus, *:active, *:focus-visible { outline: none !important; box-shadow: none !important; }
+</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Oasis — A Place to Belong</title>
+
+<meta name="theme-color" content="#040b0a">
+<meta name="description" content="Oasis is a free social community for gamers — a place to play, connect, and belong.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================
+   OASIS MODULE — fully self-contained.
+   All rules are scoped under .oasis-root so nothing here
+   can leak into or collide with the parent Mystic Realms
+   styles. Safe to delete this whole folder at any time.
+===================================================== */
+
+.oasis-root {
+    --o-teal: #2fe8c8;
+    --o-teal-soft: #7bf3de;
+    --o-teal-dim: #1c9c86;
+    --o-violet: #6a5cff;
+
+    --o-ink: #040b0a;
+    --o-ink-2: #07120f;
+    --o-panel: rgba(10, 24, 22, 0.72);
+    --o-panel-light: rgba(14, 34, 31, 0.78);
+
+    --o-line: rgba(47, 232, 200, 0.22);
+    --o-line-bright: rgba(47, 232, 200, 0.55);
+
+    --o-text: #eafff9;
+    --o-muted: #a7c9c1;
+
+    --o-shadow: 0 20px 70px rgba(0, 0, 0, 0.6), 0 0 45px rgba(47, 232, 200, 0.1);
+
+    box-sizing: border-box;
+    font-family: "Cinzel", Georgia, serif;
+    color: var(--o-text);
+    background: var(--o-ink);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.oasis-root *,
+.oasis-root *::before,
+.oasis-root *::after {
+    box-sizing: border-box;
+}
+
+.oasis-root a {
+    color: inherit;
+}
+
+/* ---------------------------------------------------------
+   BACKGROUND
+--------------------------------------------------------- */
+
+.oasis-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background:
+        radial-gradient(circle at 20% 15%, rgba(47, 232, 200, 0.14), transparent 32%),
+        radial-gradient(circle at 82% 12%, rgba(106, 92, 255, 0.14), transparent 30%),
+        radial-gradient(circle at 50% 85%, rgba(47, 232, 200, 0.10), transparent 38%),
+        linear-gradient(rgba(3, 8, 7, 0.72), rgba(3, 8, 7, 0.92)),
+        var(--o-ink-2);
+}
+
+.oasis-bg::before {
+    /* subtle star field */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.55), transparent 100%),
+        radial-gradient(1px 1px at 25% 60%, rgba(255,255,255,0.4), transparent 100%),
+        radial-gradient(1.5px 1.5px at 40% 30%, rgba(255,255,255,0.5), transparent 100%),
+        radial-gradient(1px 1px at 60% 75%, rgba(255,255,255,0.35), transparent 100%),
+        radial-gradient(1.5px 1.5px at 75% 15%, rgba(255,255,255,0.5), transparent 100%),
+        radial-gradient(1px 1px at 88% 55%, rgba(255,255,255,0.4), transparent 100%),
+        radial-gradient(1px 1px at 95% 85%, rgba(255,255,255,0.3), transparent 100%),
+        radial-gradient(1.5px 1.5px at 15% 85%, rgba(255,255,255,0.4), transparent 100%);
+    opacity: 0.7;
+    animation: oasis-twinkle 6s ease-in-out infinite alternate;
+}
+
+@keyframes oasis-twinkle {
+    from { opacity: 0.45; }
+    to { opacity: 0.85; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .oasis-bg::before { animation: none; }
+}
+
+/* ---------------------------------------------------------
+   TOP BAR
+--------------------------------------------------------- */
+
+.oasis-topbar {
+    width: 100%;
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid var(--o-line);
+    background: rgba(4, 11, 10, 0.55);
+    backdrop-filter: blur(14px);
+
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.oasis-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--o-teal-soft);
+}
+
+.oasis-back {
+    appearance: none;
+    text-decoration: none;
+    border: 1px solid var(--o-line);
+    border-radius: 999px;
+    padding: 10px 18px;
+
+    color: var(--o-teal-soft);
+    background: rgba(10, 24, 22, 0.72);
+
+    font-family: "Rajdhani", "Cinzel", Georgia, serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+
+    cursor: pointer;
+    transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+    display: inline-block;
+}
+
+.oasis-back:hover {
+    transform: translateY(-2px);
+    border-color: var(--o-teal);
+    background: rgba(20, 48, 44, 0.85);
+    box-shadow: 0 0 24px rgba(47, 232, 200, 0.2);
+}
+
+/* ---------------------------------------------------------
+   LAYOUT
+--------------------------------------------------------- */
+
+.oasis-page {
+    width: min(1080px, calc(100% - 32px));
+    margin: 0 auto;
+    padding-bottom: 60px;
+}
+
+.oasis-kicker {
+    font-family: "Rajdhani", sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--o-teal);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.oasis-kicker::before {
+    content: "";
+    width: 22px;
+    height: 1px;
+    background: var(--o-teal);
+    box-shadow: 0 0 8px rgba(47, 232, 200, 0.7);
+}
+
+/* ---------------------------------------------------------
+   HERO
+--------------------------------------------------------- */
+
+.oasis-hero {
+    padding: 90px 0 60px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.oasis-hero .oasis-kicker {
+    justify-content: center;
+}
+
+.oasis-hero .oasis-kicker::after {
+    content: "";
+    width: 22px;
+    height: 1px;
+    background: var(--o-teal);
+    box-shadow: 0 0 8px rgba(47, 232, 200, 0.7);
+}
+
+.oasis-hero h1 {
+    font-size: clamp(2.1rem, 5vw, 3.4rem);
+    line-height: 1.25;
+    margin: 0 0 22px;
+    background: linear-gradient(120deg, var(--o-text) 30%, var(--o-teal-soft) 65%, var(--o-violet) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    max-width: 16em;
+}
+
+.oasis-hero-sub {
+    max-width: 640px;
+    color: var(--o-muted);
+    font-family: "Rajdhani", sans-serif;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin: 0 0 36px;
+}
+
+.oasis-hero-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.oasis-secondary-link {
+    text-decoration: none;
+    color: var(--o-muted);
+    font-family: "Rajdhani", sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    border-bottom: 1px dashed var(--o-line-bright);
+    padding-bottom: 2px;
+    transition: color 0.2s ease;
+}
+
+.oasis-secondary-link:hover {
+    color: var(--o-teal-soft);
+}
+
+/* ---------------------------------------------------------
+   CTA BUTTON
+--------------------------------------------------------- */
+
+.oasis-cta-btn {
+    appearance: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    border: 1px solid var(--o-teal);
+    border-radius: 999px;
+    padding: 16px 34px;
+
+    color: #04120f;
+    background: linear-gradient(120deg, var(--o-teal-soft), var(--o-teal) 55%, var(--o-teal-dim));
+
+    font-family: "Cinzel", Georgia, serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+
+    cursor: pointer;
+    box-shadow: 0 0 0 rgba(47, 232, 200, 0);
+    transition: transform 0.25s ease, box-shadow 0.35s ease, filter 0.25s ease;
+    animation: oasis-glow 3.2s ease-in-out infinite;
+}
+
+.oasis-cta-btn:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.08);
+}
+
+.oasis-cta-btn--large {
+    padding: 19px 44px;
+    font-size: 1rem;
+}
+
+@keyframes oasis-glow {
+    0%, 100% { box-shadow: 0 0 18px rgba(47, 232, 200, 0.25); }
+    50% { box-shadow: 0 0 34px rgba(47, 232, 200, 0.5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .oasis-cta-btn { animation: none; }
+}
+
+/* ---------------------------------------------------------
+   SECTIONS
+--------------------------------------------------------- */
+
+.oasis-section {
+    padding: 56px 0;
+    border-top: 1px solid var(--o-line);
+}
+
+.oasis-section h2 {
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    margin: 0 0 18px;
+    color: var(--o-text);
+}
+
+.oasis-section p {
+    max-width: 720px;
+    color: var(--o-muted);
+    font-family: "Rajdhani", sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    margin: 0 0 16px;
+}
+
+/* tag row — "where oasis came from" */
+
+.oasis-tag-row {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 0;
+    margin: 26px 0 0;
+}
+
+.oasis-tag-row li {
+    font-family: "Rajdhani", sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--o-teal-soft);
+
+    border: 1px solid var(--o-line);
+    border-radius: 999px;
+    padding: 8px 16px;
+    background: var(--o-panel);
+}
+
+/* roadmap grid — "what is oasis" */
+
+.oasis-roadmap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+    margin-top: 30px;
+}
+
+.oasis-roadmap-card {
+    border: 1px solid var(--o-line);
+    border-radius: 16px;
+    padding: 18px 18px 16px;
+    background: var(--o-panel);
+    box-shadow: var(--o-shadow);
+    transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.oasis-roadmap-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--o-line-bright);
+}
+
+.oasis-roadmap-card h3 {
+    font-family: "Rajdhani", sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: var(--o-text);
+}
+
+.oasis-badge {
+    display: inline-block;
+    font-family: "Rajdhani", sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--o-teal);
+    border: 1px solid var(--o-line-bright);
+    border-radius: 999px;
+    padding: 3px 10px;
+}
+
+/* ---------------------------------------------------------
+   FREE TO JOIN CALLOUT
+--------------------------------------------------------- */
+
+.oasis-free {
+    border-top: 1px solid var(--o-line);
+    padding: 60px 0;
+}
+
+.oasis-free-inner {
+    border: 1px solid var(--o-line-bright);
+    border-radius: 22px;
+    padding: 44px clamp(20px, 5vw, 56px);
+    background: radial-gradient(circle at 20% 0%, rgba(47, 232, 200, 0.12), transparent 55%), var(--o-panel-light);
+    box-shadow: var(--o-shadow);
+    text-align: center;
+}
+
+.oasis-free-inner .oasis-kicker {
+    justify-content: center;
+}
+
+.oasis-free-inner h2 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+}
+
+.oasis-free-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 28px;
+    margin: 22px 0 20px;
+    font-family: "Rajdhani", sans-serif;
+    color: var(--o-teal-soft);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.oasis-free-list div::before {
+    content: "✓ ";
+    color: var(--o-teal);
+}
+
+.oasis-free-inner p {
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* ---------------------------------------------------------
+   FINAL CTA
+--------------------------------------------------------- */
+
+.oasis-final-cta {
+    border-top: 1px solid var(--o-line);
+    padding: 80px 0 30px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.oasis-final-cta h2 {
+    font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+    margin-bottom: 16px;
+}
+
+.oasis-final-cta p {
+    max-width: 560px;
+    text-align: center;
+}
+
+.oasis-cta-note {
+    margin-top: 16px;
+    font-family: "Rajdhani", sans-serif;
+    font-size: 0.85rem;
+    color: var(--o-muted);
+}
+
+.oasis-cta-note code {
+    color: var(--o-teal-soft);
+    font-family: inherit;
+}
+
+/* ---------------------------------------------------------
+   FOOTER
+--------------------------------------------------------- */
+
+.oasis-footer {
+    padding: 30px 0 10px;
+    text-align: center;
+}
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+--------------------------------------------------------- */
+
+@media (max-width: 700px) {
+    .oasis-topbar { padding: 14px 16px; }
+    .oasis-hero { padding: 64px 0 44px; }
+    .oasis-section { padding: 42px 0; }
+    .oasis-free { padding: 42px 0; }
+    .oasis-final-cta { padding: 60px 0 24px; }
+    .oasis-free-list { flex-direction: column; gap: 8px; }
+}
+</style>
+</head>
+<body class="oasis-root">
+
+<div class="oasis-bg"></div>
+
+<header class="oasis-topbar">
+    <div class="oasis-brand">✦ Oasis</div>
+    <a class="oasis-back" href="../index.html">← Back to Mystic Realms</a>
+</header>
+
+<main class="oasis-page">
+
+    <!-- =====================================================
+         HERO / INTRODUCTION
+    ===================================================== -->
+
+    <section class="oasis-hero">
+        <div class="oasis-kicker">Oasis Social</div>
+
+        <h1>A place to play.<br>A place to connect.<br>A place to belong.</h1>
+
+        <p class="oasis-hero-sub">
+            Oasis began as an idea for a different kind of online community for gamers —
+            not another giant social platform built around ads, algorithms, and endless
+            scrolling. It's a digital gathering place where people come together to share
+            things, talk, play, create, and build a community around what they actually
+            enjoy. It started with gaming, but the idea is bigger than gaming.
+        </p>
+
+        <div class="oasis-hero-actions">
+            <a class="oasis-cta-btn" href="https://oasis.myguyinthechair.com" target="_blank" rel="noopener">
+                ✦ Join Oasis
+            </a>
+            <a class="oasis-secondary-link" href="#oasis-what-is">Learn what we're building ↓</a>
+        </div>
+    </section>
+
+    <!-- =====================================================
+         WHERE OASIS CAME FROM
+    ===================================================== -->
+
+    <section class="oasis-section" id="oasis-origin">
+        <div class="oasis-kicker">Where Oasis Came From</div>
+
+        <h2>Started small. Still growing.</h2>
+
+        <p>
+            Oasis started as a small, gaming-focused social idea and has been growing
+            into something a little bigger ever since. The thinking behind it is simple:
+            the internet should still have places that feel like <em>places</em> — not
+            just feeds you scroll through and forget. Somewhere you can actually find
+            people again, not just content.
+        </p>
+
+        <p>
+            We're not pretending to be a massive, established company. Oasis is an
+            evolving project, and it's being shaped by the people who show up and use
+            it — around the things that make a community worth sticking around for:
+        </p>
+
+        <ul class="oasis-tag-row">
+            <li>Gaming</li>
+            <li>Friendship</li>
+            <li>Creativity</li>
+            <li>Conversation</li>
+            <li>Community</li>
+            <li>Experimentation</li>
+            <li>Personal projects</li>
+            <li>Sharing</li>
+            <li>Having fun</li>
+        </ul>
+    </section>
+
+    <!-- =====================================================
+         WHAT IS OASIS?
+    ===================================================== -->
+
+    <section class="oasis-section" id="oasis-what-is">
+        <div class="oasis-kicker">What Is Oasis?</div>
+
+        <h2>A free social community for gamers.</h2>
+
+        <p>
+            Oasis is a free social community for gamers and for anyone who enjoys
+            gaming culture, technology, creativity, and online communities in general.
+            It's still early, and we're building it out piece by piece — here's what
+            we're building toward:
+        </p>
+
+        <div class="oasis-roadmap-grid">
+            <div class="oasis-roadmap-card"><span class="oasis-badge">Building Toward</span><h3>Profiles</h3></div>
+            <div class="oasis-roadmap-card"><span class="oasis-badge">Building Toward</span><h3>Friends</h3></div>
+            <div class="oasis-roadmap-card"><span class="oasis-badge">Building Toward</span><h3>Messaging</h3></div>
+            <div class="oasis-roadmap-card"><span class="oasis-badge">Building Toward</span><h3>Gaming Communities</h3></div>
+            <div class="oasis-roadmap-card"><span class="oasis-badge">Building Toward</span><h3>Groups</h3></div>
+            <div class="oasis-roadmap-card"><span class="oasis-badge">Building Toward</span><h3>Forums</h3></div>
+            <div class="oasis-roadmap-card"><span class="oasis-badge">Building Toward</span><h3>Events</h3></div>
+            <div class="oasis-roadmap-card"><span class="oasis-badge">Building Toward</span><h3>Shared Projects</h3></div>
+            <div class="oasis-roadmap-card"><span class="oasis-badge">Building Toward</span><h3>Gaming Discussions</h3></div>
+            <div class="oasis-roadmap-card"><span class="oasis-badge">Building Toward</span><h3>Creative Communities</h3></div>
+            <div class="oasis-roadmap-card"><span class="oasis-badge">Building Toward</span><h3>Community-Created Content</h3></div>
+        </div>
+    </section>
+
+    <!-- =====================================================
+         FREE TO JOIN
+    ===================================================== -->
+
+    <section class="oasis-free">
+        <div class="oasis-free-inner">
+            <div class="oasis-kicker">Free to Join</div>
+            <h2>Oasis is free.</h2>
+
+            <div class="oasis-free-list">
+                <div>No membership fee</div>
+                <div>No subscription required</div>
+                <div>No payment required to join</div>
+            </div>
+
+            <p>
+                The whole point is to build a place where people show up because they
+                want to be there — not because they paid to be there.
+            </p>
+        </div>
+    </section>
+
+    <!-- =====================================================
+         FINAL CTA
+    ===================================================== -->
+
+    <section class="oasis-final-cta">
+        <div class="oasis-kicker">Come Find Your Oasis</div>
+
+        <h2>Ready to step in?</h2>
+
+        <p>
+            Oasis is small right now, and that's kind of the point — you're getting in
+            near the beginning of something being built in the open, together.
+        </p>
+
+        <a class="oasis-cta-btn oasis-cta-btn--large" href="https://oasis.myguyinthechair.com" target="_blank" rel="noopener">
+            ✦ Join Oasis
+        </a>
+
+        <div class="oasis-cta-note">
+            You'll head over to <code>oasis.myguyinthechair.com</code> to join — free, always.
+        </div>
+    </section>
+
+    <footer class="oasis-footer">
+        <a class="oasis-back" href="../index.html">← Back to Mystic Realms</a>
+    </footer>
+
+</main>
+
+</body>
+</html>
