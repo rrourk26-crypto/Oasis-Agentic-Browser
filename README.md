@@ -216,7 +216,7 @@ This also makes it easier to share projects between users.
 
 ---
 
-# 📷 Webcam and Media Access
+# 📷 Webcam and Media Access / Non-Working Microphone
 
 Oasis can provide access to browser-supported hardware and media capabilities when the user grants permission.
 
@@ -443,7 +443,7 @@ Oasis is intended to be a foundation that people can build on.
 
 ---
 
-## 🎤 Microphone Permissions / Live Chat Fix Known Issue 
+## 🎤 Microphone Permissions / Live Chat Known Issue / Not Working
 May not work correctly/future updates will address the known issue 
 
  **Live Chat is not working**, or Oasis does not respond when you try to **talk through the microphone**, the problem is a result of Windows microphone permissions.
