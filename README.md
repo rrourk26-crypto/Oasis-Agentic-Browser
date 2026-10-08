@@ -570,6 +570,30 @@ Tab
 can be used to move to the next interactive element on the page.
 
 ---
+## 💬 Community & Support
+
+Want to talk about **Oasis Agentic Browser**, ask questions, get help, share ideas, report problems, or just hang out with other people interested in the project?
+
+Join the **Oasis Agentic Browser** group on **Oasis Social**:
+
+### 🌐 [Oasis Agentic Browser - The Oasis](https://oasis.myguyinthechair.com/s/oasis-agentic-browser/)
+
+**Oasis Social** is the community and social side of the Oasis project. It's a place for more than just technical support. You can:
+
+* 💬 Talk about Oasis and what you're building with it
+* 🛠️ Ask for help and troubleshoot problems
+* 💡 Suggest features and share ideas
+* 🐛 Discuss bugs and issues
+* 📸 Share screenshots, projects, and experiments
+* 🤖 Talk about local AI, agents, LM Studio, and automation
+* 🌐 Discuss the future of the Oasis Agentic Browser
+* 👥 Meet and talk with other Oasis users
+* 🗣️ Or just hang out and talk
+
+GitHub is where the code lives. **Oasis Social is where the people are.**
+
+Come join the community and help shape where Oasis goes next.
+
 
 # 🌐 Project
 
