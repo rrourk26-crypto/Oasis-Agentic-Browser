@@ -1,10 +1,9 @@
-
 # 🌐 Oasis Agentic Browser
 
 **Oasis Agentic Browser** is an open-source, local-first AI browser and Windows desktop workspace built around **agentic AI, local models, automation, and direct access to your computer**.
 
 > **Formerly known as Oasis Browser**
-> 
+
 **Oasis Agentic Browser** is an open-source, local-first browser and desktop workspace for Windows.
 
 Oasis is designed to bring web browsing, local AI, Windows tools, applications, files, media, communication, games, and personal projects together in one place.
@@ -14,6 +13,34 @@ It is built with **Electron**, while also allowing local web applications and to
 The goal is simple:
 
 > **Give people a workspace they can actually make their own.**
+
+---
+
+## 📸 Screenshots
+
+### Oasis Agentic Browser
+
+![Oasis Agentic Browser](screenshots/main.png)
+
+### Web Browsing
+
+![Oasis browsing Google](screenshots/google.png)
+
+![Oasis browsing GitHub](screenshots/github.png)
+
+### Projects & Files
+
+![Oasis Project Folder](screenshots/project%20folder.png)
+
+### Agentic Tools
+
+![Oasis Working](screenshots/WORKING.png)
+
+![Oasis Agent Tools](screenshots/WORKING1.png)
+
+### Screen Sharing
+
+![Oasis Screen Sharing](screenshots/SCREENSHARE.png)
 
 ---
 
@@ -515,7 +542,7 @@ There is no requirement for every Oasis-based project to look or behave the same
 
 # 📜 License
 
-Oasis Browser is released under the **MIT License**.
+Oasis Agentic Browser is released under the **MIT License**.
 
 You are free to use, modify, fork, rename, and redistribute the project according to the terms of the MIT License.
 
@@ -546,7 +573,7 @@ can be used to move to the next interactive element on the page.
 
 # 🌐 Project
 
-**Oasis Browser**
+**Oasis Agentic Browser**
 
 An open-source Windows workspace built with Electron.
 
