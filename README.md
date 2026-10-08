@@ -2,7 +2,7 @@
 
 **Oasis Agentic Browser** is an open-source, local-first AI browser and Windows desktop workspace built around **agentic AI, local models, automation, and direct access to your computer**.
 
-> **Formerly known as Oasis Browser**
+> **Formerly known as Oasis Browser** 
 
 **Oasis Agentic Browser** is an open-source, local-first browser and desktop workspace for Windows.
 
@@ -216,14 +216,14 @@ This also makes it easier to share projects between users.
 
 ---
 
-# 📷 Webcam and Media Access / Non-Working Microphone
+# 📷 Webcam and Media Access 
 
 Oasis can provide access to browser-supported hardware and media capabilities when the user grants permission.
 
 This can include:
 
 * Webcam
-* Microphone
+* Microphone - Not Functional in this Version
 * Camera
 * Screen capture
 * Screen sharing
