@@ -443,19 +443,20 @@ Oasis is intended to be a foundation that people can build on.
 
 ---
 
-## 🎤 Microphone Permissions / Live Chat Fix
+## 🎤 Microphone Permissions / Live Chat Fix Known Issue 
+May not work correctly/future updates will address the known issue 
 
-If **Live Chat is not working**, or Oasis does not respond when you try to **talk through the microphone**, the problem may be Windows microphone permissions.
+ **Live Chat is not working**, or Oasis does not respond when you try to **talk through the microphone**, the problem is a result of Windows microphone permissions.
 
 Oasis needs microphone access for Live Chat voice features.
 
-### Windows Fix
+### Windows Fix / Possible Will Be Addressed in Future Updates
 
 Go to:
 
 **Windows Settings → Privacy & security → Microphone**
 
-Make sure these are enabled:
+You Can Try To Make sure these are enabled: Failed in Test.
 
 * **Microphone access** → ON
 * **Let apps access your microphone** → ON
