@@ -1,6 +1,11 @@
-# 🌐 Oasis Browser
 
-**Oasis Browser** is an open-source, local-first browser and desktop workspace for Windows.
+# 🌐 Oasis Agentic Browser
+
+**Oasis Agentic Browser** is an open-source, local-first AI browser and Windows desktop workspace built around **agentic AI, local models, automation, and direct access to your computer**.
+
+> **Formerly known as Oasis Browser**
+> 
+**Oasis Agentic Browser** is an open-source, local-first browser and desktop workspace for Windows.
 
 Oasis is designed to bring web browsing, local AI, Windows tools, applications, files, media, communication, games, and personal projects together in one place.
 
