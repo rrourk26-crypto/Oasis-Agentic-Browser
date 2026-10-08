@@ -131,6 +131,7 @@ Oasis has been tested with local models running through LM Studio, including:
 
 * **google/gemma-4-e4b**
 * **Qwen3-VL-8B-Instruct-Q4_K_M.gguf**
+* **OPENAI API **
 
 The Qwen model configuration has also been tested through the local LM Studio API.
 
