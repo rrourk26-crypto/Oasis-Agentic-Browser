@@ -1,0 +1,15 @@
+{
+  "id": "net-1",
+  "name": "Skater_Chris",
+  "avatar": "S",
+  "role": "The college kid",
+  "core": true,
+  "folderLabel": "Skater_Chris - CORE",
+  "favoriteRooms": [
+    "lobby",
+    "offtopic"
+  ],
+  "startingRoom": "lobby",
+  "ambient": false,
+  "removed": false
+}

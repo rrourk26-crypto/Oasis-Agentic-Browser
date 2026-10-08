@@ -1,0 +1,15 @@
+{
+  "id": "net-26",
+  "name": "WrenchRyan",
+  "avatar": "W",
+  "role": "The mechanic",
+  "core": true,
+  "folderLabel": "WrenchRyan - CORE",
+  "favoriteRooms": [
+    "cars",
+    "offtopic"
+  ],
+  "startingRoom": "cars",
+  "ambient": false,
+  "removed": false
+}

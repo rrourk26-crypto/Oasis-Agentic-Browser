@@ -1,0 +1,15 @@
+{
+  "id": "net-11",
+  "name": "CamWebSurfer",
+  "avatar": "C",
+  "role": "The web surfer",
+  "core": true,
+  "folderLabel": "CamWebSurfer - CORE",
+  "favoriteRooms": [
+    "nineties",
+    "offtopic"
+  ],
+  "startingRoom": "nineties",
+  "ambient": false,
+  "removed": false
+}

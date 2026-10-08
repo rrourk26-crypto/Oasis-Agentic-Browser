@@ -1,0 +1,15 @@
+{
+  "id": "sarah",
+  "name": "Sarah",
+  "avatar": "S",
+  "role": "The smart one",
+  "core": true,
+  "folderLabel": "Sarah - CORE",
+  "favoriteRooms": [
+    "tech",
+    "offtopic"
+  ],
+  "startingRoom": "tech",
+  "ambient": false,
+  "removed": false
+}

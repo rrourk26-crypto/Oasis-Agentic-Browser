@@ -1,0 +1,15 @@
+{
+  "id": "dave",
+  "name": "Dave",
+  "avatar": "D",
+  "role": "The joker",
+  "core": true,
+  "folderLabel": "Dave - CORE",
+  "favoriteRooms": [
+    "offtopic",
+    "offtopic"
+  ],
+  "startingRoom": "offtopic",
+  "ambient": false,
+  "removed": false
+}

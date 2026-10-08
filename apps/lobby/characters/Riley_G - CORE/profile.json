@@ -1,0 +1,15 @@
+{
+  "id": "net-17",
+  "name": "Riley_G",
+  "avatar": "R",
+  "role": "The guitarist",
+  "core": true,
+  "folderLabel": "Riley_G - CORE",
+  "favoriteRooms": [
+    "music",
+    "offtopic"
+  ],
+  "startingRoom": "music",
+  "ambient": false,
+  "removed": false
+}

@@ -1,0 +1,15 @@
+{
+  "id": "net-4",
+  "name": "SolderFace",
+  "avatar": "S",
+  "role": "The tinkerer",
+  "core": true,
+  "folderLabel": "SolderFace - CORE",
+  "favoriteRooms": [
+    "tech",
+    "offtopic"
+  ],
+  "startingRoom": "tech",
+  "ambient": false,
+  "removed": false
+}

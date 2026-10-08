@@ -1,0 +1,15 @@
+{
+  "id": "net-13",
+  "name": "QuarterKing",
+  "avatar": "Q",
+  "role": "The arcade regular",
+  "core": true,
+  "folderLabel": "QuarterKing - CORE",
+  "favoriteRooms": [
+    "retro",
+    "offtopic"
+  ],
+  "startingRoom": "retro",
+  "ambient": false,
+  "removed": false
+}

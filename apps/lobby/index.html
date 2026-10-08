@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Lobby • Live Chat</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/theme.css">
+<script>document.documentElement.dataset.look=(function(){try{return localStorage.getItem("uiLook")||"midnight"}catch(e){return "midnight"}})();</script>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- =======================================================
+     HEADER
+======================================================= -->
+
+<header class="topbar">
+
+  <div class="brandrow">
+    <div class="brand">
+      <span class="dotpulse"></span>
+      The Lobby
+    </div>
+  </div>
+
+  <div class="subtitle">
+    One local model. Any number of personalities. One neutral Admin. One very busy chat room.
+  </div>
+
+  <div class="roombar">
+
+    <button
+      class="people-toggle"
+      onclick="togglePeople()"
+      title="Chats"
+    >👥</button>
+
+    <input
+      id="username"
+      value="Guest"
+      maxlength="24"
+      title="Your username"
+      placeholder="Your username"
+    >
+
+    <select
+      id="roomSelect"
+      title="Choose a chat room"
+      onchange="switchChatRoom(this.value)"
+      aria-label="Chat room"
+    ></select>
+    <input
+      id="roomName"
+      value="The Lobby"
+      title="Current room"
+      style="display:none"
+      aria-hidden="true"
+    >
+
+    <button
+      class="settings-toggle"
+      onclick="toggleSettings()"
+      title="Show or hide Settings"
+      aria-expanded="true"
+      aria-controls="settings"
+    >✕ Settings</button>
+
+    <button
+      id="themeToggle"
+      onclick="toggleTheme()"
+      title="Toggle light / dark mode"
+    >🌙 Dark</button>
+
+    <div class="members-menu-wrap">
+      <button
+        id="membersToggle"
+        class="members-toggle"
+        onclick="toggleMembersMenu(event)"
+        title="All members"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >👥 Members</button>
+      <div id="membersMenu" class="members-menu" aria-hidden="true"></div>
+    </div>
+
+    <span id="status" class="status">
+
+      <span class="sdot"></span>
+
+      <span id="statusText">
+        Ready
+      </span>
+
+      <span
+        class="vu"
+        id="vu"
+      ></span>
+
+    </span>
+
+  </div>
+
+</header>
+
+
+<!-- =======================================================
+     MAIN — three columns: chats | conversation | settings
+======================================================= -->
+
+<section class="main">
+
+  <aside
+    class="people"
+    id="people"
+  ></aside>
+
+  <section class="chat">
+
+    <div
+      class="chathead"
+      id="chathead"
+    >
+
+      <button
+        class="backbtn"
+        onclick="backToRoom()"
+      >
+        ← Lobby
+      </button>
+
+      <strong id="roomTitle">
+        The Lobby
+      </strong>
+
+      <span
+        class="meta"
+        id="roomMeta"
+      >
+        • 11 people online
+      </span>
+
+    </div>
+
+    <div id="log"></div>
+
+    <div class="chat-footer">
+
+    <div
+      class="attach-preview"
+      id="attachPreview"
+    ></div>
+
+    <div class="composer">
+
+      <button
+        id="attachBtn"
+        class="attachbtn"
+        type="button"
+        title="Attach a file for characters to see"
+        onclick="document.getElementById('fileInput').click()"
+      >📎</button>
+
+      <input
+        type="file"
+        id="fileInput"
+        accept="image/*,.txt,.md,.json,.csv,.js,.py,.log,.html,.css,.yml,.yaml"
+        style="display:none"
+        onchange="handleFileSelect(event)"
+      >
+
+      <textarea
+        id="input"
+        placeholder="Type a message to the room... Try @Sarah or @Admin"
+        autofocus
+      ></textarea>
+
+      <button
+        id="send"
+        class="send"
+        onclick="sendMessage()"
+      >
+        Send
+      </button>
+
+    </div>
+
+
+    <div
+      class="controls"
+      id="roomControls"
+    >
+
+      <button
+        class="smallbtn"
+        onclick="seedConversation()"
+      >
+        🎲 Start chatter
+      </button>
+
+      <button
+        class="smallbtn on"
+        onclick="toggleAutonomous()"
+        id="autoButton"
+      >
+        ⏸ Pause AI chatter
+      </button>
+
+      <button
+        class="smallbtn"
+        onclick="clearChat()"
+      >
+        🗑 Clear
+      </button>
+
+    </div>
+
+
+    <div
+      class="controls"
+      id="dmControls"
+    >
+
+      <span id="dmHint">
+        Private conversation — only you and this person see it.
+      </span>
+
+      <button
+        class="smallbtn"
+        onclick="clearDM()"
+      >
+        🗑 Clear this DM
+      </button>
+
+    </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       SETTINGS — right sidebar, Messenger "chat info" style
+  ===================================================== -->
+
+  <aside
+    class="settings"
+    id="settings"
+  >
+
+    <div class="settings-head">
+      Settings
+      <div class="sub">Connection, characters &amp; behavior — saved automatically</div>
+    </div>
+
+    <details class="settings-section" open>
+      <summary>Model connection</summary>
+      <div class="settings-body">
+
+        <div>
+          <label>API base URL</label>
+          <div class="field-with-paste">
+            <input
+              id="apiBase"
+              value=""
+              placeholder="http://localhost:1234/v1"
+              oninput="persistState()"
+            >
+            <button
+              type="button"
+              class="paste-btn"
+              title="Paste"
+              onclick="pasteIntoField('apiBase')"
+            >📋</button>
+          </div>
+        </div>
+
+        <div>
+          <label>API key</label>
+          <div class="field-with-paste">
+            <input
+              id="apiKey"
+              type="password"
+              value=""
+              placeholder="Usually blank for local servers"
+              oninput="persistState()"
+            >
+            <button
+              type="button"
+              class="paste-btn"
+              title="Paste"
+              onclick="pasteIntoField('apiKey')"
+            >📋</button>
+          </div>
+        </div>
+
+        <div>
+          <label>Character model</label>
+          <select id="model" title="Character model" onchange="persistState()">
+            <option value="qwen/qwen3-vl-8b">qwen/qwen3-vl-8b</option>
+          </select>
+          <div class="model-help">
+            Used by every character except plain Admin.
+          </div>
+        </div>
+
+        <div>
+          <label>Plain Admin model</label>
+          <select id="plainModel" title="Plain Admin model" onchange="persistState()">
+            <option value="qwen/qwen3-vl-8b">qwen/qwen3-vl-8b</option>
+          </select>
+          <div class="model-help">
+            The model used by @Admin for room moderation and private conversations.
+          </div>
+        </div>
+
+        <div class="settings-fetch-row">
+          <button class="ghostbtn" style="flex:1" onclick="loadModels()">
+            🔄 Refresh models
+          </button>
+        </div>
+
+      </div>
+    </details>
+
+    <details class="settings-section">
+      <summary>Characters &amp; room</summary>
+      <div class="settings-body">
+
+        <div class="settings-toggle-row">
+          <label style="margin:0">Room Admin (always on)</label>
+          <input
+            id="includeAdminToggle"
+            type="checkbox"
+            checked
+            disabled
+            onchange="onIncludeAdminChange()"
+          >
+        </div>
+
+        <div class="save-note">
+          Add or remove individual characters from the chat list on the left — use the ➕ button or each character's ✎ / 🗑.
+        </div>
+
+      </div>
+    </details>
+
+    <details class="settings-section">
+      <summary>Personality &amp; prompt</summary>
+      <div class="settings-body">
+        <div>
+          <label>Global room system prompt</label>
+          <textarea id="globalPrompt" oninput="persistState()"></textarea>
+        </div>
+
+        <div class="world-prompt-box">
+          <label>Optional World / Story Prompt</label>
+          <textarea
+            id="worldPrompt"
+            oninput="persistState()"
+            placeholder="Leave empty to use the normal world. Example: The year is 1998. Everyone in the Lobby is helping build a small community website together. This is the shared project they are working on..."
+          ></textarea>
+          <div class="model-help">
+            Optional shared canon for every character. Use it for the year/era, setting, shared project, current situation, important facts, relationships, technology level, or story goals. If empty, the normal world prompt is unchanged. Characters keep their own personalities and voices.
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="settings-section">
+      <summary>Autonomous activity</summary>
+      <div class="settings-body">
+
+        <div class="activity-box">
+
+          <div class="activity-row">
+            <label>Overall activity</label>
+            <input
+              id="activity"
+              type="range"
+              min="0"
+              max="100"
+              value="55"
+              oninput="updateActivityLabels(); persistState()"
+            >
+            <span id="activityValue" class="activity-value">55%</span>
+          </div>
+
+          <div class="activity-row">
+            <label>Reply to others</label>
+            <input
+              id="replyChance"
+              type="range"
+              min="0"
+              max="100"
+              value="70"
+              oninput="updateActivityLabels(); persistState()"
+            >
+            <span id="replyChanceValue" class="activity-value">70%</span>
+          </div>
+
+          <div class="activity-row">
+            <label>Spontaneous chat</label>
+            <input
+              id="spontaneousChance"
+              type="range"
+              min="0"
+              max="100"
+              value="35"
+              oninput="updateActivityLabels(); persistState()"
+            >
+            <span id="spontaneousChanceValue" class="activity-value">35%</span>
+          </div>
+
+          <div class="activity-row">
+            <label>Max people per burst</label>
+            <select id="maxBurst" onchange="persistState()">
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
+
+          <div style="font-size:10px;color:var(--muted-dim);margin-top:4px">
+            Higher activity means the room wakes up more often.
+            @mentions override random selection.
+          </div>
+
+        </div>
+
+      </div>
+    </details>
+
+    <details class="settings-section" open>
+      <summary>Live world: weather, images &amp; news</summary>
+      <div class="settings-body">
+        <div>
+          <label>Weather city</label>
+          <div class="settings-fetch-row">
+            <input id="livePlace" placeholder="e.g. Louisville" onkeydown="if(event.key==='Enter')liveLookupPlace()">
+            <button class="smallbtn" onclick="liveLookupPlace()">Set</button>
+          </div>
+          <button class="smallbtn" style="margin-top:6px;width:100%" onclick="liveUseMyLocation()">📍 Use my location</button>
+        </div>
+        <div class="settings-toggle-row"><label>Weather talk</label><input id="liveWeather" type="checkbox" onchange="liveToggle()"></div>
+        <div class="settings-toggle-row"><label>Images &amp; memes</label><input id="liveImages" type="checkbox" onchange="liveToggle()"></div>
+        <div class="settings-toggle-row"><label>News headlines</label><input id="liveNews" type="checkbox" onchange="liveToggle()"></div>
+        <button class="smallbtn" onclick="liveTick(true)">✨ Post something now</button>
+        <div class="save-note" id="liveStatus">Set a city to turn on weather. Images use safe meme and photo sources only.</div>
+      </div>
+    </details>
+
+    <details class="settings-section">
+      <summary>Reset</summary>
+      <div class="settings-body danger-zone">
+        <button class="ghostbtn" style="width:100%" onclick="resetToDefaults()">
+          ↺ Reset characters &amp; settings to defaults
+        </button>
+        <div class="save-note">
+          Clears everything saved in this browser and reloads with an empty room — the original ten characters go back to being presets you can add in with the 🎭 button.
+        </div>
+      </div>
+    </details>
+
+  </aside>
+
+</section>
+
+</div>
+
+
+<!-- =========================================================
+     CHARACTER EDITOR
+========================================================= -->
+
+<div
+  class="editor"
+  id="characterEditor"
+>
+
+  <div class="editor-box">
+
+    <div class="editor-title">
+
+      <span
+        class="avatar"
+        id="editorAvatar"
+        style="
+          width:26px;
+          height:26px;
+          font-size:11px
+        "
+      >
+        ?
+      </span>
+
+      <span id="editorTitle">
+        Edit Character
+      </span>
+
+    </div>
+
+
+    <div class="editor-body">
+
+      <label>
+        Character name
+      </label>
+
+      <input
+        id="editName"
+        maxlength="30"
+        placeholder="e.g. Chris"
+      >
+
+
+      <label>
+        Role / description
+      </label>
+
+      <input
+        id="editRole"
+        maxlength="80"
+        placeholder="e.g. The skeptic"
+      >
+
+
+      <label>
+        System prompt
+      </label>
+
+      <textarea
+        id="editPrompt"
+        placeholder="You are Chris, a... Describe their personality and how they talk."
+      ></textarea>
+
+
+      <div
+        style="
+          font-size:10px;
+          color:var(--muted-dim);
+          margin-top:6px
+        "
+      >
+        Changes are applied immediately to this character's
+        next AI response. You do not need to reload the page.
+      </div>
+
+
+      <div class="editor-buttons">
+
+        <button
+          class="smallbtn"
+          onclick="closeCharacterEditor()"
+        >
+          Cancel
+        </button>
+
+        <button
+          class="send"
+          id="saveCharacterBtn"
+          style="
+            min-width:110px;
+            padding:8px 14px
+          "
+          onclick="saveCharacter()"
+        >
+          Save Character
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div
+  class="editor"
+  id="startupModal"
+>
+
+  <div class="editor-box">
+
+    <div class="editor-title">
+      <span
+        class="avatar"
+        style="width:26px;height:26px;font-size:13px"
+      >⚡</span>
+      <span>Connect to The Lobby</span>
+    </div>
+
+    <div class="editor-body">
+
+      <label>Server type</label>
+      <select id="startupProvider" onchange="onStartupProviderChange()">
+        <option value="lmstudio">LM Studio (local)</option>
+        <option value="ollama">Ollama (local, OpenAI-compatible)</option>
+        <option value="openai">OpenAI</option>
+        <option value="openrouter">OpenRouter</option>
+        <option value="other">Other (OpenAI-compatible)</option>
+      </select>
+      <div class="model-help">
+        This app talks to OpenAI-style <code>/chat/completions</code> servers. Anthropic's Claude API uses a different format and isn't wired up here yet — pick "Other" for any compatible server.
+      </div>
+
+      <label>API base URL</label>
+      <input
+        id="startupApiBase"
+        list="apiHistoryList"
+        placeholder="http://localhost:1234/v1"
+      >
+      <datalist id="apiHistoryList"></datalist>
+      <div class="model-help">
+        Past addresses you've used will show up as suggestions here.
+      </div>
+
+      <label>API key</label>
+      <input
+        id="startupApiKey"
+        type="password"
+        placeholder="Usually blank for local servers"
+      >
+      <div class="model-help">
+        Stored locally in this browser only. Required for OpenAI/OpenRouter, usually blank for LM Studio/Ollama.
+      </div>
+
+      <div class="editor-buttons">
+        <button
+          class="smallbtn"
+          onclick="skipStartupModal()"
+        >
+          Skip for now
+        </button>
+
+        <button
+          class="send"
+          style="min-width:110px;padding:8px 14px"
+          onclick="confirmStartupModal()"
+        >
+          Continue
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script src="js/characters/mike.js"></script>
+<script src="js/characters/sarah.js"></script>
+<script src="js/characters/dave.js"></script>
+<script src="js/characters/jen.js"></script>
+<script src="js/characters/tony.js"></script>
+<script src="js/characters/lisa.js"></script>
+<script src="js/characters/rick.js"></script>
+<script src="js/characters/amy.js"></script>
+<script src="js/characters/kevin.js"></script>
+<script src="js/characters/becky.js"></script>
+<script src="js/characters/custom-network.js"></script>
+<script src="js/phones.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

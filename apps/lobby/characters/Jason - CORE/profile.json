@@ -1,0 +1,15 @@
+{
+  "id": "net-extra-01",
+  "name": "Jason",
+  "avatar": "J",
+  "role": "The weekend gamer",
+  "core": true,
+  "folderLabel": "Jason - CORE",
+  "favoriteRooms": [
+    "gaming",
+    "offtopic"
+  ],
+  "startingRoom": "gaming",
+  "ambient": false,
+  "removed": false
+}

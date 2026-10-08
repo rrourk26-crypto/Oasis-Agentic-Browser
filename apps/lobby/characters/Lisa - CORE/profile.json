@@ -1,0 +1,15 @@
+{
+  "id": "lisa",
+  "name": "Lisa",
+  "avatar": "L",
+  "role": "The social one",
+  "core": true,
+  "folderLabel": "Lisa - CORE",
+  "favoriteRooms": [
+    "music",
+    "offtopic"
+  ],
+  "startingRoom": "music",
+  "ambient": false,
+  "removed": false
+}

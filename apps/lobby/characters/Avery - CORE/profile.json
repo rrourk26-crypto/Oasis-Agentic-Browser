@@ -1,0 +1,15 @@
+{
+  "id": "net-19",
+  "name": "Avery",
+  "avatar": "A",
+  "role": "The programmer",
+  "core": true,
+  "folderLabel": "Avery - CORE",
+  "favoriteRooms": [
+    "programming",
+    "offtopic"
+  ],
+  "startingRoom": "programming",
+  "ambient": false,
+  "removed": false
+}

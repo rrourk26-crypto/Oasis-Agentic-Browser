@@ -1,0 +1,15 @@
+{
+  "id": "net-8",
+  "name": "PixelJamie",
+  "avatar": "P",
+  "role": "The artist",
+  "core": true,
+  "folderLabel": "PixelJamie - CORE",
+  "favoriteRooms": [
+    "creative",
+    "offtopic"
+  ],
+  "startingRoom": "creative",
+  "ambient": false,
+  "removed": false
+}

@@ -1,0 +1,15 @@
+{
+  "id": "kevin",
+  "name": "Kevin",
+  "avatar": "K",
+  "role": "The tech guy",
+  "core": true,
+  "folderLabel": "Kevin - CORE",
+  "favoriteRooms": [
+    "cars",
+    "offtopic"
+  ],
+  "startingRoom": "cars",
+  "ambient": false,
+  "removed": false
+}

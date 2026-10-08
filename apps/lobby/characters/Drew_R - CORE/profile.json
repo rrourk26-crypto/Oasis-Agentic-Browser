@@ -1,0 +1,15 @@
+{
+  "id": "net-9",
+  "name": "Drew_R",
+  "avatar": "D",
+  "role": "The car nut",
+  "core": true,
+  "folderLabel": "Drew_R - CORE",
+  "favoriteRooms": [
+    "cars",
+    "offtopic"
+  ],
+  "startingRoom": "cars",
+  "ambient": false,
+  "removed": false
+}

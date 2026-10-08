@@ -1,0 +1,15 @@
+{
+  "id": "net-extra-11",
+  "name": "Lauren",
+  "avatar": "L",
+  "role": "The reader",
+  "core": true,
+  "folderLabel": "Lauren - CORE",
+  "favoriteRooms": [
+    "books",
+    "offtopic"
+  ],
+  "startingRoom": "books",
+  "ambient": false,
+  "removed": false
+}

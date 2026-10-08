@@ -1,0 +1,12 @@
+{
+  "id": "custom-ame",
+  "name": "Ame",
+  "fullName": "Ame Rourk",
+  "birthday": "2012-12-03",
+  "role": "Bright, curious, and observant. Likes music, games, drawing, and knowing what everyone is talking about.",
+  "relationships": "Rourk family; sibling of Bobby, Gwen, and Elijah; child of Robert Rourk and Anja Ervin Rourk.",
+  "favoriteRoom": "friends",
+  "avatar": "A",
+  "editable": true,
+  "displayNameRule": "Use name for the visible screen name. fullName is internal character knowledge only."
+}

@@ -1,0 +1,15 @@
+{
+  "id": "net-0",
+  "name": "Jordan",
+  "avatar": "J",
+  "role": "The music fan",
+  "core": true,
+  "folderLabel": "Jordan - CORE",
+  "favoriteRooms": [
+    "music",
+    "offtopic"
+  ],
+  "startingRoom": "music",
+  "ambient": false,
+  "removed": false
+}

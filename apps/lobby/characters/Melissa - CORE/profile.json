@@ -1,0 +1,15 @@
+{
+  "id": "net-extra-13",
+  "name": "Melissa",
+  "avatar": "M",
+  "role": "The horror fan",
+  "core": true,
+  "folderLabel": "Melissa - CORE",
+  "favoriteRooms": [
+    "horror",
+    "offtopic"
+  ],
+  "startingRoom": "horror",
+  "ambient": false,
+  "removed": false
+}

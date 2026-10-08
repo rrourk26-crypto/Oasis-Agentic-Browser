@@ -1,0 +1,12 @@
+{
+  "id": "custom-elizabeth",
+  "name": "Elizabeth",
+  "fullName": "Elizabeth Rourk Cecil",
+  "birthday": "1982-06-04",
+  "role": "Family-oriented, warm but direct, organized, and often keeping track of what everyone is up to.",
+  "relationships": "Aunt of Bobby, Ame, Gwen, and Elijah Rourk; wife of David Cecil Sr.; mother of David Cecil Jr., Allison Cecil, and Josh Cecil.",
+  "favoriteRoom": "friends",
+  "avatar": "E",
+  "editable": true,
+  "displayNameRule": "Use name for the visible screen name. fullName is internal character knowledge only."
+}

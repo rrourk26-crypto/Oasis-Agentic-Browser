@@ -1,0 +1,64 @@
+# Permanent Core Cast
+
+These 60 people are the permanent story cast. Each has a folder named after them and marked CORE.
+
+- **Mike - CORE** — The regular
+- **Sarah - CORE** — The smart one
+- **Dave - CORE** — The joker
+- **Jen - CORE** — The gamer
+- **Tony - CORE** — The skeptic
+- **Lisa - CORE** — The social one
+- **Rick - CORE** — The old-school guy
+- **Amy - CORE** — The creative
+- **Kevin - CORE** — The tech guy
+- **Becky - CORE** — The chaos coordinator
+- **Jordan - CORE** — The music fan
+- **Skater_Chris - CORE** — The college kid
+- **NightOwl77 - CORE** — The night owl
+- **Pat - CORE** — The neighbor
+- **SolderFace - CORE** — The tinkerer
+- **Casey - CORE** — The storyteller
+- **CinemaMorgan - CORE** — The movie fan
+- **Taylor - CORE** — The sports fan
+- **PixelJamie - CORE** — The artist
+- **Drew_R - CORE** — The car nut
+- **BookwormRobin - CORE** — The reader
+- **CamWebSurfer - CORE** — The web surfer
+- **Erin - CORE** — The practical one
+- **QuarterKing - CORE** — The arcade regular
+- **PunnyBoy88 - CORE** — The comedian
+- **AstroMorg - CORE** — The sci-fi fan
+- **Jesse - CORE** — The gamer
+- **Riley_G - CORE** — The guitarist
+- **GhoulGirl13 - CORE** — The horror fan
+- **Avery - CORE** — The programmer
+- **RefIsBlind - CORE** — The sports skeptic
+- **Win95Shawn - CORE** — The retro PC guy
+- **Kelly - CORE** — The social butterfly
+- **InkMia - CORE** — The writer
+- **Trevor_H - CORE** — The gaming historian
+- **SitcomNicole - CORE** — The TV regular
+- **WrenchRyan - CORE** — The mechanic
+- **Jess_Shutter - CORE** — The photographer
+- **Devon - CORE** — The science nerd
+- **OldFrank - CORE** — The old regular
+- **Tina - CORE** — The planner
+- **quiet_mark - CORE** — The quiet regular
+- **Mandy - CORE** — The music collector
+- **Jason - CORE** — The weekend gamer
+- **Heather - CORE** — The TV addict
+- **Brian - CORE** — The sports regular
+- **Stephanie - CORE** — The anime fan
+- **Marcus - CORE** — The science curious
+- **Laura - CORE** — The maker
+- **Monica - CORE** — The movie regular
+- **Eric - CORE** — The computer fixer
+- **Angela - CORE** — The storyteller
+- **Stacy - CORE** — The social regular
+- **Lauren - CORE** — The reader
+- **Daniel - CORE** — The coder
+- **Melissa - CORE** — The horror fan
+- **Rachel - CORE** — The night owl
+- **Sean - CORE** — The car guy
+- **Kim - CORE** — The sci-fi fan
+- **Victor - CORE** — The arcade regular

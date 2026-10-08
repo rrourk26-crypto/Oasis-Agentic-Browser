@@ -1,0 +1,15 @@
+{
+  "id": "amy",
+  "name": "Amy",
+  "avatar": "A",
+  "role": "The creative",
+  "core": true,
+  "folderLabel": "Amy - CORE",
+  "favoriteRooms": [
+    "creative",
+    "offtopic"
+  ],
+  "startingRoom": "creative",
+  "ambient": false,
+  "removed": false
+}

@@ -1,0 +1,15 @@
+{
+  "id": "net-16",
+  "name": "Jesse",
+  "avatar": "J",
+  "role": "The gamer",
+  "core": true,
+  "folderLabel": "Jesse - CORE",
+  "favoriteRooms": [
+    "gaming",
+    "offtopic"
+  ],
+  "startingRoom": "gaming",
+  "ambient": false,
+  "removed": false
+}

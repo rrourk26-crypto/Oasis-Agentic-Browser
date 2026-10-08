@@ -1,0 +1,15 @@
+{
+  "id": "net-extra-02",
+  "name": "Heather",
+  "avatar": "H",
+  "role": "The TV addict",
+  "core": true,
+  "folderLabel": "Heather - CORE",
+  "favoriteRooms": [
+    "tv",
+    "offtopic"
+  ],
+  "startingRoom": "tv",
+  "ambient": false,
+  "removed": false
+}

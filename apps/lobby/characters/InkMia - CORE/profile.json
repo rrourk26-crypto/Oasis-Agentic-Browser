@@ -1,0 +1,15 @@
+{
+  "id": "net-23",
+  "name": "InkMia",
+  "avatar": "I",
+  "role": "The writer",
+  "core": true,
+  "folderLabel": "InkMia - CORE",
+  "favoriteRooms": [
+    "books",
+    "offtopic"
+  ],
+  "startingRoom": "books",
+  "ambient": false,
+  "removed": false
+}

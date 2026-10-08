@@ -1,0 +1,15 @@
+{
+  "id": "net-extra-10",
+  "name": "Stacy",
+  "avatar": "S",
+  "role": "The social regular",
+  "core": true,
+  "folderLabel": "Stacy - CORE",
+  "favoriteRooms": [
+    "friends",
+    "offtopic"
+  ],
+  "startingRoom": "friends",
+  "ambient": false,
+  "removed": false
+}

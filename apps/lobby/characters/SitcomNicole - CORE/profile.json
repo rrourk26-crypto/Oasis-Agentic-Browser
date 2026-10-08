@@ -1,0 +1,15 @@
+{
+  "id": "net-25",
+  "name": "SitcomNicole",
+  "avatar": "S",
+  "role": "The TV regular",
+  "core": true,
+  "folderLabel": "SitcomNicole - CORE",
+  "favoriteRooms": [
+    "tv",
+    "offtopic"
+  ],
+  "startingRoom": "tv",
+  "ambient": false,
+  "removed": false
+}

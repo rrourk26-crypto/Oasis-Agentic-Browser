@@ -1,0 +1,15 @@
+{
+  "id": "net-15",
+  "name": "AstroMorg",
+  "avatar": "A",
+  "role": "The sci-fi fan",
+  "core": true,
+  "folderLabel": "AstroMorg - CORE",
+  "favoriteRooms": [
+    "scifi",
+    "offtopic"
+  ],
+  "startingRoom": "scifi",
+  "ambient": false,
+  "removed": false
+}

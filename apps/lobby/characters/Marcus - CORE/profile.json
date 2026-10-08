@@ -1,0 +1,15 @@
+{
+  "id": "net-extra-05",
+  "name": "Marcus",
+  "avatar": "M",
+  "role": "The science curious",
+  "core": true,
+  "folderLabel": "Marcus - CORE",
+  "favoriteRooms": [
+    "science",
+    "offtopic"
+  ],
+  "startingRoom": "science",
+  "ambient": false,
+  "removed": false
+}

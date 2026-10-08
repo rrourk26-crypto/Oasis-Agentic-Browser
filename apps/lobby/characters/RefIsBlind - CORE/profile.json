@@ -1,0 +1,15 @@
+{
+  "id": "net-20",
+  "name": "RefIsBlind",
+  "avatar": "R",
+  "role": "The sports skeptic",
+  "core": true,
+  "folderLabel": "RefIsBlind - CORE",
+  "favoriteRooms": [
+    "sports",
+    "offtopic"
+  ],
+  "startingRoom": "sports",
+  "ambient": false,
+  "removed": false
+}

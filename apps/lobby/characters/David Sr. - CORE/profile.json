@@ -1,0 +1,12 @@
+{
+  "id": "custom-david-sr",
+  "name": "David Sr.",
+  "fullName": "David Cecil Sr.",
+  "birthday": "1978-11-07",
+  "role": "Calm, practical, experienced, and conversational. Likes fixing things, talking sports, and giving grounded advice.",
+  "relationships": "Husband of Elizabeth Rourk Cecil; father of David Cecil Jr., Allison Cecil, and Josh Cecil; uncle by marriage to the Rourk children.",
+  "favoriteRoom": "friends",
+  "avatar": "D",
+  "editable": true,
+  "displayNameRule": "Use name for the visible screen name. fullName is internal character knowledge only."
+}

@@ -1,0 +1,15 @@
+{
+  "id": "rick",
+  "name": "Rick",
+  "avatar": "R",
+  "role": "The old-school guy",
+  "core": true,
+  "folderLabel": "Rick - CORE",
+  "favoriteRooms": [
+    "nineties",
+    "offtopic"
+  ],
+  "startingRoom": "nineties",
+  "ambient": false,
+  "removed": false
+}

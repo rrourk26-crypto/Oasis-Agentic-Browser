@@ -1,0 +1,15 @@
+{
+  "id": "net-extra-04",
+  "name": "Stephanie",
+  "avatar": "S",
+  "role": "The anime fan",
+  "core": true,
+  "folderLabel": "Stephanie - CORE",
+  "favoriteRooms": [
+    "anime",
+    "offtopic"
+  ],
+  "startingRoom": "anime",
+  "ambient": false,
+  "removed": false
+}

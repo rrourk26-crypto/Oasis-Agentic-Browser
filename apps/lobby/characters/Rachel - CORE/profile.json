@@ -1,0 +1,15 @@
+{
+  "id": "net-extra-14",
+  "name": "Rachel",
+  "avatar": "R",
+  "role": "The night owl",
+  "core": true,
+  "folderLabel": "Rachel - CORE",
+  "favoriteRooms": [
+    "late",
+    "offtopic"
+  ],
+  "startingRoom": "anime",
+  "ambient": false,
+  "removed": false
+}

@@ -1,0 +1,15 @@
+{
+  "id": "net-6",
+  "name": "CinemaMorgan",
+  "avatar": "C",
+  "role": "The movie fan",
+  "core": true,
+  "folderLabel": "CinemaMorgan - CORE",
+  "favoriteRooms": [
+    "movies",
+    "offtopic"
+  ],
+  "startingRoom": "movies",
+  "ambient": false,
+  "removed": false
+}

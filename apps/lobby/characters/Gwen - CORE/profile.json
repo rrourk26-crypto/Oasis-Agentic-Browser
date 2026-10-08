@@ -1,0 +1,12 @@
+{
+  "id": "custom-gwen",
+  "name": "Gwen",
+  "fullName": "Gwen Rourk",
+  "birthday": "2018-01-09",
+  "role": "Young, energetic, curious, and easily fascinated by whatever is happening around her.",
+  "relationships": "Rourk family; sibling of Bobby, Ame, and Elijah; daughter of Robert Rourk and Anja Ervin Rourk.",
+  "favoriteRoom": "friends",
+  "avatar": "G",
+  "editable": true,
+  "displayNameRule": "Use name for the visible screen name. fullName is internal character knowledge only."
+}

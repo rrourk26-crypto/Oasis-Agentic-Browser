@@ -1,0 +1,169 @@
+1. Unzip this whole folder (right-click > Extract All).
+2. Open the "app" folder, click the address bar, type  powershell  and press Enter.
+3. Run:  npm install
+4. Run:  npm start
+
+
+=== FILES YOU CAN ATTACH (+ button, drag and drop onto the window, or paste with Ctrl+V) ===
+Documents -> read as text:
+  PDF (scanned PDFs are shown to a vision model as page pictures), Word (.docx, .doc), Excel and other
+  spreadsheets (.xlsx .xlsm .xlsb .xls .ods .numbers .csv ... formulas are included), PowerPoint (.pptx, .ppt, with
+  speaker notes), OpenDocument (.odt .odp), RTF, EPUB books, e-mail (.eml, .msg), Jupyter notebooks (.ipynb).
+Images -> seen by the model (needs a vision model loaded in LM Studio):
+  PNG, JPG, GIF, WebP, BMP, AVIF, ICO. Big images are shrunk automatically.
+Archives -> opened like a zip:
+  .zip .jar .apk .war .vsix .whl, .tar, .tar.gz / .tgz, .gz
+Text and code -> read as text:
+  hundreds of types (code, config, markup, logs, subtitles...), plus any unknown file that turns out to be text.
+
+Inside a zip or a project folder, the AI looks at images and documents with [[read: path]] automatically.
+Up to 6 images from a zip are attached on the first message; the AI can ask for others. Images are shown once
+(to save the model's memory) and can be shown again on request. Documents are read-only: the AI can read them but
+returns changes as text/CSV files, not as edited Word/Excel files.
+
+Not supported: HEIC/TIFF/PSD images, audio, video, password-protected files, .rar/.7z archives.
+Libraries used (bundled in js/vendor, work offline): PDF.js 3.11 (Apache-2.0) and SheetJS 0.18.5 (Apache-2.0).
+
+
+RUNNING COMMANDS (new)
+----------------------
+With a project folder open (folder button next to the message box), the AI can propose a
+command, for example "node --check app.js" or "npm test". It appears on a card showing the
+exact command. Nothing runs until you click Run. The output and exit code go back to the AI
+automatically so it can fix its own mistakes. Stop kills a running command; commands also
+stop after 2 minutes and get no keyboard input.
+
+On Windows the AI can also propose opening a real PowerShell or Command Prompt window in
+the project folder (card button: Open). Use that for dev servers; its output is not sent back.
+
+Turn it off any time: Settings > "Let the AI propose commands to run".
+Only the Home page can run commands; other local pages and websites are refused.
+
+
+TABS (new)
+----------
+Drag a tab left or right to reorder it. Drop a tab on the MIDDLE of another tab to group them
+(click the group label to collapse, double-click to rename, right-click for more). Drag a tab
+down off the tab bar, or use right-click > "Move to new window", to pop it into its own window.
+Many tabs shrink and scroll; use the mouse wheel over the tab bar.
+
+SPELLING
+--------
+Right-click a misspelled word in a text box for suggestions and "Add to dictionary".
+(The dictionary downloads the first time you are online.)
+
+
+APPS THE AI CAN OPEN
+--------------------
+Ask for any of these by name: the Mystic Realm apps, The Lobby, Maze Madness, Chess, Live TV,
+Blaze Reels (slot machine, play credits only), plus the toolbar: Code Lab, Oasis Chat (Element),
+Chat history, Settings, and any of the website links on your toolbar (YouTube, Gmail, and the
+ones you add). Asking the AI to LIST its apps shows clickable links and opens nothing.
+If a built-in app can't load, its tab now says why instead of staying blank.
+
+
+WHAT CHANGED IN v16
+-------------------
+Opening apps / tabs
+  * Chess (and every app) now opens even when the AI writes its tag in a messy way: [app: chess], [[chess]],
+    [[play: chess]], a tag inside a code block or backticks, or a tag with quotes.
+  * If you plainly say "lets play chess" / "open the maze game" and the AI forgets the tag, the app opens anyway.
+  * A tag inside the AI's <think> block no longer opens things, and the same app is never opened twice from one reply.
+  * Relative links like [Chess](apps/chess/index.html) in a reply are now real, clickable links.
+  * The tab bridge no longer refuses the app's own pages because of spaces, brackets or letter case in the folder path.
+Images
+  * Generated images are downloaded once and shown from that copy. Before, every image was requested twice and the
+    free server (about one request per 15 seconds) often refused the second one, giving a broken picture.
+  * Busy-server answers (429/502/503/504) wait and retry; a picture that still fails to load retries automatically.
+  * Real photos: Wikipedia is tried first, then TVMaze (only if the show name matches), Commons, Openverse and your
+    optional keys. Each candidate is actually loaded to prove it works before it is shown; dead links are skipped.
+  * Credit lines now show in italics instead of with stray underscores.
+Other
+  * Currency conversion ([[currency: 100 USD to EUR]]) was always failing because of a broken pattern. Fixed.
+  * Astrolabe's starry background now loads (its stylesheet pointed at the wrong folder).
+
+
+WHAT CHANGED IN v17
+-------------------
+Screen sharing
+  * The Screen button always failed ("Screen sharing was cancelled") because the app never told Electron how to
+    pick a screen. It now opens a small "Choose what to share" window with thumbnails of your screens and windows.
+    Pick one (click Share, or double-click it) and the live feed starts. Cancel/Esc closes it cleanly.
+  * Only one picker can be open at once, and if Windows is slow to list screens it gives up after 10 seconds
+    instead of leaving the button dead.
+  * On a Mac, allow Screen Recording for the app in System Settings > Privacy & Security, or the list will be empty.
+  * Websites in tabs that ask to share your screen (video calls etc.) use the same picker.
+Nothing else was changed.
+
+
+WHAT CHANGED IN v18
+-------------------
+Opening apps and links
+  * "Mystic Realm — Horoscope" (or "mystic realm > horoscope") used to open the Mystic Realm hub, because the
+    longer name won. It now opens the specific app (Horoscope, Tarot, ...).
+  * "open X" opens X right away. "link me X", "give me a link to X", "link it here" now only put a clickable
+    link in the chat and do NOT open a tab.
+PowerShell / Command Prompt
+  * "open powershell" / "open cmd" / "open command prompt" now just opens that window (Windows).
+  * The AI's [terminal: powershell] block is accepted even with single brackets, and the literal word "command"
+    that it sometimes copied is ignored instead of being shown as text.
+IMPORTANT: if you ever see "This page could not be opened ... ERR_FILE_NOT_FOUND" for a built-in app, the folder
+named in the error is the one actually running. Check that the file exists inside that folder, and run the newest
+zip from a freshly extracted folder (right-click the zip > Extract All) rather than copying over an old one.
+
+
+AUTOPILOT, LONG PROJECTS AND SPEAKING UP (new in v19)
+-----------------------------------------------------
+AUTOPILOT (the circular-arrows button next to the folder button)
+  Turn it on for a chat, give the AI a job, and it keeps going by itself: it writes a PLAN, does one
+  small step, updates the plan, and the app tells it to continue until every [ ] is [x] or it needs
+  you. The bar above the message box shows what it is doing, with Pause / Resume and a Plan button
+  (you can read and edit the plan; the AI re-reads it every turn).
+  It stops by itself when: the plan is finished, it asks you a question, a reply fails, it starts
+  repeating itself, or it reaches the step limit (Settings, default 30; press Resume to go on).
+  File changes still wait for your Apply/Reject unless you turn on "Autopilot applies file changes
+  by itself" in Settings (old copies always go to .oasis-backup). Commands ALWAYS wait for your
+  Run click. Typing a message or pressing Stop interrupts it at any time.
+
+LONG CHATS NEVER RUN OUT
+  When a chat gets longer than the model's memory, the oldest messages are summarized into notes the
+  AI keeps using (a dashed line shows where). Nothing is deleted; the whole chat stays on screen and
+  saved. Old file contents are dropped from what is re-sent (the AI re-reads files when it needs
+  them), and if LM Studio ever refuses a message as too long, the app summarizes more and retries.
+
+BIG FILES AND BIG PROJECTS
+  The AI can change a few lines of a huge file with edit blocks (no need to rewrite the whole file),
+  and search a big project with [[find: text]] (file names and text inside files). Project folders
+  now list up to 20,000 files.
+
+THE AI SPEAKS UP ON ITS OWN (speech-bubble button next to Autopilot turns it on/off)
+  If you have been quiet for a while (default 5 minutes) the AI may ask a question, comment on what
+  you were doing, or suggest a next step, in your current chat (or your latest chat / a new
+  "Check-in" chat if none is open). It stops after 2 unanswered messages in a row, waits longer each
+  time, says nothing if it has nothing useful, and shows a desktop notification if the app is in the
+  background. Settings: "Autopilot & initiative" (minutes, max in a row, on/off).
+
+
+OPENING WINDOWS TOOLS (new)
+---------------------------
+Ask the AI to open a Windows app or utility and it launches the real program on your desktop (outside the
+browser, not in a tab):  "Open Task Manager", "show system resources", "open Device Manager", "open Event
+Viewer", "open Power Options", "open Windows Update", "open my D drive", "open Downloads", "open Calculator" ...
+Oasis apps and websites ("open the Lobby", "open YouTube") still open in a NEW Oasis tab.
+
+  * Vague requests ("open performance") get a question: Task Manager, Resource Monitor, or Performance Monitor?
+  * It can also answer questions about your PC without opening anything (CPU, RAM, GPU + video memory, Windows
+    version, drives, computer name, running processes, what uses the most CPU/RAM, IP address, power plan). The
+    result appears in the chat. These are read-only.
+  * Tools that CHANGE things always show a Windows Yes/Cancel box first (default Cancel): Registry Editor,
+    System Configuration, sfc /scannow, DISM /RestoreHealth, chkdsk, ipconfig /release /renew /flushdns,
+    powercfg battery and energy reports. Most of them then show Windows' own administrator prompt.
+  * Some tools only exist on certain Windows editions (Group Policy Editor and Local Users and Groups are not in
+    Windows Home). You get a plain message instead of an error.
+  * Turn it off in Settings: "Let the AI open Windows tools". Windows only.
+
+How it works (for modifying): the AI never writes a command. It names a tool, and windows-launcher.js looks the
+name up in js/windows-apps.js (the one list of tools, their aliases, and which need a Yes/Cancel) and runs a
+fixed PowerShell Start-Process script. To add a tool, add one line to js/windows-apps.js. This is separate from
+the "run commands" feature above, which still works exactly as before.
+Tests: from the app folder run  node --test tests/windows-launcher.test.js

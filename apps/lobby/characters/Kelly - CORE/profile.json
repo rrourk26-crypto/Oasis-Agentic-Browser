@@ -1,0 +1,15 @@
+{
+  "id": "net-22",
+  "name": "Kelly",
+  "avatar": "K",
+  "role": "The social butterfly",
+  "core": true,
+  "folderLabel": "Kelly - CORE",
+  "favoriteRooms": [
+    "lobby",
+    "offtopic"
+  ],
+  "startingRoom": "lobby",
+  "ambient": false,
+  "removed": false
+}

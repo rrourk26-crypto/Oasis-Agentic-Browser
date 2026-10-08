@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Astragalomancy</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background:
+      radial-gradient(circle at 50% 10%, rgba(116, 66, 173, 0.24), transparent 32%),
+      radial-gradient(circle at 15% 65%, rgba(128, 20, 67, 0.15), transparent 28%),
+      radial-gradient(circle at 85% 70%, rgba(67, 30, 126, 0.15), transparent 28%),
+      linear-gradient(rgba(5, 2, 10, 0.55), rgba(5, 2, 10, 0.82)),
+      url('../stars and moons.png') center top / cover no-repeat fixed;
+    color: white;
+    font-family: 'Cinzel', Georgia, serif;
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(75, 0, 130, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.3) 0%, transparent 70%);
+    pointer-events: none;
+    animation: fogMove 20s ease-in-out infinite;
+    z-index: 1;
+  }
+
+  @keyframes fogMove {
+    0%, 100% { opacity: 0.6; transform: scale(1) translateX(0); }
+    50% { opacity: 0.8; transform: scale(1.1) translateX(20px); }
+  }
+
+  .mystical-symbol {
+    position: fixed; font-size: 2em; opacity: 0.15; pointer-events: none;
+    z-index: 0; animation: float 15s ease-in-out infinite;
+  }
+  .symbol-1 { top: 10%; left: 8%; animation-delay: 0s; }
+  .symbol-2 { top: 15%; right: 10%; animation-delay: 2s; }
+  .symbol-3 { bottom: 12%; left: 12%; animation-delay: 4s; }
+  .symbol-4 { bottom: 20%; right: 8%; animation-delay: 6s; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(10deg); }
+  }
+
+  .back-btn{
+    position:fixed; top:20px; left:20px; z-index:200;
+    background:rgba(28, 15, 40,0.85); color:#ffd700;
+    border:2px solid rgba(255,215,0,0.5); padding:10px 20px;
+    border-radius:999px; font-weight:bold; font-size:1em;
+    text-decoration:none; cursor:pointer; transition:all .3s ease;
+    box-shadow:0 4px 10px rgba(0,0,0,0.4);
+  }
+  .back-btn:hover{ background:rgba(157, 32, 72,0.5); border-color:#ffed4e; transform:translateY(-2px); }
+.history-btn{
+  position:fixed; top:20px; right:20px; z-index:200;
+  background:rgba(28, 15, 40,0.85); color:#ffd700;
+  border:2px solid rgba(255,215,0,0.5); padding:10px 16px;
+  border-radius:999px; font-weight:bold; font-size:1em;
+  text-decoration:none; cursor:pointer; transition:all .3s ease;
+  box-shadow:0 4px 10px rgba(0,0,0,0.4);
+  font-family: 'Cinzel', Georgia, serif;
+}
+.history-btn:hover{ background:rgba(157, 32, 72,0.5); border-color:#ffed4e; transform:translateY(-2px); }
+
+  .container {
+    position: relative; z-index: 2; text-align: center;
+    max-width: 900px; width: 100%; margin: 0 auto;
+    padding-top: 70px;
+  }
+
+  h1 {
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: 3.2em;
+    margin-bottom: 8px;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255,215,0,.8), 0 0 20px rgba(255,215,0,.6), 3px 3px 6px rgba(0,0,0,.8);
+    animation: titleFloat 3s ease-in-out infinite;
+    letter-spacing: 2px;
+  }
+  @keyframes titleFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .subtitle {
+    font-size: 1.15em; color: #b9a9c8; margin-bottom: 35px; font-style: italic;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  }
+
+  .panel {
+    background: rgba(28, 15, 40, 0.85);
+    border: 3px solid rgba(255, 215, 0, 0.5);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 0 30px rgba(138, 43, 226, 0.35), 0 8px 32px rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+    margin-bottom: 26px;
+    text-align: left;
+  }
+
+  .section-title {
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: 1.5em;
+    color: #ffd700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    text-align: center;
+  }
+
+  .section-hint {
+    text-align: center; color: #b9a9c8; font-style: italic; font-size: 0.92em;
+    margin-bottom: 20px;
+  }
+
+  .lore-text {
+    color: #f7f0ff; font-size: 0.95em; line-height: 1.7; text-align: left;
+  }
+
+  .preset-row {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    margin-bottom: 20px;
+  }
+  .preset-btn {
+    background: rgba(11, 22, 34, 0.9);
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    border-radius: 999px; color: #f7f0ff; padding: 9px 16px;
+    font-family: 'Cinzel', Georgia, serif; font-size: 0.85em; font-weight: bold;
+    cursor: pointer; transition: all 0.25s ease;
+  }
+  .preset-btn:hover { border-color: #ffd700; color: #ffd700; }
+  .preset-btn.active {
+    background: linear-gradient(135deg, #3a1024 0%, #9d2048 100%);
+    border-color: #ffd700; color: #ffd700;
+    box-shadow: 0 0 12px rgba(255,215,0,0.3);
+  }
+
+  .field-group { margin-bottom: 22px; }
+  .field-group label {
+    display: block; color: #ffd700; font-weight: bold; font-size: 0.92em; margin-bottom: 8px;
+  }
+  .field-group input[type="text"] {
+    width: 100%; background: rgba(11, 22, 34, 0.9);
+    border: 1px solid rgba(255, 215, 0, 0.35); border-radius: 6px;
+    color: #fff; padding: 12px 14px; font-size: 1em; font-family: 'Cinzel', Georgia, serif;
+    text-align: center; letter-spacing: 1px;
+  }
+  .field-group input[type="text"]:focus { outline: none; border-color: #ffd700; }
+  .field-group .field-help { color: #8a94a3; font-size: 0.78em; margin-top: 6px; line-height: 1.4; text-align: center; }
+
+  .dice-table {
+    width: 100%;
+    height: 340px;
+    border-radius: 14px;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    background: radial-gradient(circle at 50% 30%, rgba(70, 30, 90, 0.35), rgba(5, 2, 10, 0.55));
+    margin-bottom: 22px;
+    position: relative;
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  .reveal-btn {
+    width: 100%;
+    margin-top: 4px;
+    background: linear-gradient(135deg, #3a1024 0%, #9d2048 100%);
+    color: white;
+    border: 2px solid #ffd700;
+    padding: 16px 30px;
+    font-size: 1.2em;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+  }
+  .reveal-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #7a1030 0%, #9d2048 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.6), 0 0 20px rgba(255,215,0,0.3);
+    border-color: #ffed4e;
+  }
+  .reveal-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .cast-result {
+    text-align: center; margin-top: 18px; min-height: 1.4em;
+    font-size: 1.3em; color: #ffd700; letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(255,215,0,.6);
+  }
+
+  .reading-box {
+    display: none;
+    background: rgba(28, 15, 40, 0.92);
+    border: 2px solid rgba(255, 215, 0, 0.5);
+    border-radius: 14px;
+    padding: 30px;
+    margin-top: 26px;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .reading-box.show { display: block; }
+  .reading-box.revealed { opacity: 1; transform: translateY(0); }
+  .reading-box h2 {
+    text-align: center; color: #ffd700; font-family: 'Cinzel', Georgia, serif;
+    font-size: 1.8em; letter-spacing: 1px; margin-bottom: 6px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  }
+  .reading-sub { text-align: center; color: #b9a9c8; font-style: italic; font-size: 0.9em; margin-bottom: 18px; }
+  .reading-body { color: #f7f0ff; line-height: 1.85; font-size: 1.05em; white-space: pre-wrap; }
+  .reading-loading { color: #b9a9c8; font-style: italic; text-align: center; }
+  .reading-error { color: #ff9bb0; text-align: center; }
+  .reading-error a { color: #ffd700; }
+  .reading-footer { margin-top: 20px; text-align: center; }
+  .mini-btn {
+    background: transparent; border: 1px solid rgba(255,215,0,0.4); color: #ffd700;
+    padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85em;
+  }
+  .mini-btn:hover { background: rgba(255,215,0,0.1); }
+
+  .footer-note {
+    text-align: center; margin-top: 20px; font-size: 0.85em; color: #b9a9c8;
+    font-style: italic; text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  }
+
+  /* ---- AI toggle ---- */
+  .toggle-row {
+    display: flex; flex-wrap: wrap; gap: 14px; margin-top: 20px; justify-content: center;
+  }
+  .toggle-card {
+    flex: 1 1 320px;
+    max-width: 420px;
+    background: rgba(11, 22, 34, 0.7);
+    border: 2px solid rgba(255, 215, 0, 0.25);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex; align-items: flex-start; gap: 10px;
+    text-align: left;
+  }
+  .toggle-card:hover { border-color: rgba(255, 215, 0, 0.6); }
+  .toggle-card.selected {
+    border-color: #ffd700;
+    background: linear-gradient(135deg, rgba(58, 16, 36,0.5), rgba(157, 32, 72,0.4));
+    box-shadow: 0 0 15px rgba(255,215,0,0.3);
+  }
+  .toggle-card input[type="checkbox"] { margin-top: 3px; accent-color: #ffd700; }
+  .toggle-title { font-weight: bold; color: #ffd700; font-size: 0.98em; }
+  .toggle-desc { color: #b9a9c8; font-size: 0.78em; margin-top: 3px; line-height: 1.35; display: block; }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 2.2em; }
+    .panel { padding: 20px; }
+    .back-btn { top: 10px; left: 10px; padding: 8px 12px; font-size: 0.85em; }
+    .history-btn { top: 10px; right: 10px; padding: 8px 12px; font-size: 0.85em; }
+    .container { padding-top: 55px; }
+    .dice-table { height: 260px; }
+  }
+</style>
+<script src="../mystic-ai-config.js"></script>
+<script src="../mystic-persona-prompts.js"></script>
+<script src="../theme-boot.js"></script>
+<script src="../mystic-effects.js"></script>
+</head>
+<body>
+
+<div class="mystical-symbol symbol-1">✨</div>
+<div class="mystical-symbol symbol-2">🌙</div>
+<div class="mystical-symbol symbol-3">⭐</div>
+<div class="mystical-symbol symbol-4">✨</div>
+
+<a href="../index.html" class="back-btn">&larr; Back</a>
+
+<button type="button" class="history-btn" title="Past Readings" onclick="openAstragalomancyHistory()">📜 Past Readings</button>
+
+<div class="container">
+  <h1>🎲 Astragalomancy 🎲</h1>
+  <p class="subtitle">Cast the bones and let their fall reveal what words cannot.</p>
+
+  <div class="panel">
+    <div class="section-title">The Old Art of the Bones</div>
+    <p class="lore-text">
+      Long before dice were toys, they were oracles. Astragalomancy —
+      dice divination — takes its name from the <em>astragaloi</em>, the
+      knucklebones early diviners cast and read like tea leaves or tarot
+      cards. The bones don't lie or explain themselves; they simply fall,
+      and it's left to the reader to find the pattern in the numbers —
+      their sum, their doubles, how high or low they land.
+    </p>
+  </div>
+
+  <div class="panel">
+    <div class="section-title">Cast the Bones</div>
+    <div class="section-hint">Choose a cast, or write your own (e.g. 2d6, 1d20, 3d8+1d4)</div>
+
+    <div class="preset-row" id="presetRow">
+      <button type="button" class="preset-btn" data-notation="1d6">Single Bone · 1d6</button>
+      <button type="button" class="preset-btn" data-notation="2d6">Twin Cast · 2d6</button>
+      <button type="button" class="preset-btn active" data-notation="3d6">Triple Cast · 3d6</button>
+      <button type="button" class="preset-btn" data-notation="1d20">Fateful Twenty · 1d20</button>
+      <button type="button" class="preset-btn" data-notation="1d4+1d6+1d8+1d10+1d12+1d20">All Dice · one of each</button>
+    </div>
+
+    <div class="field-group">
+      <label for="diceNotation">Custom cast</label>
+      <input type="text" id="diceNotation" value="3d6" autocomplete="off" spellcheck="false" inputmode="none">
+      <div class="field-help">Standard dice notation — number of dice, then "d", then the die size.</div>
+    </div>
+
+    <div id="diceRoller" class="dice-table"></div>
+
+    <button class="reveal-btn" id="castBtn">🎲 Cast the Bones</button>
+    <div class="cast-result" id="castResult"></div>
+
+    <div class="toggle-row">
+      <label class="toggle-card selected" id="aiToggleCard">
+        <input type="checkbox" id="aiToggle" checked>
+        <span>
+          <span class="toggle-title">🔮 Let <span data-mystic-name>your Mystic</span> read the bones</span>
+          <span class="toggle-desc">Get a short AI-woven omen from the cast. Turn off to just see the numbers fall, no reading.</span>
+        </span>
+      </label>
+    </div>
+  </div>
+
+  <div class="reading-box" id="readingBox">
+    <h2>Your Casting, Interpreted</h2>
+    <div class="reading-sub">Woven together by AI</div>
+    <div class="reading-body" id="readingBody"></div>
+    <div class="reading-footer">
+      <button type="button" class="mini-btn" id="reinterpretBtn">🔄 Read Again</button>
+    </div>
+  </div>
+
+  <p class="footer-note">Enjoy these readings for entertainment purposes only.</p>
+</div>
+
+<script src="libs/three.min.js"></script>
+<script src="libs/cannon.min.js"></script>
+<script src="libs/teal.js"></script>
+<script src="dice.js"></script>
+<script src="astragalomancy.js"></script>
+<script src="../tarot/reading-history.js"></script>
+<script src="../tarot/reading-history-modal.js"></script>
+<script>
+function openAstragalomancyHistory() {
+    MysticHistoryModal.open({
+        title: "Astragalomancy Readings",
+        icon: "🎲",
+        filter: (entry) => entry.app === "Astragalomancy"
+    });
+}
+</script>
+<script>
+(function () {
+  "use strict";
+
+  var container = document.getElementById("diceRoller");
+  var notationInput = document.getElementById("diceNotation");
+  var castBtn = document.getElementById("castBtn");
+  var resultEl = document.getElementById("castResult");
+  var presetRow = document.getElementById("presetRow");
+  var readingBox = document.getElementById("readingBox");
+  var reinterpretBtn = document.getElementById("reinterpretBtn");
+  var aiToggle = document.getElementById("aiToggle");
+  var aiToggleCard = document.getElementById("aiToggleCard");
+
+  var box = new DICE.dice_box(container);
+  box.setDice(notationInput.value);
+
+  var lastNotation = null;
+
+  var AI_PREF_KEY = "mysticAstragalomancy_aiEnabled";
+
+  function loadAIPref() {
+    try {
+      var v = localStorage.getItem(AI_PREF_KEY);
+      return v === null ? true : v === "true";
+    } catch (e) { return true; }
+  }
+  function saveAIPref(v) {
+    try { localStorage.setItem(AI_PREF_KEY, v ? "true" : "false"); } catch (e) {}
+  }
+  var aiEnabled = loadAIPref();
+  if (aiToggle) {
+    aiToggle.checked = aiEnabled;
+    if (aiToggleCard) aiToggleCard.classList.toggle("selected", aiEnabled);
+    aiToggle.addEventListener("change", function () {
+      aiEnabled = aiToggle.checked;
+      saveAIPref(aiEnabled);
+      if (aiToggleCard) aiToggleCard.classList.toggle("selected", aiEnabled);
+      if (!aiEnabled) readingBox.classList.remove("show", "revealed");
+    });
+  }
+
+  function setActivePreset(notation) {
+    var btns = presetRow.querySelectorAll(".preset-btn");
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle("active", btns[i].dataset.notation === notation);
+    }
+  }
+
+  presetRow.addEventListener("click", function (e) {
+    var btn = e.target.closest(".preset-btn");
+    if (!btn) return;
+    notationInput.value = btn.dataset.notation;
+    setActivePreset(btn.dataset.notation);
+    box.setDice(notationInput.value);
+  });
+
+  notationInput.addEventListener("input", function () {
+    setActivePreset(notationInput.value.trim());
+    box.setDice(notationInput.value);
+  });
+
+  function beforeRoll() {
+    castBtn.disabled = true;
+    resultEl.textContent = "";
+    readingBox.classList.remove("show", "revealed");
+    return null;
+  }
+
+  function afterRoll(notation) {
+    castBtn.disabled = false;
+    if (notation.result[0] < 0) {
+      resultEl.textContent = "The bones fell from the table — cast again.";
+      return;
+    }
+    lastNotation = notation;
+    resultEl.textContent = notation.resultString;
+    if (aiEnabled) {
+      Astragalomancy.interpretCast(notation);
+    } else if (window.ReadingHistory) {
+      var title = "Astragalomancy: " + notation.set.join(" + ") + " = " + notation.resultTotal;
+      ReadingHistory.record(title, [{ text: notation.resultString }], "Astragalomancy");
+    }
+  }
+
+  castBtn.addEventListener("click", function () {
+    var val = notationInput.value.trim();
+    if (!val) return;
+    box.setDice(val);
+    box.start_throw(beforeRoll, afterRoll);
+  });
+
+  reinterpretBtn.addEventListener("click", function () {
+    if (lastNotation && aiEnabled) Astragalomancy.interpretCast(lastNotation);
+  });
+})();
+</script>
+
+<div class="scroll-hint" id="scrollHint" aria-hidden="true">⌄</div>
+<style>
+  .scroll-hint {
+    position: fixed;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    z-index: 500;
+    font-size: 2em;
+    line-height: 1;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+    opacity: 0;
+    pointer-events: none;
+    cursor: pointer;
+    animation: scrollHintBounce 1.6s ease-in-out infinite;
+    transition: opacity 0.4s ease;
+  }
+  .scroll-hint.show {
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  @keyframes scrollHintBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(10px); }
+  }
+</style>
+<script>
+(function () {
+  var hint = document.getElementById("scrollHint");
+  if (!hint) return;
+
+  function check() {
+    var scrollable = document.documentElement.scrollHeight > window.innerHeight + 60;
+    var atTop = window.scrollY < 40;
+    hint.classList.toggle("show", scrollable && atTop);
+  }
+
+  hint.addEventListener("click", function () {
+    window.scrollBy({ top: window.innerHeight * 0.8, behavior: "smooth" });
+  });
+
+  window.addEventListener("scroll", check, { passive: true });
+  window.addEventListener("resize", check);
+  setInterval(check, 700);
+  check();
+})();
+</script>
+
+</body>
+</html>

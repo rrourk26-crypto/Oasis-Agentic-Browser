@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LM Studio Chess</title>
+<script src="chess.js"></script>
+<script>if(typeof Chess==="undefined"){document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"><\/script>');}</script>
+<style>
+:root{--bg:#12151a;--panel:#1a1f27;--panel2:#232a35;--line:#2c3441;--text:#e8ebf0;--mute:#8b95a5;
+--accent:#e3a94a;--ok:#5cc08a;--bad:#ef7070;--light:#d5dde6;--dark:#6f8ba6}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--text);font:15px/1.45 "Segoe UI",system-ui,-apple-system,sans-serif}
+.app{display:grid;grid-template-columns:300px minmax(0,1fr) 430px;gap:20px;height:100vh;padding:18px 22px;max-width:1800px;margin:auto}
+.stage{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0;min-width:0}
+.col{width:min(100%,max(300px,calc(100vh - 230px)))}
+header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+h1{font-size:20px;margin:0;font-weight:650;letter-spacing:.2px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--mute)}
+.dot.ok{background:var(--ok)}.dot.bad{background:var(--bad)}
+.status{padding:9px 13px;border-radius:9px;background:var(--panel);border:1px solid var(--line);margin-bottom:8px;font-weight:550}
+.status.busy{color:var(--accent)}.status.error{color:var(--bad)}.status.over{color:var(--ok)}
+.strip{display:flex;justify-content:space-between;align-items:center;height:30px;padding:0 4px;font-size:13px;color:var(--mute)}
+.strip .caps{font-size:18px;letter-spacing:-3px;color:var(--text)}.strip b{color:var(--accent);margin-left:8px;font-size:13px;letter-spacing:0}
+.board-wrap{position:relative;width:100%}
+#board{width:100%;aspect-ratio:1/1;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));
+border-radius:8px;overflow:hidden;container-type:inline-size;box-shadow:0 10px 40px #0008;border:3px solid var(--panel2)}
+.sq{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;min-width:0;min-height:0}
+.light{background-color:var(--light)}.dark{background-color:var(--dark)}
+.sq.last{background-image:linear-gradient(#e3a94a66,#e3a94a66)}
+.sq.check{background-image:radial-gradient(circle,#ff3b3b 0,#ff3b3b88 50%,transparent 75%)}
+.sq.sel{box-shadow:inset 0 0 0 4px var(--accent)}
+.sq.mv::after{content:"";position:absolute;width:26%;height:26%;border-radius:50%;background:#1a1f2755}
+.sq.cap::after{content:"";position:absolute;inset:5%;border:5px solid #ef707099;border-radius:50%}
+.piece{font-size:10.4cqw;line-height:1;z-index:2;font-family:"Segoe UI Symbol","Noto Sans Symbols 2","Apple Symbols",serif;pointer-events:none}
+.wp{color:#fffaf0;text-shadow:0 0 1px #000,0 0 1px #000,0 0 2px #000,0 2px 3px #0005}
+.bp{color:#1b1e24;text-shadow:0 0 1px #fff9,0 2px 3px #0004}
+.coord{position:absolute;font-size:10px;font-weight:700;opacity:.65;z-index:1;pointer-events:none}
+.light .coord{color:var(--dark)}.dark .coord{color:var(--light)}
+.coord.r{top:3px;left:4px}.coord.f{bottom:2px;right:4px}
+.promo{position:absolute;inset:0;background:#000a;display:none;align-items:center;justify-content:center;gap:10px;border-radius:8px;z-index:5}
+.promo.show{display:flex}
+.promo button{font-size:44px;width:76px;height:76px;padding:0;background:var(--light);border-radius:12px}
+.controls{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+button,select,input,textarea{font:inherit;color:var(--text);background:var(--panel2);border:1px solid var(--line);border-radius:8px}
+button{padding:8px 14px;cursor:pointer}button:hover{background:#2d3644}
+button.primary{background:var(--accent);border-color:var(--accent);color:#1b1408;font-weight:650}button.primary:hover{background:#efb95c}
+select,input,textarea{padding:8px 10px;width:100%}
+.controls select{width:auto}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,.sq:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.side{display:flex;flex-direction:column;gap:12px;min-height:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
+.chatcard{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
+.persona{display:flex;gap:8px}
+.chat{flex:1;min-height:120px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:2px}
+.msg{max-width:88%;padding:8px 12px;border-radius:14px;white-space:pre-wrap;word-wrap:break-word}
+.msg.me{align-self:flex-end;background:#3a3020;border:1px solid #5a4824;border-bottom-right-radius:4px}
+.msg.ai{align-self:flex-start;background:var(--panel2);border-bottom-left-radius:4px}
+.msg.sys{align-self:center;font-size:12.5px;color:var(--mute);text-align:center}
+.typing{align-self:flex-start;color:var(--mute);font-size:13px}
+.chatin{display:flex;gap:8px}.chatin textarea{resize:none;height:44px}
+.tog{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mute)}.tog input{width:auto}
+label{display:block;font-size:13px;color:var(--mute);margin:10px 0 5px}
+#editor{display:flex;flex-direction:column;gap:8px;padding:10px;background:var(--panel2);border-radius:10px}
+#editor[hidden]{display:none}
+#editor textarea{height:110px;resize:vertical;background:var(--bg)}
+#editor .row{display:flex;gap:8px}
+details summary{cursor:pointer;font-weight:600}
+.small{font-size:12.5px;color:var(--mute)}
+.moves{display:grid;grid-template-columns:34px 1fr 1fr;gap:2px 8px;max-height:110px;overflow-y:auto;font-family:Consolas,monospace;font-size:13px;margin-top:8px}
+.moves .n{color:var(--mute)}
+.learn{display:flex;flex-direction:column;min-height:0}
+.lhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.tabs{display:flex;gap:6px}
+.tab{padding:6px 14px;background:transparent;border-color:transparent}
+.tab.on{background:var(--panel2);border-color:var(--line);color:var(--accent)}
+.x{display:none;padding:4px 9px}
+#learnBtn{display:none}
+.lbody{flex:1;min-height:0;overflow-y:auto;font-size:14px}
+.lbody[hidden]{display:none}
+.lbody p{margin:6px 0}.lbody ul{padding-left:18px;margin:6px 0}.lbody li{margin:5px 0}
+.lbody details{border-bottom:1px solid var(--line);padding:9px 2px}
+.lbody summary{font-size:15px}
+.ask{margin-top:6px;font-size:12.5px;padding:5px 10px}
+.g{font-size:17px;color:var(--accent)}
+#notesTab{display:flex;flex-direction:column;gap:8px}
+#notesTab[hidden]{display:none}
+#notes{flex:1;resize:none;min-height:200px}
+#notesTab .row{display:flex;gap:8px}
+@media(max-width:1400px){
+ .app{grid-template-columns:minmax(0,1fr) 430px}
+ .learn{display:none;position:fixed;left:0;top:0;bottom:0;width:min(92vw,360px);z-index:20;border-radius:0 12px 12px 0;box-shadow:12px 0 40px #000a}
+ .learn.open{display:flex}
+ #learnBtn{display:inline-block}.x{display:block}
+}
+@media(max-width:940px){
+ body{height:auto}.app{display:flex;flex-direction:column;height:auto;padding:12px}
+ .col{width:100%}.chatcard{min-height:420px}.chat{max-height:320px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="learn card" id="learn">
+  <div class="lhead">
+    <div class="tabs"><button class="tab on" data-t="rules">Rules</button><button class="tab" data-t="notes">Notes</button></div>
+    <button class="x" id="learnClose" aria-label="Close">✕</button>
+  </div>
+  <div class="lbody" id="rulesTab"></div>
+  <div class="lbody" id="notesTab" hidden>
+    <textarea id="notes" placeholder="Your notes — openings you're learning, mistakes to avoid, ideas to try…"></textarea>
+    <div class="row"><button id="addMoves">Add moves so far</button><button id="clearNotes">Clear</button></div>
+    <div class="small">Saved automatically in this browser.</div>
+  </div>
+</aside>
+<main class="stage"><div class="col">
+  <header><h1>LM Studio Chess</h1><span id="dot" class="dot" title="LM Studio connection"></span></header>
+  <div class="status" id="status"></div>
+  <div class="strip" id="topStrip"></div>
+  <div class="board-wrap"><div id="board"></div><div id="promo" class="promo"></div></div>
+  <div class="strip" id="botStrip"></div>
+  <div class="controls">
+    <button class="primary" id="newGame">New game</button>
+    <select id="level" aria-label="Difficulty"><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select>
+    <select id="side" aria-label="Play as"><option value="w">Play White</option><option value="b">Play Black</option><option value="r">Random side</option></select>
+    <button id="undo">Undo</button><button id="flip">Flip</button><button id="learnBtn">Learn</button>
+    <button id="retry" hidden>Retry AI move</button>
+  </div>
+</div></main>
+
+<aside class="side">
+  <section class="card chatcard">
+    <div class="persona">
+      <select id="persona" aria-label="AI personality"></select>
+      <button id="editP" title="View or edit this personality">Edit</button>
+    </div>
+    <div id="editor" hidden>
+      <input id="pName" placeholder="Personality name (e.g. Pirate Captain)">
+      <textarea id="pPrompt" placeholder="Describe how the AI should talk. Example: You are a grumpy old chess master who secretly loves teaching."></textarea>
+      <div class="row"><button class="primary" id="pSave">Save</button><button id="pDel">Delete</button><button id="pCancel">Cancel</button></div>
+      <div class="small" id="pHint"></div>
+    </div>
+    <div class="chat" id="chat" aria-live="polite"></div>
+    <div class="chatin">
+      <textarea id="msg" placeholder="Talk to your opponent…  (Enter to send)"></textarea>
+      <button class="primary" id="send">Send</button>
+    </div>
+    <label class="tog"><input type="checkbox" id="talk" checked> AI comments on moves</label>
+  </section>
+
+  <section class="card"><b>Moves</b><div class="moves" id="moves"></div></section>
+
+  <details class="card" id="settings">
+    <summary>LM Studio settings</summary>
+    <label>Server address</label>
+    <input id="server" placeholder="http://127.0.0.1:1234/v1">
+    <div style="margin-top:8px"><button class="primary" id="connect">Connect / refresh models</button></div>
+    <label>Model</label>
+    <select id="models"><option value="">Connect to load models</option></select>
+    <label>Move randomness <span id="tempLabel"></span></label>
+    <input id="temperature" type="range" min="0" max="1" step=".05">
+    <div class="small" id="connection" style="margin-top:8px">Disconnected</div>
+  </details>
+</aside>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const game=new Chess();
+const LS=(k,d)=>localStorage.getItem("lm_chess_"+k)??d, setLS=(k,v)=>localStorage.setItem("lm_chess_"+k,v);
+const G={w:"♟︎",b:"♟︎"}; // placeholder, real glyphs below
+const GLYPH={p:"♟︎",n:"♞︎",b:"♝︎",r:"♜︎",q:"♛︎",k:"♚︎"};
+const VAL={p:1,n:3,b:3,r:5,q:9};
+let selected=null,flipped=false,playerColor="w",aiBusy=false,aiFailed=false,gid=0,msg=null,promo=null;
+let chat=[],chatQ=Promise.resolve(),editingId=null;
+
+/* ---------- personalities ---------- */
+const BUILTIN=[
+ {id:"teacher",name:"Teacher",prompt:"You are a warm, patient chess teacher playing a game against your student. Explain ideas simply: why a move is strong or weak, what plans to consider, common tactics and opening principles. Praise good moves, gently point out mistakes, and ask guiding questions instead of just handing over answers. Keep replies to 2-4 sentences unless asked for more."},
+ {id:"rival",name:"Friendly Rival",prompt:"You are a friendly, playful chess rival. Use light banter and good sportsmanship, react to the moves, and keep replies short. Never be mean."},
+ {id:"rapper",name:"Hype Rapper",prompt:"You are an over-the-top hype rapper who turned chess opponent. Big confident energy, slangy and funny, drop short rhymes and ad-libs, and trash talk playfully but keep it friendly and PG. Still give real chess insight when asked. Keep replies to 1-3 sentences."},
+ {id:"gm",name:"Dry Grandmaster",prompt:"You are a terse, dry-witted grandmaster. Answer in one or two short sentences, respect good moves, and understate everything."}
+];
+const customs=()=>JSON.parse(LS("personas","[]"));
+const allPersonas=()=>[...BUILTIN,...customs()];
+const current=()=>allPersonas().find(p=>p.id===LS("persona","teacher"))||BUILTIN[0];
+function fillPersonas(){
+  const s=$("persona"),cur=current().id;s.innerHTML="";
+  const g1=document.createElement("optgroup");g1.label="Built-in";
+  BUILTIN.forEach(p=>g1.append(new Option(p.name,p.id)));s.append(g1);
+  const c=customs();
+  if(c.length){const g2=document.createElement("optgroup");g2.label="Your personalities";c.forEach(p=>g2.append(new Option(p.name,p.id)));s.append(g2)}
+  s.append(new Option("＋ New personality…","__new"));
+  s.value=cur;
+}
+function openEditor(p,id){
+  editingId=id;$("editor").hidden=false;
+  $("pName").value=p.name;$("pPrompt").value=p.prompt;
+  $("pDel").style.display=id?"":"none";
+  $("pHint").textContent=id?"":"Built-in personalities can't be changed — saving creates your own copy.";
+}
+$("persona").onchange=e=>{
+  if(e.target.value==="__new"){e.target.value=current().id;openEditor({name:"",prompt:""},null);return}
+  setLS("persona",e.target.value);$("editor").hidden=true;
+};
+$("editP").onclick=()=>{
+  if(!$("editor").hidden){$("editor").hidden=true;return}
+  const p=current(),isCustom=customs().some(x=>x.id===p.id);
+  openEditor(isCustom?p:{name:p.name+" (custom)",prompt:p.prompt},isCustom?p.id:null);
+};
+$("pCancel").onclick=()=>$("editor").hidden=true;
+$("pSave").onclick=()=>{
+  const name=$("pName").value.trim(),prompt=$("pPrompt").value.trim();
+  if(!name||!prompt){$("pHint").textContent="Give it a name and a description.";return}
+  const list=customs();let id=editingId;
+  if(id){const p=list.find(x=>x.id===id);p.name=name;p.prompt=prompt}
+  else{id="c"+Date.now();list.push({id,name,prompt})}
+  setLS("personas",JSON.stringify(list));setLS("persona",id);
+  fillPersonas();$("editor").hidden=true;addMsg("sys","Personality: "+name);
+};
+$("pDel").onclick=()=>{
+  if(!editingId)return;
+  setLS("personas",JSON.stringify(customs().filter(x=>x.id!==editingId)));
+  setLS("persona","teacher");fillPersonas();$("editor").hidden=true;
+};
+
+/* ---------- LM Studio ---------- */
+const server=()=>$("server").value.trim().replace(/\/+$/,"");
+async function connect(){
+  $("connection").textContent="Connecting…";
+  try{
+    const r=await fetch(server()+"/models");if(!r.ok)throw new Error("HTTP "+r.status);
+    const list=(await r.json()).data||[],sel=$("models");sel.innerHTML="";
+    if(!list.length){sel.innerHTML='<option value="">No loaded models</option>';throw new Error("no models loaded")}
+    list.forEach(m=>sel.append(new Option(m.id,m.id)));
+    const saved=LS("model","");sel.value=list.some(m=>m.id===saved)?saved:list[0].id;setLS("model",sel.value);
+    $("connection").textContent="Connected • "+list.length+" model(s)";$("dot").className="dot ok";
+  }catch(e){
+    $("connection").textContent="Connection failed: "+e.message;$("dot").className="dot bad";
+    $("settings").open=true;
+  }
+}
+async function llm(messages,{temp=.7,max=300}={}){
+  const model=$("models").value;
+  if(!model)throw new Error("Choose an LM Studio model first (open Settings).");
+  const out=[];
+  for(const m of messages){const p=out[out.length-1];
+    if(p&&p.role===m.role&&m.role!=="system")p.content+="\n"+m.content;else out.push({...m})}
+  const fi=out.findIndex(m=>m.role!=="system");
+  if(fi>=0&&out[fi].role==="assistant")out.splice(fi,0,{role:"user",content:"(The game has started.)"});
+  const r=await fetch(server()+"/chat/completions",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({model,temperature:temp,max_tokens:max,messages:out})});
+  if(!r.ok)throw new Error("LM Studio returned HTTP "+r.status);
+  const d=await r.json();
+  return (d.choices?.[0]?.message?.content||"").replace(/<think>[\s\S]*?<\/think>/g,"").replace(/<think>[\s\S]*$/,"").trim();
+}
+
+/* ---------- board ---------- */
+function setMsg(t,type=""){msg=t?{t,type}:null;renderStatus()}
+function result(){
+  if(game.in_checkmate())return game.turn()===playerColor?"Checkmate — the AI wins":"Checkmate — you win!";
+  if(game.in_stalemate())return "Stalemate — draw";
+  if(game.in_threefold_repetition())return "Draw by repetition";
+  if(game.insufficient_material())return "Draw — insufficient material";
+  return "Draw";
+}
+function renderStatus(){
+  const s=$("status");
+  if(msg){s.textContent=msg.t;s.className="status "+msg.type;return}
+  if(game.game_over()){s.textContent=result();s.className="status over";return}
+  const mine=game.turn()===playerColor,name=game.turn()==="w"?"White":"Black";
+  s.textContent=(mine?"Your turn":"AI's turn")+" — "+name+(game.in_check()?" (check)":"");
+  s.className="status";
+}
+function strip(el,color){
+  const other=color==="w"?"b":"w",caps=[],mine=color===playerColor;
+  let a=0,b=0;
+  game.history({verbose:true}).forEach(m=>{if(m.captured){(m.color===color?caps:[]).push(m.captured);
+    const v=VAL[m.captured];if(m.color===color)a+=v;else b+=v}});
+  caps.sort((x,y)=>VAL[y]-VAL[x]);
+  el.innerHTML=`<span>${mine?"You":"AI"} · ${color==="w"?"White":"Black"}</span><span class="caps">${caps.map(t=>GLYPH[t]).join("")}${a>b?`<b>+${a-b}</b>`:""}</span>`;
+  el.querySelector(".caps").style.color=other==="w"?"#fffaf0":"#9aa5b5";
+}
+function render(){
+  const files="abcdefgh".split(""),ranks=[8,7,6,5,4,3,2,1];
+  const fs=flipped?[...files].reverse():files,rs=flipped?[...ranks].reverse():ranks;
+  const hist=game.history({verbose:true}),last=hist[hist.length-1];
+  const moves=selected?game.moves({square:selected,verbose:true}):[];
+  let checkSq=null;
+  if(game.in_check())game.board().forEach((row,r)=>row.forEach((p,c)=>{if(p&&p.type==="k"&&p.color===game.turn())checkSq=files[c]+(8-r)}));
+  const b=$("board");b.innerHTML="";
+  rs.forEach((rank,ri)=>fs.forEach((file,fi)=>{
+    const sq=file+rank,p=game.get(sq),el=document.createElement("div");
+    el.className="sq "+((files.indexOf(file)+rank)%2===0?"light":"dark");
+    if(sq===selected)el.classList.add("sel");
+    if(last&&(sq===last.from||sq===last.to))el.classList.add("last");
+    if(sq===checkSq)el.classList.add("check");
+    const m=moves.find(x=>x.to===sq);if(m)el.classList.add(m.captured||m.flags.includes("e")?"cap":"mv");
+    if(p){const d=document.createElement("div");d.className="piece "+p.color+"p";d.textContent=GLYPH[p.type];el.append(d)}
+    if(fi===0){const c=document.createElement("span");c.className="coord r";c.textContent=rank;el.append(c)}
+    if(ri===7){const c=document.createElement("span");c.className="coord f";c.textContent=file;el.append(c)}
+    el.onclick=()=>clickSquare(sq);b.append(el);
+  }));
+  const top=flipped?"w":"b";strip($("topStrip"),top);strip($("botStrip"),top==="w"?"b":"w");
+  let h="";
+  for(let i=0;i<hist.length;i+=2)h+=`<span class="n">${i/2+1}.</span><span>${hist[i].san}</span><span>${hist[i+1]?hist[i+1].san:""}</span>`;
+  $("moves").innerHTML=h||'<span class="small" style="grid-column:1/4">No moves yet.</span>';
+  $("moves").scrollTop=1e6;
+  renderStatus();
+}
+function clickSquare(sq){
+  if(aiBusy||promo||game.game_over()||game.turn()!==playerColor)return;
+  const p=game.get(sq);
+  if(selected){
+    const cand=game.moves({square:selected,verbose:true}).filter(m=>m.to===sq);
+    if(cand.length){
+      if(cand[0].promotion)return askPromo(selected,sq);
+      return play({from:selected,to:sq});
+    }
+  }
+  selected=(p&&p.color===playerColor&&sq!==selected)?sq:null;render();
+}
+function askPromo(from,to){
+  promo={from,to};const el=$("promo");el.innerHTML="";
+  ["q","r","b","n"].forEach(t=>{
+    const bt=document.createElement("button");bt.textContent=GLYPH[t];bt.style.color=playerColor==="w"?"#fffaf0":"#1b1e24";
+    if(playerColor==="w")bt.style.textShadow="0 0 2px #000,0 0 2px #000";
+    bt.onclick=e=>{e.stopPropagation();el.classList.remove("show");const m={from,to,promotion:t};promo=null;play(m)};
+    el.append(bt);
+  });
+  el.onclick=()=>{el.classList.remove("show");promo=null;selected=null;render()};
+  el.classList.add("show");
+}
+function play(mv){
+  const r=game.move(mv);selected=null;msg=null;render();
+  if(!r)return;
+  if(game.game_over())comment(`The game just ended: ${result()}. The human's final move was ${r.san}.`);
+  else aiMove(r.san);
+}
+
+/* ---------- AI moves ---------- */
+const aiColor=()=>playerColor==="w"?"b":"w";
+function legalMoves(){return game.moves({verbose:true}).map(m=>({san:m.san,from:m.from,to:m.to,promotion:m.promotion||null,uci:m.from+m.to+(m.promotion||"")}))}
+function findMove(ans,list){
+  const clean=(ans||"").replace(/```/g,"").trim();
+  const first=clean.split(/\r?\n/)[0].trim().replace(/^["'*]+|["'*.]+$/g,"");
+  const exact=list.find(m=>m.san===first||m.uci===first);if(exact)return exact;
+  const low=clean.toLowerCase();
+  return [...list].sort((a,b)=>b.san.length-a.san.length).find(m=>low.includes(m.san.toLowerCase())||low.includes(m.uci));
+}
+/* ---------- engine (Medium & Hard) ---------- */
+let QD=0,deadline=0,nodes=0;const TIMEOUT={};
+const PV={p:100,n:320,b:330,r:500,q:900,k:0};
+function evalPos(g){
+  let s=0;const b=g.board();
+  for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+    const p=b[r][c];if(!p)continue;
+    let v=PV[p.type];const cr=3.5-Math.abs(r-3.5),cc=3.5-Math.abs(c-3.5);
+    if(p.type==="n"||p.type==="b")v+=(cr+cc)*6;
+    else if(p.type==="p")v+=(p.color==="w"?6-r:r-1)*8+cc*3;
+    else if(p.type==="q")v+=(cr+cc)*2;
+    s+=p.color==="w"?v:-v;
+  }
+  return s+(Math.random()*4-2);
+}
+const mvScore=m=>(m.captured?10*PV[m.captured]-PV[m.piece]:0)+(m.promotion?800:0);
+const ordered=g=>g.moves({verbose:true}).sort((a,b)=>mvScore(b)-mvScore(a));
+function qs(g,al,be,d){
+  if(++nodes%200===0&&Date.now()>deadline)throw TIMEOUT;
+  let e=evalPos(g);if(g.turn()==="b")e=-e;
+  if(d===0||e>=be)return e;
+  if(e>al)al=e;
+  for(const m of ordered(g)){
+    if(!m.captured&&!m.promotion)continue;
+    g.move(m);const sc=-qs(g,-be,-al,d-1);g.undo();
+    if(sc>=be)return sc;if(sc>al)al=sc;
+  }
+  return al;
+}
+function negamax(g,d,al,be){
+  if(++nodes%200===0&&Date.now()>deadline)throw TIMEOUT;
+  if(g.in_checkmate())return -1e5-d;
+  if(g.in_draw())return 0;
+  if(d===0)return qs(g,al,be,QD);
+  let best=-1e9;
+  for(const m of ordered(g)){
+    g.move(m);const sc=-negamax(g,d-1,-be,-al);g.undo();
+    if(sc>best)best=sc;if(best>al)al=best;if(al>=be)break;
+  }
+  return best;
+}
+function rankMoves(g){
+  QD=0;deadline=Date.now()+1e7;const out=[];
+  for(const m of ordered(g)){g.move(m);out.push({m,sc:-negamax(g,1,-1e9,1e9)});g.undo()}
+  return out.sort((a,b)=>b.sc-a.sc);
+}
+function thinkHard(g,ms,maxD){
+  QD=2;deadline=Date.now()+ms;let best=null,rootMoves=ordered(g);
+  for(let d=1;d<=maxD;d++){
+    try{
+      let al=-1e9,cur=null;
+      for(const m of rootMoves){g.move(m);const sc=-negamax(g,d-1,-1e9,-al);g.undo();if(sc>al){al=sc;cur=m}}
+      best=cur;rootMoves=[cur,...rootMoves.filter(m=>m!==cur)];
+    }catch(e){if(e!==TIMEOUT)throw e;break}
+  }
+  return best;
+}
+
+async function engineChoice(level){
+  await new Promise(r=>setTimeout(r,40));
+  const g=new Chess(game.fen());
+  if(level==="hard"){const m=thinkHard(g,3500,5);return m&&{from:m.from,to:m.to,promotion:m.promotion||undefined}}
+  const ranked=rankMoves(g),top=ranked[0].sc;
+  const cands=ranked.slice(0,4).filter(r=>r.sc>=top-150).map(r=>({san:r.m.san,from:r.m.from,to:r.m.to,promotion:r.m.promotion||null,uci:r.m.from+r.m.to+(r.m.promotion||"")}));
+  let pick=cands[0];
+  if(cands.length>1){
+    try{
+      const ans=await llm([{role:"system",content:"You are a chess player. Output only one move from the candidate list. Do not explain your reasoning."},
+        {role:"user",content:`You are playing chess as ${aiColor()==="w"?"White":"Black"}.\nFEN: ${game.fen()}\nMove history: ${game.history().join(" ")||"(none)"}\n\nCANDIDATE MOVES: ${cands.map(m=>m.san).join(", ")}\n\nPick the move you like best. Return ONLY the SAN move exactly as written.`}],
+        {temp:Number($("temperature").value),max:2000});
+      pick=findMove(ans,cands)||pick;
+    }catch(e){}
+  }
+  return {from:pick.from,to:pick.to,promotion:pick.promotion||undefined};
+}
+async function aiMove(humanSan){
+  if(aiBusy||game.game_over()||game.turn()===playerColor)return;
+  const my=gid;aiBusy=true;aiFailed=false;$("retry").hidden=true;setMsg("AI is thinking…","busy");
+  try{
+    const level=$("level").value;let played=null;
+    if(level!=="easy"){
+      const mv=await engineChoice(level);
+      if(my!==gid)return;
+      if(mv)played=game.move(mv);
+      if(!played)throw new Error("The engine couldn't find a move.");
+    }else{
+      const list=legalMoves(),legal=list.map(m=>m.san+" ["+m.uci+"]").join(", ");
+      const prompt=`You are playing chess as ${aiColor()==="w"?"White":"Black"}.\nCurrent FEN: ${game.fen()}\nMove history: ${game.history().join(" ")||"(none)"}\n\nLEGAL MOVES:\n${legal}\n\nChoose one legal move. Return ONLY the SAN move exactly as written in the legal move list.`;
+      let prev="";
+      for(let i=0;i<3&&!played;i++){
+        const ans=await llm([{role:"system",content:"You are a chess player. Output only one legal SAN move. Do not explain your reasoning."},
+          {role:"user",content:prompt+(i?`\n\nYour previous answer "${prev.slice(0,40)}" was not in the list. Pick exactly one move from the list.`:"")}],
+          {temp:Number($("temperature").value),max:2000});
+        if(my!==gid)return;
+        prev=ans;const mv=findMove(ans,list);
+        if(mv)played=game.move({from:mv.from,to:mv.to,promotion:mv.promotion||undefined});
+      }
+      if(!played)throw new Error("The model didn't return a legal move after 3 tries. "+(prev?'It said: "'+prev.slice(0,120)+'"':"Its reply was empty — a reasoning model may have run out of tokens. Try a non-thinking model."));
+    }
+    msg=null;render();
+    const over=game.game_over();
+    comment((humanSan?`The human played ${humanSan}. You replied ${played.san}.`:`You played ${played.san}.`)+(game.in_check()?" That gave check.":"")+(over?` The game is over: ${result()}.`:""));
+  }catch(e){
+    if(my===gid){aiFailed=true;$("retry").hidden=false;setMsg(e.message,"error")}
+  }finally{
+    if(my===gid){aiBusy=false;render()}
+  }
+}
+
+/* ---------- chat ---------- */
+function addMsg(role,text){
+  if(role!=="sys")chat.push({role:role==="me"?"user":"assistant",content:text});
+  const d=document.createElement("div");d.className="msg "+role;d.textContent=text;
+  $("chat").append(d);$("chat").scrollTop=1e7;
+}
+const showTyping=()=>{const d=document.createElement("div");d.id="typing";d.className="typing";d.textContent=current().name+" is typing…";$("chat").append(d);$("chat").scrollTop=1e7};
+const hideTyping=()=>{const t=$("typing");if(t)t.remove()};
+function systemFor(){
+  const h=game.history();
+  return current().prompt+`\n\nYou are chatting with the human while a chess game is in progress. You play ${aiColor()==="w"?"White":"Black"}; the human plays ${playerColor==="w"?"White":"Black"}. Current FEN: ${game.fen()}\nMoves so far: ${h.join(" ")||"none"}\n${game.game_over()?"The game is over: "+result():(game.turn()===aiColor()?"It is your turn.":"It is the human's turn.")}\nKeep replies short (1-4 sentences) unless asked for more. Your moves are played separately, so don't announce a move unless asked. Rely on the FEN and move list; don't invent positions.`;
+}
+const recent=()=>chat.slice(-14);
+function comment(note){
+  if(!$("talk").checked)return;
+  chatQ=chatQ.then(async()=>{
+    try{showTyping();
+      const t=await llm([{role:"system",content:systemFor()},...recent(),{role:"user",content:`[Game update, not typed by the human] ${note} React in character in one or two short sentences.`}],{temp:.8,max:200});
+      hideTyping();if(t)addMsg("ai",t);
+    }catch(e){hideTyping()}
+  });
+}
+function send(){
+  const t=$("msg").value.trim();if(!t)return;
+  $("msg").value="";addMsg("me",t);
+  chatQ=chatQ.then(async()=>{
+    try{showTyping();
+      const r=await llm([{role:"system",content:systemFor()},...recent()],{temp:.8,max:500});
+      hideTyping();addMsg("ai",r||"…");
+    }catch(e){hideTyping();addMsg("sys","Chat error: "+e.message)}
+  });
+}
+$("send").onclick=send;
+$("msg").onkeydown=e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}};
+
+/* ---------- controls ---------- */
+function newGame(){
+  gid++;aiBusy=false;aiFailed=false;$("retry").hidden=true;game.reset();selected=null;msg=null;promo=null;$("promo").classList.remove("show");
+  let s=$("side").value;if(s==="r")s=Math.random()<.5?"w":"b";
+  playerColor=s;flipped=s==="b";setLS("side",$("side").value);
+  addMsg("sys","New game — you are "+(s==="w"?"White":"Black")+".");
+  render();if(s==="b")aiMove();
+}
+$("newGame").onclick=newGame;
+$("flip").onclick=()=>{flipped=!flipped;render()};
+$("retry").onclick=()=>aiMove();
+$("undo").onclick=()=>{
+  if(!game.history().length)return;
+  gid++;aiBusy=false;$("retry").hidden=true;promo=null;$("promo").classList.remove("show");
+  do{game.undo()}while(game.history().length&&game.turn()!==playerColor);
+  selected=null;msg=null;render();
+  if(!game.game_over()&&game.turn()!==playerColor)aiMove();
+};
+$("connect").onclick=connect;
+$("models").onchange=()=>setLS("model",$("models").value);
+$("server").onchange=()=>setLS("server",server());
+$("talk").checked=LS("talk","1")==="1";$("talk").onchange=()=>setLS("talk",$("talk").checked?"1":"0");
+$("temperature").oninput=()=>{$("tempLabel").textContent=Number($("temperature").value).toFixed(2);setLS("temp",$("temperature").value)};
+
+/* ---------- learn: rules & notes ---------- */
+const RULES=[
+ {t:"Using this board",h:`<p>Click one of your pieces to see where it can go: a dot is a move, a red ring is a capture. Click the highlighted square to move.</p><p>Not sure what to do? Ask in the chat — the <b>Teacher</b> personality explains its ideas as you play. <b>Undo</b> lets you take a move back.</p>`},
+ {t:"The goal",h:`<p>Checkmate the opponent's king: attack it so it cannot escape. The king is never actually captured — the game ends first.</p><p>White moves first, then players take turns. You must move on your turn.</p>`},
+ {t:"How the pieces move",h:`<ul>
+  <li><span class="g">♙</span> <b>Pawn</b> — forward one square (two from its starting square). It captures one square diagonally forward and never moves backward.</li>
+  <li><span class="g">♖</span> <b>Rook</b> — any distance in a straight line, sideways or up and down.</li>
+  <li><span class="g">♗</span> <b>Bishop</b> — any distance diagonally. It stays on its starting colour.</li>
+  <li><span class="g">♘</span> <b>Knight</b> — an L shape: two squares one way, one to the side. It jumps over other pieces.</li>
+  <li><span class="g">♕</span> <b>Queen</b> — any distance in a straight line or diagonal. The strongest piece.</li>
+  <li><span class="g">♔</span> <b>King</b> — one square in any direction, but never into check.</li>
+ </ul><p>You capture by landing on an enemy piece. You can't land on your own pieces.</p>`},
+ {t:"Special moves",h:`<ul>
+  <li><b>Castling</b> — the king moves two squares toward a rook and the rook hops over it. Allowed only if neither has moved, nothing is between them, and the king isn't in check or passing through an attacked square. To castle here, click your king, then the square two steps over.</li>
+  <li><b>En passant</b> — if an enemy pawn moves two squares and lands right beside your pawn, you may capture it as if it had moved only one. You must do it on the very next move.</li>
+  <li><b>Promotion</b> — a pawn that reaches the far end becomes a queen, rook, bishop or knight. You'll get a choice.</li>
+ </ul>`},
+ {t:"Check, checkmate and draws",h:`<ul>
+  <li><b>Check</b> — your king is attacked. You must get out of it by moving the king, blocking, or capturing the attacker.</li>
+  <li><b>Checkmate</b> — check with no escape. The game is over.</li>
+  <li><b>Stalemate</b> — you have no legal move but aren't in check. It's a draw.</li>
+  <li><b>Other draws</b> — the same position three times, too few pieces left to checkmate, or 50 moves with no capture or pawn move.</li>
+ </ul>`},
+ {t:"Piece values",h:`<p>A rough guide for trading pieces: pawn 1, knight 3, bishop 3, rook 5, queen 9. The little <b>+N</b> next to the captured pieces on the board shows who is ahead.</p>`},
+ {t:"Beginner tips",h:`<ul>
+  <li>Fight for the centre with your e and d pawns.</li>
+  <li>Bring out your knights and bishops early.</li>
+  <li>Castle early to tuck your king away.</li>
+  <li>Don't move the same piece twice in the opening, and don't rush the queen out.</li>
+  <li>Before every move, ask: what is my opponent threatening? Is anything of mine unprotected?</li>
+ </ul>`}
+];
+function fillRules(){
+  const box=$("rulesTab");box.innerHTML="";
+  RULES.forEach((r,i)=>{
+    const d=document.createElement("details");if(i===0)d.open=true;
+    d.innerHTML=`<summary>${r.t}</summary>${r.h}`;
+    const b=document.createElement("button");b.className="ask";b.textContent="Ask the AI to explain";
+    b.onclick=()=>{$("msg").value=`Explain "${r.t}" to me like I'm a beginner.`;send();$("learn").classList.remove("open")};
+    d.append(b);box.append(d);
+  });
+}
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===t));
+  $("rulesTab").hidden=t.dataset.t!=="rules";$("notesTab").hidden=t.dataset.t!=="notes";
+});
+$("learnBtn").onclick=()=>$("learn").classList.add("open");
+$("learnClose").onclick=()=>$("learn").classList.remove("open");
+$("notes").value=LS("notes","");
+$("notes").oninput=()=>setLS("notes",$("notes").value);
+$("clearNotes").onclick=()=>{if(!$("notes").value||confirm("Clear all notes?")){$("notes").value="";setLS("notes","")}};
+$("addMoves").onclick=()=>{
+  const h=game.history();if(!h.length)return;
+  let t="";for(let i=0;i<h.length;i+=2)t+=(i/2+1)+". "+h[i]+" "+(h[i+1]||"")+" ";
+  const n=$("notes");n.value+=(n.value&&!n.value.endsWith("\n")?"\n":"")+t.trim()+"\n";setLS("notes",n.value);n.scrollTop=1e6;
+};
+fillRules();
+
+// First run inside Oasis: start from the AI address already set in Oasis Settings.
+const OASIS_BASE=(()=>{try{const o=JSON.parse(localStorage.getItem("lmchat.settings")||"null");return o&&typeof o.baseUrl==="string"?o.baseUrl.trim().replace(/\/+$/,""):"";}catch(e){return "";}})();
+$("server").value=LS("server",OASIS_BASE||"http://127.0.0.1:1234/v1");
+$("temperature").value=LS("temp","0.2");$("temperature").oninput();
+$("side").value=LS("side","w");
+$("level").value=LS("level","easy");$("level").onchange=()=>setLS("level",$("level").value);
+fillPersonas();
+addMsg("sys","Pick a personality above, then chat or just play. The AI can see the board.");
+render();connect();
+</script>
+</body>
+</html>

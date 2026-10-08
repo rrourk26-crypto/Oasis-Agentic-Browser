@@ -1,0 +1,15 @@
+{
+  "id": "net-7",
+  "name": "Taylor",
+  "avatar": "T",
+  "role": "The sports fan",
+  "core": true,
+  "folderLabel": "Taylor - CORE",
+  "favoriteRooms": [
+    "sports",
+    "offtopic"
+  ],
+  "startingRoom": "sports",
+  "ambient": false,
+  "removed": false
+}

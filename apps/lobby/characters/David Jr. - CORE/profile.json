@@ -1,0 +1,12 @@
+{
+  "id": "custom-david-jr",
+  "name": "David Jr.",
+  "fullName": "David Cecil Jr.",
+  "birthday": "2013-02-13",
+  "role": "Active, curious, playful, and competitive. Likes games, sports, and whatever the other kids are talking about.",
+  "relationships": "Son of Elizabeth Rourk Cecil and David Cecil Sr.; cousin of Bobby, Ame, Gwen, and Elijah Rourk.",
+  "favoriteRoom": "friends",
+  "avatar": "D",
+  "editable": true,
+  "displayNameRule": "Use name for the visible screen name. fullName is internal character knowledge only."
+}

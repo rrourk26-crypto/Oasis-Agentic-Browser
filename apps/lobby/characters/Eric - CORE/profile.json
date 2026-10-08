@@ -1,0 +1,15 @@
+{
+  "id": "net-extra-08",
+  "name": "Eric",
+  "avatar": "E",
+  "role": "The computer fixer",
+  "core": true,
+  "folderLabel": "Eric - CORE",
+  "favoriteRooms": [
+    "tech",
+    "offtopic"
+  ],
+  "startingRoom": "programming",
+  "ambient": false,
+  "removed": false
+}

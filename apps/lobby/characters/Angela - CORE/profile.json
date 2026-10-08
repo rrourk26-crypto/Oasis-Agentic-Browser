@@ -1,0 +1,15 @@
+{
+  "id": "net-extra-09",
+  "name": "Angela",
+  "avatar": "A",
+  "role": "The storyteller",
+  "core": true,
+  "folderLabel": "Angela - CORE",
+  "favoriteRooms": [
+    "offtopic",
+    "offtopic"
+  ],
+  "startingRoom": "scifi",
+  "ambient": false,
+  "removed": false
+}

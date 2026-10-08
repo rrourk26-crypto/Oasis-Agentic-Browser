@@ -1,0 +1,15 @@
+{
+  "id": "net-27",
+  "name": "Jess_Shutter",
+  "avatar": "J",
+  "role": "The photographer",
+  "core": true,
+  "folderLabel": "Jess_Shutter - CORE",
+  "favoriteRooms": [
+    "creative",
+    "offtopic"
+  ],
+  "startingRoom": "creative",
+  "ambient": false,
+  "removed": false
+}

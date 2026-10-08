@@ -1,0 +1,15 @@
+{
+  "id": "net-2",
+  "name": "NightOwl77",
+  "avatar": "N",
+  "role": "The night owl",
+  "core": true,
+  "folderLabel": "NightOwl77 - CORE",
+  "favoriteRooms": [
+    "late",
+    "offtopic"
+  ],
+  "startingRoom": "late",
+  "ambient": false,
+  "removed": false
+}

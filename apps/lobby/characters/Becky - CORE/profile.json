@@ -1,0 +1,15 @@
+{
+  "id": "becky",
+  "name": "Becky",
+  "avatar": "B",
+  "role": "The chaos coordinator",
+  "core": true,
+  "folderLabel": "Becky - CORE",
+  "favoriteRooms": [
+    "horror",
+    "offtopic"
+  ],
+  "startingRoom": "horror",
+  "ambient": false,
+  "removed": false
+}

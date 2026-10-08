@@ -1,0 +1,15 @@
+{
+  "id": "tony",
+  "name": "Tony",
+  "avatar": "T",
+  "role": "The skeptic",
+  "core": true,
+  "folderLabel": "Tony - CORE",
+  "favoriteRooms": [
+    "late",
+    "offtopic"
+  ],
+  "startingRoom": "late",
+  "ambient": false,
+  "removed": false
+}

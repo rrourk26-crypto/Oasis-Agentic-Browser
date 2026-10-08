@@ -1,0 +1,15 @@
+{
+  "id": "net-3",
+  "name": "Pat",
+  "avatar": "P",
+  "role": "The neighbor",
+  "core": true,
+  "folderLabel": "Pat - CORE",
+  "favoriteRooms": [
+    "friends",
+    "offtopic"
+  ],
+  "startingRoom": "friends",
+  "ambient": false,
+  "removed": false
+}

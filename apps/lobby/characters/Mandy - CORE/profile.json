@@ -1,0 +1,15 @@
+{
+  "id": "net-extra-00",
+  "name": "Mandy",
+  "avatar": "M",
+  "role": "The music collector",
+  "core": true,
+  "folderLabel": "Mandy - CORE",
+  "favoriteRooms": [
+    "music",
+    "offtopic"
+  ],
+  "startingRoom": "movies",
+  "ambient": false,
+  "removed": false
+}

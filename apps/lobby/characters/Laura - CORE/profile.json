@@ -1,0 +1,15 @@
+{
+  "id": "net-extra-06",
+  "name": "Laura",
+  "avatar": "L",
+  "role": "The maker",
+  "core": true,
+  "folderLabel": "Laura - CORE",
+  "favoriteRooms": [
+    "creative",
+    "offtopic"
+  ],
+  "startingRoom": "tv",
+  "ambient": false,
+  "removed": false
+}

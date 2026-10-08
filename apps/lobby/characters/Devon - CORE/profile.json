@@ -1,0 +1,15 @@
+{
+  "id": "net-28",
+  "name": "Devon",
+  "avatar": "D",
+  "role": "The science nerd",
+  "core": true,
+  "folderLabel": "Devon - CORE",
+  "favoriteRooms": [
+    "science",
+    "offtopic"
+  ],
+  "startingRoom": "science",
+  "ambient": false,
+  "removed": false
+}

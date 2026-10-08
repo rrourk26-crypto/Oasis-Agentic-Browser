@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500">
+<rect width="400" height="500" fill="#151827"/>
+<circle cx="200" cy="190" r="120" fill="#9aa5c0"/>
+<text x="200" y="235" font-family="Arial,sans-serif" font-size="130" font-weight="700" fill="#151827" text-anchor="middle">T</text>
+<text x="200" y="400" font-family="Arial,sans-serif" font-size="44" font-weight="700" fill="#e9ebf3" text-anchor="middle">Tony</text>
+<text x="200" y="440" font-family="Arial,sans-serif" font-size="20" fill="#8790aa" text-anchor="middle">selfie</text>
+</svg>

@@ -1,0 +1,15 @@
+{
+  "id": "jen",
+  "name": "Jen",
+  "avatar": "J",
+  "role": "The gamer",
+  "core": true,
+  "folderLabel": "Jen - CORE",
+  "favoriteRooms": [
+    "gaming",
+    "offtopic"
+  ],
+  "startingRoom": "gaming",
+  "ambient": false,
+  "removed": false
+}

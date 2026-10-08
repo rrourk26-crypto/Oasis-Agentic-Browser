@@ -1,0 +1,15 @@
+{
+  "id": "net-30",
+  "name": "Tina",
+  "avatar": "T",
+  "role": "The planner",
+  "core": true,
+  "folderLabel": "Tina - CORE",
+  "favoriteRooms": [
+    "anime",
+    "offtopic"
+  ],
+  "startingRoom": "anime",
+  "ambient": false,
+  "removed": false
+}

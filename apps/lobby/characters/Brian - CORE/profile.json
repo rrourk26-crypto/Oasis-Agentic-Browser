@@ -1,0 +1,15 @@
+{
+  "id": "net-extra-03",
+  "name": "Brian",
+  "avatar": "B",
+  "role": "The sports regular",
+  "core": true,
+  "folderLabel": "Brian - CORE",
+  "favoriteRooms": [
+    "sports",
+    "offtopic"
+  ],
+  "startingRoom": "sports",
+  "ambient": false,
+  "removed": false
+}

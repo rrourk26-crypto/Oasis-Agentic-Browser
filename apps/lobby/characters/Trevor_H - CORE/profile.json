@@ -1,0 +1,15 @@
+{
+  "id": "net-24",
+  "name": "Trevor_H",
+  "avatar": "T",
+  "role": "The gaming historian",
+  "core": true,
+  "folderLabel": "Trevor_H - CORE",
+  "favoriteRooms": [
+    "retro",
+    "offtopic"
+  ],
+  "startingRoom": "retro",
+  "ambient": false,
+  "removed": false
+}

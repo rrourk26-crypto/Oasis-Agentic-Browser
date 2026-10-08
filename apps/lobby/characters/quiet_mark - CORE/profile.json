@@ -1,0 +1,15 @@
+{
+  "id": "net-31",
+  "name": "quiet_mark",
+  "avatar": "Q",
+  "role": "The quiet regular",
+  "core": true,
+  "folderLabel": "quiet_mark - CORE",
+  "favoriteRooms": [
+    "late",
+    "offtopic"
+  ],
+  "startingRoom": "late",
+  "ambient": false,
+  "removed": false
+}

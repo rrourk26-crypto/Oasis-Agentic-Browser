@@ -1,0 +1,15 @@
+{
+  "id": "net-14",
+  "name": "PunnyBoy88",
+  "avatar": "P",
+  "role": "The comedian",
+  "core": true,
+  "folderLabel": "PunnyBoy88 - CORE",
+  "favoriteRooms": [
+    "offtopic",
+    "offtopic"
+  ],
+  "startingRoom": "offtopic",
+  "ambient": false,
+  "removed": false
+}

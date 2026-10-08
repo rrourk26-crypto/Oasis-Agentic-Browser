@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blaze Reels</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="cabinet" id="cabinet">
+  <button class="avatar" id="cardBtn" aria-label="Open player card"></button>
+  <header class="marquee">
+    <h1>Blaze Reels</h1>
+    <p id="status" aria-live="polite">Pick a bet and press Spin.</p>
+  </header>
+
+  <section class="window" id="window" aria-label="Slot reels">
+    <div class="reel" data-reel="0"><div class="strip"></div></div>
+    <div class="reel" data-reel="1"><div class="strip"></div></div>
+    <div class="reel" data-reel="2"><div class="strip"></div></div>
+    <svg class="guides" id="guides" viewBox="0 0 300 300" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <svg class="lines" id="lines" viewBox="0 0 300 300" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <div class="tags" id="tags" aria-hidden="true"></div>
+    <div class="shade" aria-hidden="true"></div>
+    <div class="banner" id="banner" hidden></div>
+  </section>
+
+  <section class="panel">
+    <div class="readout"><span class="label">Credits</span><span class="value" id="balance">1,000</span></div>
+    <div class="readout"><span class="label">Win</span><span class="value win" id="win">0</span></div>
+    <div class="readout" id="fsBox" hidden><span class="label">Free spins</span><span class="value" id="fs">0</span></div>
+
+    <div class="bet">
+      <button class="step" id="betDown" aria-label="Lower bet">&minus;</button>
+      <div class="betval"><span class="label">Total bet</span><span class="value" id="bet">5</span><span class="sub" id="betSub">1 per line, 5 lines</span></div>
+      <button class="step" id="betUp" aria-label="Raise bet">+</button>
+    </div>
+
+    <div class="actions">
+      <button class="ghost" id="maxBet">Max bet</button>
+      <button class="spin" id="spin">Spin</button>
+    </div>
+    <div class="broke" id="broke" hidden>
+      <div><b>Out of funds</b><span id="brokeText"></span><small>Try a scratch ticket (from 1 credit) or wait for the timer.</small></div>
+      <button class="ghost" id="brokeScratch">Scratch ticket</button>
+    </div>
+
+    <div class="autorow" role="group" aria-label="Auto spins">
+      <span class="label">Auto spins</span>
+      <button class="seg" data-auto="0" aria-pressed="true">Off</button>
+      <button class="seg" data-auto="25" aria-pressed="false">25</button>
+      <button class="seg" data-auto="50" aria-pressed="false">50</button>
+      <span class="autonote" id="autoNote" aria-live="polite"></span>
+    </div>
+
+    <div class="tools">
+      <button class="link" id="cardLink">Player card</button>
+      <button class="link" id="payBtn">Paytable</button>
+      <button class="link" id="statsBtn">Stats</button>
+      <button class="link" id="scratchLink">Scratch tickets</button>
+      <button class="link" id="linesBtn" aria-pressed="true">Pay lines on</button>
+      <button class="link" id="sound" aria-pressed="true">Sound on</button>
+      <label class="vol">Volume <input type="range" id="vol" min="0" max="100" step="1" value="80" aria-label="Sound volume"></label>
+    </div>
+  </section>
+</main>
+
+<dialog id="card" aria-label="Player card">
+  <form id="cardForm" class="cardbox" autocomplete="off">
+    <h2>Player card</h2>
+    <div class="pcard tier-bronze" id="pcard">
+      <img class="bgimg" id="pBg" alt="" src="images/card-bronze.webp">
+      <label class="photo" title="Add or change photo">
+        <img id="pPhoto" alt="Your photo" hidden><span class="ph" id="pPh">+ Add photo</span>
+        <input class="sr" type="file" id="inPhoto" accept="image/*">
+      </label>
+      <div class="ptext">
+        <div class="pn" id="pName"></div>
+        <div class="prow"><span><i>ID</i><b id="pId"></b></span><span><i>Bank</i><b id="pBank"></b></span></div>
+      </div>
+    </div>
+    <button type="button" class="link" id="rmPhoto" hidden>Remove photo</button>
+    <div class="fields">
+      <label>Name<input id="inName" maxlength="16" placeholder="Your name"></label>
+      <label>Player ID<input id="inId" maxlength="10" placeholder="Auto"></label>
+      <label>Starting bank<input id="inBank" type="number" inputmode="numeric" min="5" max="1000000" step="1" required></label>
+      <p class="tiernote" id="tierNote"></p>
+    </div>
+    <p class="note" id="bankHint"></p>
+    <div class="cardact">
+      <button type="button" class="link danger" id="restartBtn" hidden>Restart game</button>
+      <button type="button" class="ghost" id="cardClose" hidden>Close</button>
+      <button type="submit" class="spin small" id="cardGo">Start playing</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="scratchDlg" aria-label="Scratch ticket">
+  <div class="cardbox">
+    <h2>Blaze Scratch</h2>
+    <p class="note" id="scNote"></p>
+    <div class="ticket" id="ticket" hidden>
+      <div class="tkhead">Find a flaming 7 &mdash; win the prize shown</div>
+      <div class="tboard" id="tboard">
+        <div class="bonus"><div class="bx"><i>Hot bonus</i><b id="bx0"></b></div><div class="bx"><i>Hotter bonus</i><b id="bx1"></b></div></div>
+        <div class="tgrid" id="tgrid"></div>
+        <canvas id="tfoil" aria-hidden="true"></canvas>
+      </div>
+      <p class="tkrules">A <b>2X / 3X / 5X / 7X</b> symbol wins that many times the prize shown. Bonus boxes pay automatically.</p>
+    </div>
+    <p class="scresult" id="scResult" aria-live="polite"></p>
+    <div class="cardact">
+      <button type="button" class="ghost" id="scReveal" hidden>Reveal all</button>
+      <button type="button" class="ghost" id="buy1">Buy 1 credit ticket</button>
+      <button type="button" class="ghost" id="buy5">Buy 5 credit ticket</button>
+      <button type="button" class="spin small" id="scClose">Close</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="statsDlg" aria-label="Your stats">
+  <form method="dialog" class="paybox">
+    <h2>Your stats</h2>
+    <div class="stgrid" id="stGrid"></div>
+    <p class="note">Last 10 spins</p>
+    <ol class="last" id="stLast"></ol>
+    <button class="spin small" value="close">Close</button>
+  </form>
+</dialog>
+
+<dialog id="pay">
+  <form method="dialog" class="paybox">
+    <h2>Paytable</h2>
+    <p class="note">Wins pay on 5 lines: three rows and two diagonals, left to right. Amounts are multiples of your bet per line.</p>
+    <div class="paygrid" id="paygrid"></div>
+    <p class="note" id="odds"></p>
+    <ul class="rules">
+      <li>Wild replaces every symbol except the Liberty Bell.</li>
+      <li>Two cherries on the first two reels of a line pay 1&times;.</li>
+      <li>Three Liberty Bells anywhere start 8 free spins and pay 2&times; your total bet. Free spins pay double.</li>
+      <li>Space bar spins. Press it again to stop the reels faster.</li>
+    </ul>
+    <button class="spin small" value="close">Close</button>
+  </form>
+</dialog>
+
+<script src="app.js"></script>
+</body>
+</html>

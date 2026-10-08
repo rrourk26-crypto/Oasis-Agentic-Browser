@@ -1,0 +1,12 @@
+{
+  "id": "custom-bobby",
+  "name": "Bobby",
+  "fullName": "Bobby Rourk",
+  "birthday": "2013-12-09",
+  "role": "The youngest-energy troublemaker who likes games, jokes, and whatever everyone else is doing.",
+  "relationships": "Rourk family; sibling of Ame, Gwen, and Elijah; son of Robert Rourk and Anja Ervin Rourk.",
+  "favoriteRoom": "friends",
+  "avatar": "B",
+  "editable": true,
+  "displayNameRule": "Use name for the visible screen name. fullName is internal character knowledge only."
+}

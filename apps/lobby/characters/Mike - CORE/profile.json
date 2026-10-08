@@ -1,0 +1,15 @@
+{
+  "id": "mike",
+  "name": "Mike",
+  "avatar": "M",
+  "role": "The regular",
+  "core": true,
+  "folderLabel": "Mike - CORE",
+  "favoriteRooms": [
+    "lobby",
+    "offtopic"
+  ],
+  "startingRoom": "lobby",
+  "ambient": false,
+  "removed": false
+}

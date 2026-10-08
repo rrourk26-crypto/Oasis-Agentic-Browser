@@ -1,0 +1,15 @@
+{
+  "id": "net-18",
+  "name": "GhoulGirl13",
+  "avatar": "G",
+  "role": "The horror fan",
+  "core": true,
+  "folderLabel": "GhoulGirl13 - CORE",
+  "favoriteRooms": [
+    "horror",
+    "offtopic"
+  ],
+  "startingRoom": "horror",
+  "ambient": false,
+  "removed": false
+}

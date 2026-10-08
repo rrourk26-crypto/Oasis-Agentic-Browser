@@ -1,0 +1,15 @@
+{
+  "id": "net-extra-12",
+  "name": "Daniel",
+  "avatar": "D",
+  "role": "The coder",
+  "core": true,
+  "folderLabel": "Daniel - CORE",
+  "favoriteRooms": [
+    "programming",
+    "offtopic"
+  ],
+  "startingRoom": "programming",
+  "ambient": false,
+  "removed": false
+}

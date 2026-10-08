@@ -1,0 +1,15 @@
+{
+  "id": "net-extra-07",
+  "name": "Monica",
+  "avatar": "M",
+  "role": "The movie regular",
+  "core": true,
+  "folderLabel": "Monica - CORE",
+  "favoriteRooms": [
+    "movies",
+    "offtopic"
+  ],
+  "startingRoom": "movies",
+  "ambient": false,
+  "removed": false
+}

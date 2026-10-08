@@ -1,0 +1,96 @@
+/* THE LOBBY THEME LAYER: colors, shape, shadow and motion only. Layout and logic untouched.
+   Pick a look in Settings > Look. "Classic" = the original styling (no overrides). */
+
+/* ---------- MIDNIGHT (new default) ---------- */
+:root[data-look="midnight"]{
+  --bg:#080a14; --panel:#0f1222; --panel-alt:#151a30; --line:#232a48; --line-soft:#1a2038;
+  --text:#eceffa; --muted:#8f9abb; --muted-dim:#5f6a8f;
+  --accent:#8b7cff; --accent-strong:#a99bff; --accent-soft:rgba(139,124,255,.16); --you:#7fe3d6;
+  --hover:#1d2444; --scroll-thumb:#2b3358; --topbar-end:#0c0f1d;
+  --me-bubble-1:#2c2668; --me-bubble-2:#231f55; --overlay:rgba(4,5,12,.65);
+  --shadow-soft:rgba(0,0,0,.45); --shadow-strong:rgba(0,0,0,.6); --online:#4ee0a0;
+  --r:14px; --glow:0 0 0 1px rgba(139,124,255,.25),0 8px 30px rgba(90,70,220,.25);
+}
+:root[data-look="midnight"] body{
+  background:radial-gradient(1100px 600px at 8% -10%,rgba(124,108,255,.20),transparent 60%),
+             radial-gradient(900px 500px at 100% 0%,rgba(63,208,224,.13),transparent 55%),var(--bg) fixed;
+}
+/* ---------- DAYLIGHT ---------- */
+:root[data-look="daylight"]{
+  --bg:#eef1f9; --panel:#ffffff; --panel-alt:#f4f6fc; --line:#dde2f0; --line-soft:#e9ecf6;
+  --text:#1b2036; --muted:#586182; --muted-dim:#8790ad;
+  --accent:#5b5bf0; --accent-strong:#4646d8; --accent-soft:rgba(91,91,240,.12); --you:#0f8f7e;
+  --hover:#e8ecfa; --scroll-thumb:#c9d0e6; --topbar-end:#ffffff;
+  --me-bubble-1:#e4e4ff; --me-bubble-2:#d9dafd; --overlay:rgba(20,26,50,.35);
+  --shadow-soft:rgba(40,50,100,.12); --shadow-strong:rgba(40,50,100,.22); --online:#1fae70; --danger:#d04a55;
+  --mike:#2f6fdb; --sarah:#8e4fc0; --dave:#d9822b; --jen:#2a9d5c; --tony:#5f6b88; --lisa:#d6457a;
+  --rick:#a9832f; --amy:#b552a0; --kevin:#1b93bd; --becky:#d9581f; --llama:#5f9a22;
+  --r:14px; --glow:0 6px 22px rgba(70,70,216,.22);
+}
+:root[data-look="daylight"] body{background:linear-gradient(180deg,#f6f8fe,#e9edf8) fixed;}
+/* ---------- RETRO 98 (chat-room nostalgia) ---------- */
+:root[data-look="retro"]{
+  --bg:#f4f4f0; --panel:#c0c0c0; --panel-alt:#d4d0c8; --line:#808080; --line-soft:#a0a0a0;
+  --text:#000000; --muted:#404040; --muted-dim:#606060;
+  --accent:#000080; --accent-strong:#0000c0; --accent-soft:rgba(0,0,128,.14); --you:#000080;
+  --hover:#b8b8e8; --scroll-thumb:#808080; --topbar-end:#000080;
+  --me-bubble-1:#ffffcc; --me-bubble-2:#fff8a8; --overlay:rgba(0,0,0,.4);
+  --shadow-soft:rgba(0,0,0,.35); --shadow-strong:rgba(0,0,0,.5); --online:#008000; --danger:#c00000;
+  --mike:#0000cc; --sarah:#800080; --dave:#b35900; --jen:#006400; --tony:#404040; --lisa:#c0006b;
+  --rick:#806000; --amy:#a0009a; --kevin:#006080; --becky:#c04000; --llama:#3a7d00;
+  --r:0px; --glow:none;
+}
+:root[data-look="retro"] body,:root[data-look="retro"]{font-family:Tahoma,"MS Sans Serif",Verdana,sans-serif!important;}
+:root[data-look="retro"] .topbar,:root[data-look="retro"] .topbar *{color:#fff;}
+:root[data-look="retro"] .send,:root[data-look="retro"] .ghostbtn,:root[data-look="retro"] .rowbtn,:root[data-look="retro"] .smallbtn,
+:root[data-look="retro"] .add-char-btn,:root[data-look="retro"] .members-toggle,:root[data-look="retro"] .people-toggle,:root[data-look="retro"] .settings-toggle{
+  background:#c0c0c0!important;color:#000!important;border:2px outset #fff!important;border-radius:0!important;box-shadow:none!important;}
+:root[data-look="retro"] .send:active,:root[data-look="retro"] .ghostbtn:active,:root[data-look="retro"] .rowbtn:active{border-style:inset!important;}
+:root[data-look="retro"] input,:root[data-look="retro"] textarea,:root[data-look="retro"] select{
+  background:#fff!important;color:#000!important;border:2px inset #808080!important;border-radius:0!important;}
+:root[data-look="retro"] .bubble{border:1px solid #808080!important;box-shadow:none!important;}
+
+/* ---------- SHARED POLISH (all themes except classic) ---------- */
+:root:not([data-look="classic"]){ --rad:var(--r,14px); }
+:root:not([data-look="classic"]) *{ scrollbar-width:thin; scrollbar-color:var(--scroll-thumb) transparent; }
+:root:not([data-look="classic"]) .bubble{ border-radius:var(--rad); box-shadow:0 1px 2px var(--shadow-soft); }
+:root:not([data-look="classic"]) .person,
+:root:not([data-look="classic"]) .preset-menu-item,
+:root:not([data-look="classic"]) .member-menu-item{ transition:background .16s ease, transform .16s ease; border-radius:calc(var(--rad) - 4px); }
+:root:not([data-look="classic"]) .person:hover,
+:root:not([data-look="classic"]) .preset-menu-item:hover{ background:var(--hover); }
+:root:not([data-look="classic"]) .avatar{ box-shadow:0 0 0 2px var(--panel), 0 2px 8px var(--shadow-soft); }
+:root:not([data-look="classic"]) .send{ transition:transform .15s ease, box-shadow .2s ease, filter .2s ease; }
+:root:not([data-look="classic"]) .send:hover{ transform:translateY(-1px); filter:brightness(1.08); }
+:root:not([data-look="classic"]) .ghostbtn,
+:root:not([data-look="classic"]) .rowbtn,
+:root:not([data-look="classic"]) .smallbtn{ border-radius:calc(var(--rad) - 4px); transition:background .16s ease, border-color .16s ease; }
+:root:not([data-look="classic"]) input,
+:root:not([data-look="classic"]) textarea,
+:root:not([data-look="classic"]) select{ border-radius:calc(var(--rad) - 4px); transition:border-color .16s ease, box-shadow .16s ease; }
+:root:not([data-look="classic"]) input:focus,
+:root:not([data-look="classic"]) textarea:focus,
+:root:not([data-look="classic"]) select:focus{ outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+:root:not([data-look="classic"]) .members-menu,
+:root:not([data-look="classic"]) .preset-menu,
+:root:not([data-look="classic"]) .emoji-picker,
+:root:not([data-look="classic"]) .editor-box{ border-radius:var(--rad); box-shadow:0 18px 50px var(--shadow-strong); }
+:root:not([data-look="classic"]):not([data-look="retro"]) .members-menu,
+:root:not([data-look="classic"]):not([data-look="retro"]) .preset-menu{ backdrop-filter:blur(14px) saturate(140%); }
+:root:not([data-look="classic"]) .settings-section{ border-radius:var(--rad); }
+:root:not([data-look="classic"]):not([data-look="retro"]) .send{
+  background:linear-gradient(135deg,#7c6cff,#3fd0e0)!important; color:#fff!important; border:0!important; box-shadow:var(--glow); }
+:root[data-look="daylight"] .send{ background:linear-gradient(135deg,#5b5bf0,#7a5cf0)!important; }
+@keyframes msgIn{ from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:none;} }
+:root:not([data-look="classic"]) .chat .msg:last-child{ animation:msgIn .22s ease-out; }
+/* theme picker (Settings > Look) */
+.themepick{ display:flex; gap:8px; flex-wrap:wrap; }
+.themepick button{ flex:1; min-width:70px; padding:8px 10px; cursor:pointer; border-radius:10px; border:1px solid var(--line); background:var(--panel-alt); color:var(--text); font:inherit; font-size:12px; }
+.themepick button.on{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+@media (prefers-reduced-motion:reduce){ *{ animation:none!important; transition:none!important; } }
+
+/* the "Refresh models" style buttons never had styling of their own */
+:root:not([data-look="classic"]):not([data-look="retro"]) .ghostbtn{ background:var(--panel-alt); color:var(--text); border:1px solid var(--line); padding:8px 12px; cursor:pointer; font:inherit; }
+:root:not([data-look="classic"]):not([data-look="retro"]) .ghostbtn:hover{ background:var(--hover); border-color:var(--accent); }
+
+:root[data-look="retro"] body{ background:#008080; }

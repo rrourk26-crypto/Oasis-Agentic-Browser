@@ -1,0 +1,15 @@
+{
+  "id": "net-5",
+  "name": "Casey",
+  "avatar": "C",
+  "role": "The storyteller",
+  "core": true,
+  "folderLabel": "Casey - CORE",
+  "favoriteRooms": [
+    "offtopic",
+    "offtopic"
+  ],
+  "startingRoom": "offtopic",
+  "ambient": false,
+  "removed": false
+}

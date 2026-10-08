@@ -1,0 +1,15 @@
+{
+  "id": "net-29",
+  "name": "OldFrank",
+  "avatar": "O",
+  "role": "The old regular",
+  "core": true,
+  "folderLabel": "OldFrank - CORE",
+  "favoriteRooms": [
+    "nineties",
+    "offtopic"
+  ],
+  "startingRoom": "nineties",
+  "ambient": false,
+  "removed": false
+}

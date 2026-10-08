@@ -1,0 +1,15 @@
+{
+  "id": "net-12",
+  "name": "Erin",
+  "avatar": "E",
+  "role": "The practical one",
+  "core": true,
+  "folderLabel": "Erin - CORE",
+  "favoriteRooms": [
+    "friends",
+    "offtopic"
+  ],
+  "startingRoom": "friends",
+  "ambient": false,
+  "removed": false
+}

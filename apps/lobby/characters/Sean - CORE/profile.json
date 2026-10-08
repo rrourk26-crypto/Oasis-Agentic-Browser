@@ -1,0 +1,15 @@
+{
+  "id": "net-extra-15",
+  "name": "Sean",
+  "avatar": "S",
+  "role": "The car guy",
+  "core": true,
+  "folderLabel": "Sean - CORE",
+  "favoriteRooms": [
+    "cars",
+    "offtopic"
+  ],
+  "startingRoom": "science",
+  "ambient": false,
+  "removed": false
+}

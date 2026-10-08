@@ -1,0 +1,1012 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Oasis AI Workspace</title>
+<style>
+:root{color-scheme:dark;--bg:#090c12;--bar:#111722;--bar2:#171f2d;--line:#2b3444;--text:#eef3fa;--muted:#9aa8bb;--accent:#78b8ff;--ai:#18283c}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font:13px "Segoe UI",system-ui,sans-serif}
+body{display:flex;flex-direction:column}
+#chrome{background:linear-gradient(#151c28,#101620);border-bottom:1px solid #05070a}
+body.private #chrome{background:linear-gradient(#1c1229,#140c1e)}
+body.private #address{border-color:#5c3f80}
+#privateBadge{font-size:11px;color:#d9bdf7;background:#2c1c40;padding:5px 10px;border-radius:12px;margin-right:2px;white-space:nowrap;flex:none}
+#tabbar{height:40px;display:flex;align-items:flex-end;padding:5px 8px 0;gap:3px;overflow:hidden}
+#tabs{height:35px;display:flex;align-items:stretch;gap:3px;min-width:0;align-items:flex-end;padding:5px 8px 0;gap:3px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+#tabs::-webkit-scrollbar{display:none}
+.tab{height:35px;flex:0 1 200px;min-width:64px;max-width:240px;display:flex;align-items:center;gap:8px;padding:0 10px;border:1px solid transparent;border-radius:10px 10px 0 0;background:#101620;color:#aeb9c8;cursor:pointer;user-select:none}
+.tab.active{flex-shrink:0;min-width:120px;background:#1a2230;color:#fff;border-color:#2b3444;border-bottom-color:#1a2230}
+.tab.grouped{border-top:3px solid var(--gcolor,#5aa8e0)}
+.tab.dragging{opacity:.35}
+.tab.dropBefore{box-shadow:inset 4px 0 0 var(--accent)}
+.tab.dropAfter{box-shadow:inset -4px 0 0 var(--accent)}
+.tab.dropGroup,.groupChip.dropGroup{outline:2px dashed var(--accent);outline-offset:-3px}
+.tab.dropGroup{background:#1f2b3d}
+.groupRename{height:26px;align-self:flex-end;margin:0 2px;width:110px;border:1px solid #5d91cc;border-radius:6px 6px 0 0;background:#0b111a;color:#fff;padding:0 7px;outline:0;font:inherit;font-size:11.5px;flex:none}
+.tab .favicon{width:16px;height:16px;border-radius:4px;background:#5b8cff;display:grid;place-items:center;font-size:10px;flex:none}
+.tab .title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.tab .close{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#8794a8}
+.tab .close:hover{background:#2c3545;color:white}
+.groupChip{height:26px;align-self:flex-end;margin:0 2px;padding:0 9px;border-radius:6px 6px 0 0;color:#0a0e14;font-size:11px;font-weight:700;white-space:nowrap;flex:none;opacity:.95}
+.groupChip:hover{opacity:1}
+#newtab{height:30px;width:32px;margin:0 0 0 2px;border-radius:7px;display:grid;place-items:center;font-size:21px;color:#c7d1df;flex:none}
+#newtab:hover{background:#252e3d}
+#toolbar{height:48px;display:flex;align-items:center;gap:7px;padding:5px 10px;width:100%}
+.navbtn{width:34px;height:34px;border-radius:8px;color:#b8c3d2;font-size:18px}
+.navbtn:hover{background:#252e3d}.navbtn:disabled{opacity:.35}
+#urlForm{display:flex;flex:1;min-width:0;margin:0}
+#address{height:36px;flex:1;min-width:0;border:1px solid #3a4658;border-radius:18px;background:#0b1018;color:#edf3fb;padding:0 16px;outline:0;font-size:14px}
+#address:focus{border-color:#5d91cc;background:#0d131d}
+.dropdownWrap{position:relative;display:flex;align-items:center}
+#favStar.active{color:#ffd76b}
+.dropdown{position:absolute;top:42px;right:0;width:335px;max-height:min(640px,calc(100vh - 56px));overflow:auto;background:#141c29;border:1px solid #2b3444;border-radius:10px;box-shadow:0 16px 40px #0009;padding:6px;display:none;z-index:80}
+.dropdown.open{display:block}
+.ddItem{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;color:#dbe4f0;font-size:13px}
+.ddItem:hover{background:#1e2a3c}
+button.ddItem{width:100%;text-align:left;background:none;border:0;cursor:pointer;font:inherit}
+.ddTitle{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;cursor:pointer}
+.ddShortcut{color:#77869c;font-size:11.5px;flex:none;margin-left:auto}
+.ddArrow{color:#77869c;font-size:13px;flex:none;margin-left:auto}
+.ddItem .ddShortcut+.ddArrow{margin-left:8px}
+.ddRow{cursor:pointer}
+.ddRowText{display:flex;flex-direction:column;overflow:hidden;flex:1;min-width:0}
+.ddRowText .ddTitle{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:default}
+.ddSub{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#77869c;font-size:11px}
+.ddRemove{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#8794a8;flex:none;font-size:13px;background:none;border:0}
+.ddRemove:hover{background:#2c3545;color:#fff}
+.ddEmpty{padding:16px 10px;color:#8d9bb0;font-size:12.5px;text-align:center}
+.ddSep{height:1px;background:#293445;margin:6px 4px}
+.ddHead{padding:6px 10px 4px;color:#77869c;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.ddPanelHead{display:flex;align-items:center;gap:8px;padding:4px 4px 8px;margin-bottom:4px;border-bottom:1px solid #293445}
+.ddBack{width:28px;height:28px;border-radius:7px;color:#c7d1df;font-size:17px;flex:none;background:none;border:0;cursor:pointer}
+.ddBack:hover{background:#252e3d}
+.ddPanelTitle{font-weight:700;font-size:13.5px;color:#eef3fa}
+.ddColorDot{width:9px;height:9px;border-radius:50%;flex:none}
+.ddZoomRow{display:flex;align-items:center;gap:4px;padding:4px 6px}
+.ddZoomBtn{width:30px;height:30px;border-radius:7px;color:#dbe4f0;font-size:16px;background:none;border:0;cursor:pointer}
+.ddZoomBtn:hover{background:#1e2a3c}
+.ddZoomPct{flex:1;text-align:center;color:#c7d1df;font-size:12.5px}
+.ddFooterBtn{width:100%;margin-top:4px;padding:9px 10px;border-radius:7px;background:#1c2635;color:#dbe4f0;border:1px solid #2b3444;cursor:pointer;font:inherit;font-size:12.5px}
+.ddFooterBtn:hover{background:#232f42}
+.ddFooterBtn.ddPrimary{background:#3f6fae;border-color:#3f6fae;color:#fff}
+.ddFooterBtn.ddPrimary:hover{background:#4a7dbf}
+.ddFooterBtn.ddDanger{background:#5a2a2a;border-color:#5a2a2a;color:#fbdcdc}
+.ddFooterBtn.ddDanger:hover{background:#6c3232}
+.ddSettingsForm,.ddClearForm,.ddGroupForm{padding:6px 4px;display:flex;flex-direction:column;gap:6px}
+.ddLabel{color:#8d9bb0;font-size:11.5px;margin-top:4px}
+.ddInput{height:32px;border-radius:7px;border:1px solid #334156;background:#0b111a;color:#fff;padding:0 10px;outline:0;font:inherit}
+.ddInput:focus{border-color:#5d91cc}
+.ddCheck{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#dbe4f0;padding:4px 2px}
+.ddClearNote{color:#77869c;font-size:11px;padding:2px 2px 0}
+.ddColorRow{display:flex;gap:6px;padding:2px 0}
+.ddSwatch{width:22px;height:22px;border-radius:50%;border:2px solid transparent;cursor:pointer}
+.ddSwatch.active{border-color:#fff}
+.ddGroupBtns{display:flex;gap:6px}
+.ddGroupBtns .ddFooterBtn{margin-top:0}
+#findBar{position:absolute;z-index:70;top:12px;left:12px;display:none;align-items:center;gap:6px;background:#141c29;border:1px solid #2b3444;border-radius:10px;box-shadow:0 12px 30px #0009;padding:6px 8px}
+#findBar.open{display:flex}
+#findInput{width:180px;height:30px;border:1px solid #334156;border-radius:7px;background:#0b111a;color:#fff;padding:0 10px;outline:0}
+#findCount{font-size:12px;color:#8d9bb0;min-width:44px;text-align:center}
+#findBar button{width:28px;height:28px;border-radius:7px;color:#c7d1df}
+#findBar button:hover{background:#252e3d}
+#content{position:relative;flex:1;min-height:0;background:#fff}
+view{display:none}webview{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+webview.active{display:flex}
+#aiPanel{position:absolute;z-index:50;right:12px;top:12px;width:370px;height:calc(100% - 24px);display:none;flex-direction:column;background:rgba(12,18,28,.97);border:1px solid #34445a;border-radius:14px;box-shadow:0 18px 55px #0009;overflow:hidden}
+#aiPanel.open{display:flex}
+#aiHead{height:48px;display:flex;align-items:center;padding:0 14px;border-bottom:1px solid #293445;font-weight:700}
+#aiHead span{flex:1}#aiClose{font-size:20px;color:#9eacbf}
+#aiMessages{flex:1;overflow:auto;padding:12px}
+.msg{margin:8px 0;padding:9px 11px;border-radius:10px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+.msg.user{background:#243b59;margin-left:35px}.msg.ai{background:#151f2d;margin-right:15px}
+#aiTools{display:flex;gap:6px;padding:8px 10px;border-top:1px solid #293445}
+.tool{flex:1;padding:7px;border:1px solid #334156;border-radius:8px;background:#111925;color:#cbd6e5}
+.tool:hover{background:#1b2737}
+#aiForm{display:flex;gap:7px;padding:10px;border-top:1px solid #293445}
+#aiInput{flex:1;min-width:0;resize:none;height:42px;border:1px solid #334156;border-radius:9px;background:#0b111a;color:white;padding:10px;outline:0}
+#aiSend{width:48px;border-radius:9px;background:#6eaef5;color:#08111e;font-weight:700}
+#status{font-size:11px;color:#8d9bb0;padding:0 12px 7px}
+</style>
+</head>
+<body>
+<div id="chrome">
+  <div id="tabbar"><div id="tabs"></div><button id="newtab" title="New tab">+</button></div>
+  <div id="toolbar">
+    <button class="navbtn" id="back" title="Back">‹</button>
+    <button class="navbtn" id="forward" title="Forward">›</button>
+    <button class="navbtn" id="reload" title="Reload">↻</button>
+    <button class="navbtn" id="home" title="Home">⌂</button>
+    <form id="urlForm"><input id="address" autocomplete="off" spellcheck="false" placeholder="Search or enter a URL"></form>
+    <button class="navbtn" id="favStar" title="Add to favorites">☆</button>
+    <div class="dropdownWrap" id="toolsWrap">
+      <button class="navbtn" id="toolsBtn" title="Tools">⋮</button>
+      <div class="dropdown" id="toolsMenu"></div>
+    </div>
+  </div>
+</div>
+<div id="content">
+  <div id="findBar">
+    <input id="findInput" autocomplete="off" spellcheck="false" placeholder="Find in page">
+    <span id="findCount"></span>
+    <button id="findPrev" title="Previous">↑</button>
+    <button id="findNext" title="Next">↓</button>
+    <button id="findClose" title="Close">×</button>
+  </div>
+  <div id="aiPanel">
+    <div id="aiHead"><span>Oasis AI Workspace</span><button id="aiClose">×</button></div>
+    <div id="aiMessages"><div class="msg ai">I can search, inspect the current page, read visible page text, and use browser actions. Tell me what you want done.</div></div>
+    <div id="aiTools">
+      <button class="tool" id="aiScreen">See screen</button>
+      <button class="tool" id="aiRead">Read page</button>
+    </div>
+    <div id="status"></div>
+    <form id="aiForm"><textarea id="aiInput" placeholder="Ask the AI to search or use this page…"></textarea><button id="aiSend">Go</button></form>
+  </div>
+</div>
+<script>
+/* ---------- Window identity (regular vs InPrivate) ---------- */
+const urlParams = new URLSearchParams(location.search);
+const PARTITION = urlParams.get("partition") || "persist:oasis";
+const IS_PRIVATE = urlParams.get("private") === "1";
+if (IS_PRIVATE) {
+  document.body.classList.add("private");
+  document.title = "Oasis — InPrivate";
+}
+
+const HOME_FILE = "index.html";
+const MEDIA_FILE = "tv.html";
+const NEW_TAB_URL = "https://www.google.com/";
+const DEFAULT_LM_URL = "http://50.5.155.226:1234/v1";
+const tabs=[], views=new Map();
+let activeId=null, nextId=1, blankTabNumber=1;
+
+const $=id=>document.getElementById(id);
+function fileUrl(file){return new URL(file, location.href).href}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+if (IS_PRIVATE) {
+  const badge=document.createElement("span");
+  badge.id="privateBadge"; badge.textContent="InPrivate";
+  $("toolbar").insertBefore(badge, $("favStar"));
+}
+
+function makeTab(url, title, displayUrl="", options={}){
+  const id=nextId++;
+  const tab=document.createElement("div"); tab.className="tab"; tab.dataset.id=id;
+  tab.innerHTML='<span class="favicon">O</span><span class="title"></span><button class="close" title="Close tab">×</button>';
+  const initialTitle=title || `Tab ${blankTabNumber++}`;
+  tab.querySelector(".title").textContent=initialTitle;
+  tab.addEventListener("click",e=>{if(!e.target.closest(".close"))activate(id)});
+  tab.querySelector(".close").addEventListener("click",e=>{e.stopPropagation();closeTab(id)});
+  tab.addEventListener("contextmenu",e=>openTabContextMenu(e,id));
+  wireTabDrag(tab,id);
+  $("tabs").appendChild(tab);
+
+  const v=document.createElement("webview");
+  v.id="view-"+id; v.src=url;
+  v.setAttribute("allowpopups","true");
+  v.setAttribute("partition",PARTITION);
+  v.style.display="none";
+  $("content").prepend(v);
+
+  const item={id,tab,view:v,title:initialTitle,fixedTitle:Boolean(title),displayUrl:displayUrl||"",fixedUrl:Boolean(displayUrl),appTab:Boolean(options.appTab),groupId:null};
+  tabs.push(item); views.set(id,v);
+
+  v.addEventListener("page-title-updated",e=>{
+    if(!item.fixedTitle){
+      tab.querySelector(".title").textContent=e.title||initialTitle;
+      updateHistoryTitle(safeGetURL(v), e.title);
+    }
+  });
+  v.addEventListener("did-navigate",()=>{
+    if(!item.fixedUrl) item.displayUrl="";
+    if(activeId===id)syncAddress(v,item);
+    recordHistory(safeGetURL(v), tab.querySelector(".title").textContent);
+  });
+  v.addEventListener("did-navigate-in-page",()=>{if(activeId===id)syncAddress(v,item)});
+  // The Home page asks for tabs through this bridge when the AI opens an app or
+  // a search (see openTab in project-preload.js).
+  v.addEventListener("ipc-message",e=>{
+    if(e.channel!=="oasis-open-tab") return;
+    const url=String((e.args&&e.args[0])||"");
+    if(!isAllowedTabUrl(url)) return;
+    const meta=appTabMeta(url);
+    makeTab(url,meta.title,meta.displayUrl);
+  });
+  v.addEventListener("dom-ready",()=>{
+    if(activeId===id)syncAddress(v,item);
+    installHomeToolbarHooks(v);
+  });
+  v.addEventListener("did-fail-load",e=>{
+    if(e.errorCode!==-3 && activeId===id) $("address").value=e.validatedURL||e.url||"";
+    // A page that can't load now says why, instead of leaving a blank tab.
+    if(e.isMainFrame && e.errorCode!==-3 && !/^data:/i.test(e.validatedURL||"")){
+      const esc=t=>String(t||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+      const page='<meta charset="utf-8"><body style="font:15px Segoe UI,sans-serif;background:#0b101c;color:#dbe6f7;padding:48px;line-height:1.6"><h2>This page could not be opened</h2><p>'+esc(e.validatedURL||e.url)+'</p><p style="color:#ff9a9a">'+esc(e.errorDescription||"error")+" ("+esc(e.errorCode)+")</p><p style=\"color:#8fa3bf\">If this is one of the built-in apps, the file may be missing from the app folder. Re-extract the zip fully and try again.</p>";
+      try{ v.loadURL("data:text/html;charset=utf-8,"+encodeURIComponent(page)); }catch(err){}
+    }
+  });
+  v.addEventListener("found-in-page",e=>{
+    if(activeId===id && $("findBar").classList.contains("open")){
+      const r=e.result;
+      $("findCount").textContent=r.matches ? (r.activeMatchOrdinal+"/"+r.matches) : "0/0";
+    }
+  });
+  activate(id);
+  return id;
+}
+// Only web links, or pages inside this app's own folder, may be opened through the bridge.
+function isAllowedTabUrl(url){
+  if(/^https?:\/\//i.test(url)) return true;
+  if(!/^file:/i.test(url)) return false;
+  // Compare as decoded, lower-case, forward-slash paths so spaces, brackets, (1) in the folder name and
+  // Windows drive-letter case can't make the app refuse its own pages.
+  const dec=t=>{ try{ return decodeURIComponent(t); }catch(e){ try{ return decodeURI(t); }catch(e2){ return t; } } };
+  const clean=t=>dec(String(t)).replace(/\\/g,"/").replace(/[?#].*$/,"").toLowerCase();
+  try{
+    const base=clean(new URL(".",location.href).href);
+    const u=clean(url);
+    return u.startsWith(base) && !/\/\.\.(\/|$)/.test(u);
+  }catch(e){ return false; }
+}
+function safeGetURL(v){
+  // A <webview> only gains its API methods (getURL, loadURL, etc.) once its
+  // internal guest view has attached, which happens a tick after the element
+  // is created — calling getURL() any earlier throws "v.getURL is not a
+  // function" and, if that happens during the very first tab's creation,
+  // silently aborts the rest of the startup script (breaking every feature
+  // wired up further down, favorites included). Guard every call site.
+  if(!v || typeof v.getURL!=="function") return "";
+  try{ return v.getURL()||""; }catch(e){ return ""; }
+}
+function syncAddress(v,item){
+  if(item?.displayUrl){ $("address").value=item.displayUrl; }
+  else{
+    const u=safeGetURL(v);
+    $("address").value=(u.endsWith("/index.html") || u.endsWith("/tv.html")) ? "" : u;
+  }
+  syncStar();
+}
+function activate(id){
+  activeId=id;
+  tabs.forEach(t=>{
+    const on=t.id===id;
+    t.tab.classList.toggle("active",on);
+    t.view.classList.toggle("active",on);
+    t.view.style.display=on?"flex":"none";
+  });
+  const item=tabs.find(t=>t.id===id), v=views.get(id);
+  if(v) syncAddress(v,item);
+  try{ item?.tab.scrollIntoView({inline:"nearest",block:"nearest"}); }catch(e){}
+}
+function closeTab(id){
+  const i=tabs.findIndex(t=>t.id===id); if(i<0)return;
+  const t=tabs[i]; t.view.remove(); t.tab.remove(); tabs.splice(i,1); views.delete(id);
+  groups = groups.filter(g=>tabs.some(x=>x.groupId===g.id));
+  renderTabGroupChips();
+  if(!tabs.length) makeTab(NEW_TAB_URL);
+  else if(activeId===id) activate(tabs[Math.max(0,i-1)].id);
+}
+function activeView(){return views.get(activeId)}
+function activeItem(){return tabs.find(t=>t.id===activeId)}
+function openBrowserTab(url,title="",displayUrl="",options={}){return makeTab(url,title,displayUrl,options)}
+function navigate(raw){
+  let s=raw.trim(); if(!s)return;
+  let url;
+  if(/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(s)) url=s;
+  else if(/^[\w.-]+\.[a-z]{2,}(\/.*)?$/i.test(s)) url="https://"+s;
+  else url="https://www.google.com/search?q="+encodeURIComponent(s);
+  const item=activeItem();
+  if(item) item.displayUrl="";
+  activeView()?.loadURL(url);
+}
+$("urlForm").addEventListener("submit",e=>{e.preventDefault();navigate($("address").value)});
+$("back").onclick=()=>activeView()?.canGoBack() && activeView().goBack();
+$("forward").onclick=()=>activeView()?.canGoForward() && activeView().goForward();
+$("reload").onclick=()=>activeView()?.reload();
+$("home").onclick=()=>{const i=activeItem();if(i){i.displayUrl="Home";i.fixedUrl=true;}activeView()?.loadURL(fileUrl(HOME_FILE));};
+$("newtab").onclick=()=>makeTab(NEW_TAB_URL);
+
+function addMsg(text,who="ai"){let d=document.createElement("div");d.className="msg "+who;d.textContent=text;$("aiMessages").appendChild(d);$("aiMessages").scrollTop=$("aiMessages").scrollHeight;return d}
+
+/* Turn the Home page's browser-like toolbar items into real browser tabs. */
+function appTabMeta(url){
+  const u=String(url||"");
+  if(/onecompiler\.com/i.test(u)) return {title:"Code Editor",displayUrl:"Code Editor"};
+  if(/\/tv\.html(?:$|[?#])/i.test(u)) return {title:"TV",displayUrl:"TV"};
+  if(/app\.element\.io/i.test(u)) return {title:"Messenger",displayUrl:""};
+  // Locally installed apps (opened via the AI's [[app: id]] tag, e.g. Mystic
+  // Realm): let the tab pick up the app's own <title> instead of pinning a
+  // fixed label, and instead of falling through to a bare "Tab" for file:// URLs.
+  if(/\/apps\/mystic-realm\//i.test(u)) return {title:"",displayUrl:""};
+  if(/\/apps\/lobby\//i.test(u)) return {title:"",displayUrl:""};
+  if(/\/apps\/maze-madness\//i.test(u)) return {title:"Maze Madness",displayUrl:"Maze Madness"};
+  if(/\/apps\/chess\//i.test(u)) return {title:"Chess",displayUrl:"Chess"};
+  if(/\/apps\/blaze-reels\//i.test(u)) return {title:"Blaze Reels",displayUrl:"Blaze Reels"};
+  if(/youtube\.com|youtu\.be/i.test(u)) return {title:"YouTube",displayUrl:""};
+  if(/wikipedia\.org/i.test(u)) return {title:"Wikipedia",displayUrl:""};
+  try{return {title:new URL(u).hostname.replace(/^www\./i,"")||"Tab",displayUrl:""};}catch{return {title:"Tab",displayUrl:""};}
+}
+function installHomeToolbarHooks(v){
+  try{
+    v.executeJavaScript(`(()=>{
+      if(window.__oasisBrowserHooksInstalled)return true;
+      window.__oasisBrowserHooksInstalled=true;
+      const open=(url)=>{ try{ window.open(url,'_blank'); }catch(e){} };
+      const bind=(id,url)=>{ const el=document.getElementById(id); if(!el||el.__oasisBound)return; el.__oasisBound=true; el.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();open(url);},true); };
+      bind('openCodeLab','https://onecompiler.com/python');
+      bind('openLiveTV',new URL('tv.html',location.href).href);
+      bind('openOasisElement','https://app.element.io/#/room/#oasis-lobby:matrix.org');
+      document.querySelectorAll('#links a').forEach(a=>{
+        if(a.__oasisBound)return; a.__oasisBound=true;
+        a.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();open(a.href);},true);
+      });
+      return true;
+    })()`,true);
+  }catch(e){}
+}
+
+async function pageText(){
+  const v=activeView(); if(!v)return "";
+  try{return await v.executeJavaScript(`(document.body?.innerText||"").slice(0,30000)`,true)}catch(e){return "Could not read this page: "+e.message}
+}
+async function screenShot(){
+  try{
+    const v=activeView();
+    return v ? await window.oasisElectron.captureWebView(v.getWebContentsId()) : null;
+  }catch{return null}
+}
+async function takeScreenshot(){
+  const dataUrl=await screenShot();
+  if(!dataUrl){ addMsg("Screenshot was not available for this page."); return; }
+  const a=document.createElement("a"); a.href=dataUrl; a.download="oasis-screenshot-"+Date.now()+".png";
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function translatePage(){
+  const v=activeView(); const url=safeGetURL(v); if(!v||!url) return;
+  const item=activeItem(); if(item){item.displayUrl="";item.fixedUrl=false;}
+  v.loadURL("https://translate.google.com/translate?sl=auto&tl=en&u="+encodeURIComponent(url));
+}
+async function browserAction(action){
+  const v=activeView(); if(!v) return "No active page.";
+  const a=action||{};
+  try{
+    if(a.action==="navigate" && a.url){ v.loadURL(a.url); return "Navigated to "+a.url; }
+    if(a.action==="back"){v.goBack();return "Went back."}
+    if(a.action==="forward"){v.goForward();return "Went forward."}
+    if(a.action==="reload"){v.reload();return "Reloaded the page."}
+    if(a.action==="scroll"){
+      const amount=Number(a.amount||650);
+      await v.executeJavaScript(`window.scrollBy({top:${Math.max(-3000,Math.min(3000,amount))},behavior:"smooth"})`,true);
+      return "Scrolled "+amount+" pixels.";
+    }
+    if(a.action==="click" && a.selector){
+      const r=await v.executeJavaScript(`(()=>{const e=document.querySelector(${JSON.stringify(a.selector)});if(!e)return {ok:false,error:"Element not found"};e.click();return {ok:true,text:(e.innerText||e.getAttribute("aria-label")||"clicked").slice(0,200)}})()`,true);
+      return r.ok ? "Clicked "+r.text : r.error;
+    }
+    if(a.action==="type" && a.selector){
+      const val=String(a.text??"");
+      const r=await v.executeJavaScript(`(()=>{const e=document.querySelector(${JSON.stringify(a.selector)});if(!e)return {ok:false,error:"Input not found"};e.focus();e.value=${JSON.stringify(val)};e.dispatchEvent(new Event("input",{bubbles:true}));e.dispatchEvent(new Event("change",{bubbles:true}));return {ok:true}})()`,true);
+      return r.ok ? "Typed into the selected field." : r.error;
+    }
+    return null;
+  }catch(e){return "Action failed: "+e.message}
+}
+async function askAI(prompt, context="", image=null){
+  const lmUrl = localStorage.getItem("oasis_lm_url") || DEFAULT_LM_URL;
+  const body={model:localStorage.getItem("oasis_ai_model")||"local-model",messages:[
+    {role:"system",content:"You are Oasis AI Browser. You can inspect the active webpage using text and an image. When the user asks you to operate the browser, return ONE JSON object and nothing else when an action is appropriate. Supported actions: {action:'navigate',url:'https://...'}, {action:'back'}, {action:'forward'}, {action:'reload'}, {action:'scroll',amount:650}, {action:'click',selector:'CSS selector'}, {action:'type',selector:'CSS selector',text:'...'}, or {action:'none',reply:'...'} if no browser action is needed. Prefer accessible CSS selectors such as button[aria-label='...'], input[name='q'], or exact IDs. Never invent that an action succeeded."},
+    {role:"user",content: image ? [{type:"text",text:prompt+"\\n\\nVisible page text:\\n"+context},{type:"image_url",image_url:{url:image}}] : prompt+"\\n\\nVisible page text:\\n"+context}
+  ],temperature:.2,max_tokens:1200};
+  const r=await fetch(lmUrl+"/chat/completions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  if(!r.ok)throw new Error("LM Studio returned HTTP "+r.status);
+  const j=await r.json(); return j.choices?.[0]?.message?.content||"No response.";
+}
+$("aiRead").onclick=async()=>addMsg(await pageText());
+$("aiScreen").onclick=async()=>{let img=await screenShot();if(img)addMsg("I captured the current browser screen and can send it to the vision model when you ask a question.");else addMsg("Screen capture was not available.")};
+$("aiForm").addEventListener("submit",async e=>{
+  e.preventDefault();let p=$("aiInput").value.trim();if(!p)return;$("aiInput").value="";addMsg(p,"user");$("status").textContent="Working…";
+  try{
+    const lower=p.toLowerCase();
+    if(lower.startsWith("search ")||lower.startsWith("search the web for ")){
+      let q=p.replace(/^search( the web for)?\s*/i,"");
+      makeTab("https://www.google.com/search?q="+encodeURIComponent(q));
+      addMsg("Searching the web for: "+q);$("status").textContent="Done";return;
+    }
+    const txt=await pageText(), img=await screenShot();
+    let raw=await askAI(p,txt,img), result=raw;
+    try{
+      const clean=raw.replace(/^```json\s*/i,"").replace(/\s*```$/,"").trim();
+      const obj=JSON.parse(clean);
+      if(obj.action && obj.action!=="none"){
+        const done=await browserAction(obj);
+        result=done;
+      } else if(obj.reply) result=obj.reply;
+    }catch{}
+    addMsg(result);
+    $("status").textContent="Done";
+  }catch(err){addMsg("AI error: "+err.message);$("status").textContent="Error"}
+});
+$("aiInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("aiForm").requestSubmit()}});
+
+/* ---------- Favorites ---------- */
+const FAV_KEY="oasis_favorites";
+function loadFavorites(){try{return JSON.parse(localStorage.getItem(FAV_KEY)||"[]")}catch{return []}}
+function saveFavorites(list){localStorage.setItem(FAV_KEY,JSON.stringify(list))}
+function isFavorited(url){return loadFavorites().some(f=>f.url===url)}
+function currentPageInfo(){
+  const item=activeItem(), v=activeView();
+  if(!item||!v) return null;
+  const url=safeGetURL(v);
+  if(!url || /^(about|file|devtools):/i.test(url)) return null;
+  const title=item.tab.querySelector(".title").textContent||url;
+  return {url,title};
+}
+function syncStar(){
+  const btn=$("favStar"), info=currentPageInfo();
+  if(!info){ btn.disabled=true; btn.textContent="☆"; btn.classList.remove("active"); btn.title="Nothing to bookmark here"; return; }
+  btn.disabled=false;
+  const fav=isFavorited(info.url);
+  btn.textContent=fav?"★":"☆";
+  btn.classList.toggle("active",fav);
+  btn.title=fav?"Remove from favorites":"Add to favorites";
+}
+$("favStar").addEventListener("click",()=>{
+  const info=currentPageInfo(); if(!info)return;
+  let list=loadFavorites();
+  list = isFavorited(info.url) ? list.filter(f=>f.url!==info.url) : [...list, info];
+  saveFavorites(list); syncStar();
+  if(menuView==="favorites") renderToolsMenu();
+});
+
+/* ---------- History ---------- */
+const HIST_KEY="oasis_history";
+function loadHistory(){try{return JSON.parse(localStorage.getItem(HIST_KEY)||"[]")}catch{return []}}
+function saveHistory(list){localStorage.setItem(HIST_KEY,JSON.stringify(list))}
+function recordHistory(url,title){
+  if(IS_PRIVATE) return;
+  if(!url || /^(about|file|devtools):/i.test(url)) return;
+  let list=loadHistory().filter(h=>h.url!==url);
+  list.unshift({url,title:title||url,time:Date.now()});
+  if(list.length>300) list=list.slice(0,300);
+  saveHistory(list);
+}
+function updateHistoryTitle(url,title){
+  if(IS_PRIVATE || !url) return;
+  const list=loadHistory();
+  const h=list.find(x=>x.url===url);
+  if(h){ h.title=title||h.title; saveHistory(list); if(menuView==="history") renderToolsMenu(); }
+}
+function relativeTime(ts){
+  const s=Math.floor((Date.now()-ts)/1000);
+  if(s<60) return "just now";
+  const m=Math.floor(s/60); if(m<60) return m+"m ago";
+  const h=Math.floor(m/60); if(h<24) return h+"h ago";
+  const d=Math.floor(h/24); return d+"d ago";
+}
+
+/* ---------- Downloads ---------- */
+let downloads=[];
+function fmtBytes(n){
+  if(n==null || isNaN(n)) return "";
+  const u=["B","KB","MB","GB"]; let i=0, v=n;
+  while(v>=1024 && i<u.length-1){v/=1024;i++;}
+  return v.toFixed(v<10&&i>0?1:0)+" "+u[i];
+}
+window.oasisElectron?.onDownloadUpdate?.(d=>{
+  const idx=downloads.findIndex(x=>x.id===d.id);
+  if(idx>=0) downloads[idx]={...downloads[idx],...d}; else downloads.unshift(d);
+  if(downloads.length>50) downloads.length=50;
+  if(menuView==="downloads") renderToolsMenu();
+});
+
+/* ---------- Tab groups ---------- */
+let groups=[];
+let nextGroupId=1;
+let groupDraft=null;
+let groupDraftTargetTabId=null;
+const GROUP_COLORS=["#e05252","#e0a352","#e0d652","#63c76b","#5aa8e0","#9a6ee0","#e05aa8"];
+function groupById(id){return groups.find(g=>g.id===id)}
+function tabsInGroup(id){return tabs.filter(t=>t.groupId===id)}
+function assignTabToGroup(tabId,groupId){
+  const item=tabs.find(t=>t.id===tabId); if(!item) return;
+  const last=lastMemberEl(groupId,item);
+  if(last) $("tabs").insertBefore(item.tab,last.nextSibling);   // keep a group's tabs side by side
+  item.groupId=groupId; pruneGroups(); renderTabGroupChips(); syncTabOrder();
+}
+function removeTabFromGroup(tabId){
+  const item=tabs.find(t=>t.id===tabId); if(!item) return;
+  item.groupId=null; item.tab.style.display=""; renderTabGroupChips();
+}
+function ungroupAll(groupId){
+  tabs.forEach(t=>{ if(t.groupId===groupId){ t.groupId=null; t.tab.style.display=""; } });
+}
+function toggleGroupCollapsed(groupId){
+  const g=groupById(groupId); if(!g) return;
+  g.collapsed=!g.collapsed; renderTabGroupChips();
+  if(menuView==="groups") renderToolsMenu();
+}
+function renderTabGroupChips(){
+  document.querySelectorAll("#tabs .groupChip, #tabs .groupRename").forEach(c=>c.remove());
+  tabs.forEach(t=>{ if(!t.groupId) t.tab.style.display=""; });
+  tabs.forEach(t=>{ t.tab.classList.remove("grouped"); t.tab.style.removeProperty("--gcolor"); });
+  groups.forEach(g=>{
+    const members=tabs.filter(t=>t.groupId===g.id);
+    if(!members.length) return;
+    members.forEach(t=>{
+      t.tab.classList.add("grouped");
+      t.tab.style.setProperty("--gcolor",g.color);
+      t.tab.style.display=g.collapsed?"none":"";
+    });
+    let firstEl=null;
+    for(const child of $("tabs").children){
+      if(members.some(m=>m.tab===child)){ firstEl=child; break; }
+    }
+    if(!firstEl) return;
+    const chip=document.createElement("button");
+    chip.className="groupChip"; chip.style.background=g.color;
+    chip.textContent=(g.collapsed?"▸ ":"▾ ")+g.name;
+    chip.title=g.collapsed?"Expand group":"Collapse group";
+    chip.addEventListener("click",e=>{e.stopPropagation();toggleGroupCollapsed(g.id);});
+    chip.addEventListener("dblclick",e=>{e.stopPropagation();renameGroupInline(g.id);});
+    chip.addEventListener("contextmenu",e=>openGroupContextMenu(e,g.id));
+    chip.dataset.group=g.id;
+    $("tabs").insertBefore(chip,firstEl);
+  });
+}
+function startNewGroupDraft(targetTabId){
+  groupDraftTargetTabId=targetTabId;
+  groupDraft={name:"Group "+(groups.length+1),color:GROUP_COLORS[groups.length%GROUP_COLORS.length]};
+  openToolsPanel("groups");
+}
+
+/* ---------- Drag tabs: reorder, group (drop on a tab), pop out (drag off the strip) ---------- */
+const DRAG_MIME="application/x-oasis-tab";
+let dragTabId=null, dragHandled=false;
+function pruneGroups(){ groups=groups.filter(g=>tabs.some(x=>x.groupId===g.id)); }
+function syncTabOrder(){
+  const order=[...$("tabs").querySelectorAll(".tab")].map(el=>Number(el.dataset.id));
+  tabs.sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));
+}
+function tabEls(skip){ return [...$("tabs").querySelectorAll(".tab")].filter(el=>el!==skip); }
+function lastMemberEl(groupId,skipItem){
+  const m=tabEls(skipItem?.tab).filter(el=>tabs.find(t=>t.tab===el)?.groupId===groupId); return m[m.length-1]||null;
+}
+function itemOfEl(el){ return tabs.find(t=>t.tab===el); }
+function neighborTab(el,dir,skipEl){   // next/previous tab element, ignoring chips and the tab being moved
+  const list=tabEls(skipEl), i=list.indexOf(el); return i<0?null:(list[i+dir]||null);
+}
+function clearDropMarks(){ document.querySelectorAll(".dropBefore,.dropAfter,.dropGroup").forEach(x=>x.classList.remove("dropBefore","dropAfter","dropGroup")); }
+function dropTarget(e){
+  const el=e.target.closest?.(".tab, .groupChip"); if(!el||!$("tabs").contains(el)) return null;
+  const r=el.getBoundingClientRect(), x=(e.clientX-r.left)/Math.max(1,r.width);
+  if(el.classList.contains("groupChip")) return {el,kind:"chip",zone:x<.4?"before":"group"};
+  return {el,kind:"tab",zone:x<.28?"before":x>.72?"after":"group"};
+}
+function wireTabDrag(tab,id){
+  tab.draggable=true;
+  tab.addEventListener("dragstart",e=>{
+    dragTabId=id; dragHandled=false;
+    e.dataTransfer.effectAllowed="move";
+    e.dataTransfer.setData(DRAG_MIME,String(id));
+    tab.classList.add("dragging");
+  });
+  tab.addEventListener("dragend",e=>{
+    tab.classList.remove("dragging"); clearDropMarks();
+    const wasId=dragTabId; dragTabId=null;
+    if(!dragHandled) maybeTearOff(wasId,e);
+  });
+}
+function placeDraggedTab(item,t){
+  const strip=$("tabs");
+  let newGroup=null, ref=null;   // ref = node to insert before (null = end)
+  if(!t){ strip.appendChild(item.tab); item.groupId=null; return; }
+  const T=t.kind==="tab"?itemOfEl(t.el):null;
+  if(t.kind==="chip"){
+    const g=groupById(Number(t.el.dataset.group));
+    if(t.zone==="before"){ strip.insertBefore(item.tab,t.el); item.groupId=null; return; }
+    if(g){ const last=lastMemberEl(g.id,item); strip.insertBefore(item.tab,last?last.nextSibling:null); item.groupId=g.id; g.collapsed=false; }
+    return;
+  }
+  if(!T||T===item) return;
+  if(t.zone==="group"){
+    if(T.groupId){ newGroup=T.groupId; const g=groupById(newGroup); if(g) g.collapsed=false; }
+    else{
+      const g={id:nextGroupId++,name:"Group "+(groups.length+1),color:GROUP_COLORS[groups.length%GROUP_COLORS.length],collapsed:false};
+      groups.push(g); T.groupId=g.id; newGroup=g.id;
+    }
+    strip.insertBefore(item.tab,T.tab.nextSibling); item.groupId=newGroup; return;
+  }
+  if(t.zone==="before"){
+    const prev=neighborTab(T.tab,-1,item.tab), pItem=prev&&itemOfEl(prev);
+    if(T.groupId && pItem && pItem.groupId===T.groupId){ item.groupId=T.groupId; strip.insertBefore(item.tab,T.tab); return; }   // between two members: joins the group
+    // before the first tab of a group: sit left of the group's label, not inside it
+    let node=T.tab; if(T.groupId){ const chip=strip.querySelector('.groupChip[data-group="'+T.groupId+'"]'); if(chip) node=chip; }
+    strip.insertBefore(item.tab,node); item.groupId=null; return;
+  }
+  // after
+  const next=neighborTab(T.tab,1,item.tab), nItem=next&&itemOfEl(next);
+  if(T.groupId && nItem && nItem.groupId===T.groupId){ item.groupId=T.groupId; strip.insertBefore(item.tab,T.tab.nextSibling); return; }
+  strip.insertBefore(item.tab,T.tab.nextSibling); item.groupId=null;
+}
+const tabbarEl=document.getElementById("tabbar");
+tabbarEl.addEventListener("dragover",e=>{
+  if(dragTabId===null || !e.dataTransfer.types.includes(DRAG_MIME)) return;
+  e.preventDefault(); e.dataTransfer.dropEffect="move";
+  clearDropMarks();
+  const t=dropTarget(e); if(!t) return;
+  if(t.kind==="tab" && Number(t.el.dataset.id)===dragTabId) return;
+  t.el.classList.add(t.zone==="before"?"dropBefore":t.zone==="after"?"dropAfter":"dropGroup");
+});
+tabbarEl.addEventListener("dragleave",e=>{ if(!tabbarEl.contains(e.relatedTarget)) clearDropMarks(); });
+tabbarEl.addEventListener("drop",e=>{
+  if(dragTabId===null || !e.dataTransfer.types.includes(DRAG_MIME)) return;
+  e.preventDefault(); dragHandled=true;
+  const item=tabs.find(x=>x.id===dragTabId); const t=dropTarget(e);
+  clearDropMarks(); item?.tab.classList.remove("dragging");
+  if(!item) return;
+  placeDraggedTab(item,t);
+  pruneGroups(); renderTabGroupChips(); syncTabOrder();
+  try{ item.tab.scrollIntoView({inline:"nearest",block:"nearest"}); }catch(err){}
+});
+// Released well away from the strip (or outside the window): the tab becomes its own window.
+function maybeTearOff(id,e){
+  const item=tabs.find(t=>t.id===id); if(!item) return;
+  if(e.screenX===0 && e.screenY===0) return;   // drag was cancelled with Esc
+  const bar=tabbarEl.getBoundingClientRect();
+  const nearStrip=e.clientX>=0 && e.clientX<=innerWidth && e.clientY>=-6 && e.clientY<=bar.bottom+40;
+  if(nearStrip) return;
+  const url=safeGetURL(item.view); if(!url || !window.oasisElectron?.popOutTab) return;
+  window.oasisElectron.popOutTab({url,partition:PARTITION,title:item.tab.querySelector(".title").textContent,x:e.screenX,y:e.screenY})
+    .then(r=>{ if(r&&r.ok) closeTab(item.id); });
+}
+$("tabs").addEventListener("wheel",e=>{ if(e.deltaY){ $("tabs").scrollLeft+=e.deltaY; e.preventDefault(); } },{passive:false});
+
+function renameGroupInline(groupId){
+  const g=groupById(groupId); const chip=document.querySelector('#tabs .groupChip[data-group="'+groupId+'"]'); if(!g||!chip) return;
+  const inp=document.createElement("input"); inp.className="groupRename"; inp.value=g.name; inp.maxLength=30;
+  chip.replaceWith(inp); inp.focus(); inp.select();
+  let done=false;
+  const finish=save=>{ if(done) return; done=true; if(save&&inp.value.trim()) g.name=inp.value.trim(); renderTabGroupChips(); if(menuView==="groups") renderToolsMenu(); };
+  inp.addEventListener("keydown",ev=>{ if(ev.key==="Enter") finish(true); else if(ev.key==="Escape") finish(false); });
+  inp.addEventListener("blur",()=>finish(true));
+}
+function openGroupContextMenu(e,groupId){
+  e.preventDefault(); e.stopPropagation();
+  closeTabContextMenu(); closeDropdowns();
+  const g=groupById(groupId); if(!g) return;
+  const menu=document.createElement("div"); menu.id="tabCtxMenu"; menu.className="dropdown open";
+  menu.style.position="fixed"; menu.style.top=e.clientY+"px"; menu.style.left=e.clientX+"px"; menu.style.right="auto"; menu.style.width="200px";
+  document.body.appendChild(menu);
+  const row=(label,fn)=>{ const b=document.createElement("button"); b.className="ddItem"; b.innerHTML='<span class="ddTitle">'+escapeHtml(label)+'</span>'; b.addEventListener("click",()=>{closeTabContextMenu();fn();}); menu.appendChild(b); };
+  row("Rename group",()=>renameGroupInline(groupId));
+  row(g.collapsed?"Expand group":"Collapse group",()=>toggleGroupCollapsed(groupId));
+  row("Ungroup (keep tabs)",()=>{ ungroupAll(groupId); pruneGroups(); renderTabGroupChips(); });
+  row("Close group",()=>{ tabsInGroup(groupId).map(t=>t.id).forEach(closeTab); });
+}
+
+/* ---------- Tab right-click menu ---------- */
+function closeTabContextMenu(){ document.getElementById("tabCtxMenu")?.remove(); }
+function openTabContextMenu(e,tabId){
+  e.preventDefault();
+  closeTabContextMenu(); closeDropdowns();
+  const item=tabs.find(t=>t.id===tabId); if(!item) return;
+  const menu=document.createElement("div"); menu.id="tabCtxMenu"; menu.className="dropdown open";
+  menu.style.position="fixed"; menu.style.top=e.clientY+"px"; menu.style.left=e.clientX+"px"; menu.style.right="auto"; menu.style.width="220px";
+  document.body.appendChild(menu);
+  function row(label,action){
+    const b=document.createElement("button"); b.className="ddItem"; b.innerHTML=`<span class="ddTitle">${escapeHtml(label)}</span>`;
+    b.addEventListener("click",()=>{action();closeTabContextMenu();});
+    menu.appendChild(b); return b;
+  }
+  function sepEl(){ const s=document.createElement("div"); s.className="ddSep"; menu.appendChild(s); }
+  if(groups.length){
+    const head=document.createElement("div"); head.className="ddHead"; head.textContent="Add tab to group"; menu.appendChild(head);
+    groups.forEach(g=>{
+      const b=row(g.name,()=>assignTabToGroup(item.id,g.id));
+      const dot=document.createElement("span"); dot.className="ddColorDot"; dot.style.background=g.color;
+      b.prepend(dot);
+    });
+    row("New group…",()=>startNewGroupDraft(item.id));
+  } else {
+    row("Add tab to new group",()=>startNewGroupDraft(item.id));
+  }
+  if(item.groupId){ sepEl(); row("Remove from group",()=>removeTabFromGroup(item.id)); }
+  sepEl();
+  row("Move to new window",()=>{ const url=safeGetURL(views.get(item.id)); if(url&&window.oasisElectron?.popOutTab) window.oasisElectron.popOutTab({url,partition:PARTITION,title:item.tab.querySelector(".title").textContent}).then(r=>{ if(r&&r.ok) closeTab(item.id); }); });
+  row("Duplicate tab",()=>{ const url=safeGetURL(views.get(item.id))||NEW_TAB_URL; makeTab(url); });
+  row("Close tab",()=>closeTab(item.id));
+  if(tabs.length>1) row("Close other tabs",()=>{ tabs.filter(t=>t.id!==item.id).map(t=>t.id).forEach(closeTab); });
+}
+document.addEventListener("click",()=>closeTabContextMenu());
+document.addEventListener("contextmenu",e=>{ if(!e.target.closest(".tab")) closeTabContextMenu(); });
+
+/* ---------- Tools menu (panel system: main / favorites / history / groups / downloads / clear / settings) ---------- */
+function zoomBy(delta){const v=activeView();if(!v)return;const z=Math.min(3,Math.max(0.25,Number((v.getZoomFactor()+delta).toFixed(2))));v.setZoomFactor(z);}
+function toggleDevTools(){const v=activeView();if(!v)return;v.isDevToolsOpened()?v.closeDevTools():v.openDevTools();}
+
+let menuView="main";
+function sep(menu){const s=document.createElement("div");s.className="ddSep";menu.appendChild(s);}
+function mainItem(menu,{label,shortcut,arrow,action}){
+  const b=document.createElement("button"); b.className="ddItem";
+  b.innerHTML=`<span class="ddTitle">${escapeHtml(label)}</span>${shortcut?`<span class="ddShortcut">${escapeHtml(shortcut)}</span>`:""}${arrow?'<span class="ddArrow">›</span>':""}`;
+  b.addEventListener("click",action);
+  menu.appendChild(b);
+}
+function panelHeader(menu,title){
+  const head=document.createElement("div"); head.className="ddPanelHead";
+  const back=document.createElement("button"); back.className="ddBack"; back.textContent="‹"; back.title="Back";
+  back.addEventListener("click",e=>{e.stopPropagation();menuView="main";groupDraft=null;renderToolsMenu();});
+  const t=document.createElement("span"); t.className="ddPanelTitle"; t.textContent=title;
+  head.appendChild(back); head.appendChild(t); menu.appendChild(head);
+}
+function listRow(menu,title,subtitle){
+  const row=document.createElement("div"); row.className="ddItem ddRow";
+  row.innerHTML=`<span class="ddRowText"><span class="ddTitle">${escapeHtml(title)}</span>${subtitle?`<span class="ddSub">${escapeHtml(subtitle)}</span>`:""}</span>`;
+  menu.appendChild(row); return row;
+}
+function addRemoveButton(row,onRemove){
+  const btn=document.createElement("button"); btn.className="ddRemove"; btn.title="Remove"; btn.textContent="×";
+  btn.addEventListener("click",e=>{e.stopPropagation();onRemove();});
+  row.appendChild(btn);
+}
+function emptyState(menu,text){ const d=document.createElement("div"); d.className="ddEmpty"; d.textContent=text; menu.appendChild(d); }
+function footerButton(menu,label,onClick,cls=""){
+  const b=document.createElement("button"); b.className="ddFooterBtn "+cls; b.textContent=label;
+  b.addEventListener("click",onClick); menu.appendChild(b); return b;
+}
+function zoomRow(menu){
+  const row=document.createElement("div"); row.className="ddZoomRow";
+  const v=activeView(); const pct=v?Math.round(v.getZoomFactor()*100):100;
+  row.innerHTML=`<button class="ddZoomBtn" id="ddZoomOut">−</button><span class="ddZoomPct">${pct}%</span><button class="ddZoomBtn" id="ddZoomIn">+</button><button class="ddZoomBtn" id="ddZoomReset" title="Reset zoom">↺</button><button class="ddZoomBtn" id="ddZoomFull" title="Full screen">⤢</button>`;
+  menu.appendChild(row);
+  row.querySelector("#ddZoomOut").addEventListener("click",e=>{e.stopPropagation();zoomBy(-0.1);refreshZoomRow();});
+  row.querySelector("#ddZoomIn").addEventListener("click",e=>{e.stopPropagation();zoomBy(0.1);refreshZoomRow();});
+  row.querySelector("#ddZoomReset").addEventListener("click",e=>{e.stopPropagation();activeView()?.setZoomFactor(1);refreshZoomRow();});
+  row.querySelector("#ddZoomFull").addEventListener("click",e=>{e.stopPropagation();window.oasisElectron?.toggleFullscreen?.();closeDropdowns();});
+}
+function refreshZoomRow(){
+  const row=$("toolsMenu").querySelector(".ddZoomRow"); if(!row) return;
+  const v=activeView(); row.querySelector(".ddZoomPct").textContent=(v?Math.round(v.getZoomFactor()*100):100)+"%";
+}
+
+function renderMainPanel(menu){
+  mainItem(menu,{label:"New tab",shortcut:"Ctrl+T",action:()=>{makeTab(NEW_TAB_URL);closeDropdowns();}});
+  mainItem(menu,{label:"New window",shortcut:"Ctrl+N",action:()=>{window.oasisElectron?.newWindow?.();closeDropdowns();}});
+  mainItem(menu,{label:"New InPrivate window",shortcut:"Ctrl+Shift+N",action:()=>{window.oasisElectron?.newPrivateWindow?.();closeDropdowns();}});
+  sep(menu);
+  zoomRow(menu);
+  sep(menu);
+  mainItem(menu,{label:"Favorites",shortcut:"Ctrl+Shift+O",arrow:true,action:()=>{menuView="favorites";renderToolsMenu();}});
+  mainItem(menu,{label:"History",shortcut:"Ctrl+H",arrow:true,action:()=>{menuView="history";renderToolsMenu();}});
+  mainItem(menu,{label:"Tab groups",arrow:true,action:()=>{menuView="groups";renderToolsMenu();}});
+  mainItem(menu,{label:"Downloads",shortcut:"Ctrl+J",arrow:true,action:()=>{menuView="downloads";renderToolsMenu();}});
+  sep(menu);
+  mainItem(menu,{label:"Delete browsing data…",shortcut:"Ctrl+Shift+Delete",arrow:true,action:()=>{menuView="clear";renderToolsMenu();}});
+  mainItem(menu,{label:"Print…",shortcut:"Ctrl+P",action:()=>{activeView()?.print();closeDropdowns();}});
+  mainItem(menu,{label:"Translate this page",action:()=>{translatePage();closeDropdowns();}});
+  mainItem(menu,{label:"Screenshot",shortcut:"Ctrl+Shift+S",action:()=>{takeScreenshot();closeDropdowns();}});
+  mainItem(menu,{label:"Find on page",shortcut:"Ctrl+F",action:()=>{openFindBar();closeDropdowns();}});
+  sep(menu);
+  mainItem(menu,{label:"Developer tools",action:()=>{toggleDevTools();closeDropdowns();}});
+  mainItem(menu,{label:"Settings",arrow:true,action:()=>{menuView="settings";renderToolsMenu();}});
+  sep(menu);
+  mainItem(menu,{label:"About Oasis",action:()=>{window.oasisElectron?.showAbout?.();closeDropdowns();}});
+  mainItem(menu,{label:IS_PRIVATE?"Close InPrivate window":"Close Oasis",action:()=>{window.oasisElectron?.closeWindow?.();}});
+}
+function renderFavoritesPanel(menu){
+  panelHeader(menu,"Favorites");
+  const favs=loadFavorites();
+  if(!favs.length){ emptyState(menu,"No favorites yet — click the star next to the address bar to save this page."); return; }
+  favs.forEach(f=>{
+    const row=listRow(menu,f.title||f.url,f.url);
+    row.addEventListener("click",()=>{makeTab(f.url);closeDropdowns();});
+    addRemoveButton(row,()=>{saveFavorites(loadFavorites().filter(x=>x.url!==f.url));renderToolsMenu();syncStar();});
+  });
+}
+function renderHistoryPanel(menu){
+  panelHeader(menu,"History");
+  if(IS_PRIVATE){ emptyState(menu,"Oasis doesn't keep history in an InPrivate window."); return; }
+  const hist=loadHistory();
+  if(!hist.length){ emptyState(menu,"No browsing history yet."); return; }
+  hist.slice(0,40).forEach(h=>{
+    const row=listRow(menu,h.title,relativeTime(h.time)+" · "+h.url);
+    row.addEventListener("click",()=>{makeTab(h.url);closeDropdowns();});
+    addRemoveButton(row,()=>{saveHistory(loadHistory().filter(x=>!(x.url===h.url&&x.time===h.time)));renderToolsMenu();});
+  });
+  sep(menu);
+  footerButton(menu,"Clear all history",()=>{saveHistory([]);renderToolsMenu();});
+}
+function renderDownloadsPanel(menu){
+  panelHeader(menu,"Downloads");
+  if(!downloads.length){ emptyState(menu,"No downloads yet."); }
+  else downloads.forEach(d=>{
+    let sub;
+    if(d.state==="progressing") sub=fmtBytes(d.receivedBytes)+" of "+fmtBytes(d.totalBytes);
+    else if(d.state==="completed") sub="Completed"+(d.totalBytes?" · "+fmtBytes(d.totalBytes):"");
+    else sub="Failed or cancelled";
+    const row=listRow(menu,d.filename||"Download",sub);
+    row.addEventListener("click",()=>{ if(d.state==="completed"&&d.path){window.oasisElectron?.openPath?.(d.path);closeDropdowns();} });
+    if(d.state==="completed"&&d.path){
+      const btn=document.createElement("button"); btn.className="ddRemove"; btn.textContent="⌕"; btn.title="Show in folder";
+      btn.addEventListener("click",e=>{e.stopPropagation();window.oasisElectron?.showItemInFolder?.(d.path);});
+      row.appendChild(btn);
+    }
+  });
+  sep(menu);
+  footerButton(menu,"Open downloads folder",()=>{window.oasisElectron?.openDownloadsFolder?.();closeDropdowns();});
+}
+function renderGroupsPanel(menu){
+  panelHeader(menu,"Tab groups");
+  if(groupDraft){ renderGroupDraftForm(menu); return; }
+  if(!groups.length){ emptyState(menu,"No tab groups yet. Group tabs to keep related work together."); }
+  else groups.forEach(g=>{
+    const count=tabsInGroup(g.id).length;
+    const row=listRow(menu,g.name,count+" tab"+(count===1?"":"s")+(g.collapsed?" · collapsed":""));
+    const dot=document.createElement("span"); dot.className="ddColorDot"; dot.style.background=g.color;
+    row.firstChild.prepend(dot);
+    row.addEventListener("click",()=>toggleGroupCollapsed(g.id));
+    addRemoveButton(row,()=>{ ungroupAll(g.id); groups=groups.filter(x=>x.id!==g.id); renderTabGroupChips(); renderToolsMenu(); });
+  });
+  sep(menu);
+  footerButton(menu,"+ New group",()=>startNewGroupDraft(activeItem()?.id));
+}
+function renderGroupDraftForm(menu){
+  const wrap=document.createElement("div"); wrap.className="ddGroupForm";
+  wrap.innerHTML=`
+    <label class="ddLabel">Group name</label>
+    <input class="ddInput" id="grpName" value="${escapeHtml(groupDraft.name)}" placeholder="Group name">
+    <label class="ddLabel">Color</label>
+    <div class="ddColorRow" id="grpColors"></div>
+    <div class="ddGroupBtns"><button class="ddFooterBtn" id="grpCancel">Cancel</button><button class="ddFooterBtn ddPrimary" id="grpCreate">Create group</button></div>`;
+  menu.appendChild(wrap);
+  const colorRow=wrap.querySelector("#grpColors");
+  GROUP_COLORS.forEach(c=>{
+    const sw=document.createElement("button"); sw.className="ddSwatch"+(c===groupDraft.color?" active":""); sw.style.background=c;
+    sw.addEventListener("click",()=>{groupDraft.color=c;renderToolsMenu();});
+    colorRow.appendChild(sw);
+  });
+  wrap.querySelector("#grpName").addEventListener("input",e=>{groupDraft.name=e.target.value;});
+  wrap.querySelector("#grpCancel").addEventListener("click",()=>{groupDraft=null;groupDraftTargetTabId=null;renderToolsMenu();});
+  wrap.querySelector("#grpCreate").addEventListener("click",()=>{
+    const g={id:nextGroupId++,name:groupDraft.name.trim()||"Group",color:groupDraft.color,collapsed:false};
+    groups.push(g);
+    const targetId=groupDraftTargetTabId ?? activeItem()?.id;
+    if(targetId!=null) assignTabToGroup(targetId,g.id);
+    groupDraft=null; groupDraftTargetTabId=null;
+    renderToolsMenu();
+  });
+}
+function renderClearDataPanel(menu){
+  panelHeader(menu,"Delete browsing data");
+  const wrap=document.createElement("div"); wrap.className="ddClearForm";
+  wrap.innerHTML=`
+    <label class="ddCheck"><input type="checkbox" id="clrHistory" checked> Browsing history</label>
+    <label class="ddCheck"><input type="checkbox" id="clrCookies" checked> Cookies and site data</label>
+    <label class="ddCheck"><input type="checkbox" id="clrCache" checked> Cached images and files</label>
+    <div class="ddClearNote">Favorites and tab groups are never deleted by this.</div>
+    <button class="ddFooterBtn ddDanger" id="clrGo">Clear now</button>`;
+  menu.appendChild(wrap);
+  wrap.querySelector("#clrGo").addEventListener("click",async()=>{
+    const btn=wrap.querySelector("#clrGo"); btn.disabled=true; btn.textContent="Clearing…";
+    if(wrap.querySelector("#clrHistory").checked) saveHistory([]);
+    await window.oasisElectron?.clearBrowsingData?.(PARTITION,{
+      cookies: wrap.querySelector("#clrCookies").checked,
+      cache: wrap.querySelector("#clrCache").checked
+    });
+    btn.textContent="Cleared";
+    setTimeout(()=>closeDropdowns(),700);
+  });
+}
+function renderSettingsPanel(menu){
+  panelHeader(menu,"Settings");
+  const wrap=document.createElement("div"); wrap.className="ddSettingsForm";
+  const lm=localStorage.getItem("oasis_lm_url")||DEFAULT_LM_URL;
+  const model=localStorage.getItem("oasis_ai_model")||"local-model";
+  wrap.innerHTML=`
+    <label class="ddLabel">AI server URL (LM Studio)</label>
+    <input class="ddInput" id="setLmUrl" value="${escapeHtml(lm)}">
+    <label class="ddLabel">AI model name</label>
+    <input class="ddInput" id="setModel" value="${escapeHtml(model)}">
+    <button class="ddFooterBtn ddPrimary" id="setSave">Save</button>`;
+  menu.appendChild(wrap);
+  wrap.querySelector("#setSave").addEventListener("click",()=>{
+    localStorage.setItem("oasis_lm_url",wrap.querySelector("#setLmUrl").value.trim());
+    localStorage.setItem("oasis_ai_model",wrap.querySelector("#setModel").value.trim());
+    const btn=wrap.querySelector("#setSave"); btn.textContent="Saved"; setTimeout(()=>closeDropdowns(),500);
+  });
+}
+function renderToolsMenu(){
+  const menu=$("toolsMenu");
+  menu.innerHTML="";
+  if(menuView==="favorites") renderFavoritesPanel(menu);
+  else if(menuView==="history") renderHistoryPanel(menu);
+  else if(menuView==="groups") renderGroupsPanel(menu);
+  else if(menuView==="downloads") renderDownloadsPanel(menu);
+  else if(menuView==="clear") renderClearDataPanel(menu);
+  else if(menuView==="settings") renderSettingsPanel(menu);
+  else renderMainPanel(menu);
+}
+function openToolsPanel(view){
+  closeDropdowns();
+  menuView=view;
+  renderToolsMenu();
+  $("toolsMenu").classList.add("open");
+}
+$("toolsBtn").addEventListener("click",e=>{
+  e.stopPropagation();
+  const wasOpen=$("toolsMenu").classList.contains("open");
+  closeDropdowns();
+  if(!wasOpen){ menuView="main"; groupDraft=null; renderToolsMenu(); $("toolsMenu").classList.add("open"); }
+});
+function closeDropdowns(){document.querySelectorAll(".dropdown.open").forEach(d=>d.classList.remove("open"));}
+// Capture phase (the "true") is essential here: several menu rows rebuild
+// #toolsMenu's contents (menu.innerHTML="") as part of handling their own
+// click (switching to the Favorites/History/etc. panel). If this outside-
+// click check ran during the normal bubble phase, it would run *after* that
+// rebuild, find the original clicked element detached from the DOM, wrongly
+// conclude the click landed "outside" the menu, and immediately close it —
+// which looked like the row did nothing at all. Running in capture phase
+// evaluates this before any handler (and any rebuild) runs.
+document.addEventListener("click",e=>{if(!e.target.closest(".dropdownWrap"))closeDropdowns();},true);
+
+/* ---------- Find in page ---------- */
+function openFindBar(){
+  if(!activeView())return;
+  $("findBar").classList.add("open");
+  $("findInput").value=""; $("findCount").textContent="";
+  $("findInput").focus();
+}
+function closeFindBar(){
+  $("findBar").classList.remove("open");
+  try{activeView()?.stopFindInPage("clearSelection")}catch(e){}
+}
+function doFind(forward=true){
+  const v=activeView(); if(!v)return;
+  const q=$("findInput").value;
+  if(!q){ try{v.stopFindInPage("clearSelection")}catch(e){} $("findCount").textContent=""; return; }
+  v.findInPage(q,{forward,findNext:false});
+}
+$("findInput").addEventListener("input",()=>doFind(true));
+$("findInput").addEventListener("keydown",e=>{
+  if(e.key==="Enter"){e.preventDefault();doFind(!e.shiftKey);}
+  if(e.key==="Escape"){e.preventDefault();closeFindBar();}
+});
+$("findNext").addEventListener("click",()=>doFind(true));
+$("findPrev").addEventListener("click",()=>doFind(false));
+$("findClose").addEventListener("click",closeFindBar);
+
+window.oasisElectron?.onOpenInTab?.(url=>{
+  if(!url) return;
+  const meta=appTabMeta(url);
+  makeTab(url, meta.title, meta.displayUrl);
+});
+window.oasisElectron?.onContextNav?.(action=>{
+  const v=activeView(); if(!v) return;
+  if(action==="back"){ if(v.canGoBack()) v.goBack(); }
+  else if(action==="forward"){ if(v.canGoForward()) v.goForward(); }
+  else if(action==="reload") v.reload();
+});
+
+makeTab(fileUrl(HOME_FILE),"Home","Home",{appTab:true});
+window.addEventListener("keydown",e=>{
+  const mod=e.ctrlKey||e.metaKey;
+  if(mod&&e.key.toLowerCase()==="l"){e.preventDefault();$("address").focus();$("address").select();}
+  if(mod&&!e.shiftKey&&e.key.toLowerCase()==="t"){e.preventDefault();makeTab(NEW_TAB_URL);}
+  if(mod&&!e.shiftKey&&e.key.toLowerCase()==="n"){e.preventDefault();window.oasisElectron?.newWindow?.();}
+  if(mod&&e.shiftKey&&e.key.toLowerCase()==="n"){e.preventDefault();window.oasisElectron?.newPrivateWindow?.();}
+  if(mod&&e.key.toLowerCase()==="w"){e.preventDefault();if(activeId!=null)closeTab(activeId);}
+  if(mod&&e.key.toLowerCase()==="f"){e.preventDefault();openFindBar();}
+  if(mod&&!e.shiftKey&&e.key.toLowerCase()==="d"){e.preventDefault();$("favStar").click();}
+  if(mod&&e.shiftKey&&e.key.toLowerCase()==="o"){e.preventDefault();openToolsPanel("favorites");}
+  if(mod&&!e.shiftKey&&e.key.toLowerCase()==="h"){e.preventDefault();openToolsPanel("history");}
+  if(mod&&!e.shiftKey&&e.key.toLowerCase()==="j"){e.preventDefault();openToolsPanel("downloads");}
+  if(mod&&e.shiftKey&&e.key.toLowerCase()==="delete"){e.preventDefault();openToolsPanel("clear");}
+  if(mod&&e.shiftKey&&e.key.toLowerCase()==="s"){e.preventDefault();takeScreenshot();}
+  if(mod&&!e.shiftKey&&e.key.toLowerCase()==="p"){e.preventDefault();activeView()?.print();}
+  if(e.key==="Escape"){closeDropdowns();closeTabContextMenu();if($("findBar").classList.contains("open"))closeFindBar();}
+});
+</script>
+</body>
+</html>

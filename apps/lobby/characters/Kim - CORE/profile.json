@@ -1,0 +1,15 @@
+{
+  "id": "net-extra-16",
+  "name": "Kim",
+  "avatar": "K",
+  "role": "The sci-fi fan",
+  "core": true,
+  "folderLabel": "Kim - CORE",
+  "favoriteRooms": [
+    "scifi",
+    "offtopic"
+  ],
+  "startingRoom": "scifi",
+  "ambient": false,
+  "removed": false
+}

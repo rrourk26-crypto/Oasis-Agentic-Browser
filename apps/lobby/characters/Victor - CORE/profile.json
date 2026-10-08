@@ -1,0 +1,15 @@
+{
+  "id": "net-extra-17",
+  "name": "Victor",
+  "avatar": "V",
+  "role": "The arcade regular",
+  "core": true,
+  "folderLabel": "Victor - CORE",
+  "favoriteRooms": [
+    "retro",
+    "offtopic"
+  ],
+  "startingRoom": "retro",
+  "ambient": false,
+  "removed": false
+}

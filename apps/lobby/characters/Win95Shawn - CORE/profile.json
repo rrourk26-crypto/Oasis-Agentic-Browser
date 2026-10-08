@@ -1,0 +1,15 @@
+{
+  "id": "net-21",
+  "name": "Win95Shawn",
+  "avatar": "W",
+  "role": "The retro PC guy",
+  "core": true,
+  "folderLabel": "Win95Shawn - CORE",
+  "favoriteRooms": [
+    "tech",
+    "offtopic"
+  ],
+  "startingRoom": "tech",
+  "ambient": false,
+  "removed": false
+}

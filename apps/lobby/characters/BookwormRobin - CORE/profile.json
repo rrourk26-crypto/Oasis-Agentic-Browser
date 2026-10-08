@@ -1,0 +1,15 @@
+{
+  "id": "net-10",
+  "name": "BookwormRobin",
+  "avatar": "B",
+  "role": "The reader",
+  "core": true,
+  "folderLabel": "BookwormRobin - CORE",
+  "favoriteRooms": [
+    "books",
+    "offtopic"
+  ],
+  "startingRoom": "books",
+  "ambient": false,
+  "removed": false
+}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'">
+<title>Share your screen</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font:14px "Segoe UI",system-ui,sans-serif;background:#0b101c;color:#dbe6f7;display:flex;flex-direction:column;height:100vh}
+  header{padding:16px 20px 8px}
+  h1{margin:0 0 4px;font-size:18px}
+  p{margin:0;color:#8fa3bf;font-size:13px}
+  #grid{flex:1;overflow:auto;padding:12px 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;align-content:start}
+  h2{grid-column:1/-1;margin:8px 0 0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8fa3bf}
+  button.card{background:#141b2b;border:2px solid #243049;border-radius:10px;padding:8px;color:inherit;cursor:pointer;text-align:left;font:inherit}
+  button.card:hover{border-color:#5b8cff}
+  button.card.sel{border-color:#5b8cff;background:#1a2540}
+  button.card img{width:100%;aspect-ratio:16/10;object-fit:contain;background:#05080f;border-radius:6px;display:block}
+  button.card span{display:block;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}
+  footer{padding:12px 20px;display:flex;justify-content:flex-end;gap:10px;border-top:1px solid #243049}
+  footer button{font:inherit;padding:8px 18px;border-radius:8px;border:1px solid #2f3d5c;background:#18213a;color:#dbe6f7;cursor:pointer}
+  footer button.go{background:#3b6cf0;border-color:#3b6cf0;color:#fff}
+  footer button:disabled{opacity:.45;cursor:default}
+  #empty{grid-column:1/-1;color:#ff9a9a}
+</style></head>
+<body>
+<header><h1>Choose what to share with the AI</h1><p>The AI only sees the picture you pick, and only when you send a message.</p></header>
+<div id="grid"><div id="empty" style="color:#8fa3bf">Loading screens and windows…</div></div>
+<footer><button id="cancel" type="button">Cancel</button><button id="share" class="go" type="button" disabled>Share</button></footer>
+<script>
+  let picked = null;
+  const grid = document.getElementById("grid"), share = document.getElementById("share");
+  function card(s) {
+    const b = document.createElement("button"); b.type = "button"; b.className = "card";
+    const im = document.createElement("img"); im.alt = ""; if (s.thumb) im.src = s.thumb;
+    const t = document.createElement("span"); t.textContent = s.name || "(untitled)"; t.title = s.name || "";
+    b.append(im, t);
+    b.onclick = () => { picked = s.id; grid.querySelectorAll(".card").forEach(c => c.classList.remove("sel")); b.classList.add("sel"); share.disabled = false; };
+    b.ondblclick = () => window.oasisPicker.choose(s.id);
+    return b;
+  }
+  window.oasisPicker.onSources((list) => {
+    grid.textContent = "";
+    const screens = list.filter(s => s.screen), wins = list.filter(s => !s.screen);
+    if (!list.length) { const e = document.createElement("div"); e.id = "empty"; e.textContent = "No screens or windows were found. On a Mac, allow Screen Recording for this app in System Settings > Privacy & Security."; grid.append(e); return; }
+    if (screens.length) { const h = document.createElement("h2"); h.textContent = "Screens"; grid.append(h); screens.forEach(s => grid.append(card(s))); }
+    if (wins.length) { const h = document.createElement("h2"); h.textContent = "Windows"; grid.append(h); wins.forEach(s => grid.append(card(s))); }
+  });
+  share.onclick = () => picked && window.oasisPicker.choose(picked);
+  document.getElementById("cancel").onclick = () => window.oasisPicker.cancel();
+  addEventListener("keydown", e => { if (e.key === "Escape") window.oasisPicker.cancel(); });
+</script></body></html>

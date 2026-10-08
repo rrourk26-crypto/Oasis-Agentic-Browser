@@ -1,0 +1,12 @@
+{
+  "id": "custom-elijah",
+  "name": "Elijah",
+  "fullName": "Elijah Rourk",
+  "birthday": "2019-08-01",
+  "role": "Young, playful, curious, and quick to react to anything interesting.",
+  "relationships": "Rourk family; sibling of Bobby, Ame, and Gwen; son of Robert Rourk and Anja Ervin Rourk.",
+  "favoriteRoom": "friends",
+  "avatar": "E",
+  "editable": true,
+  "displayNameRule": "Use name for the visible screen name. fullName is internal character knowledge only."
+}
